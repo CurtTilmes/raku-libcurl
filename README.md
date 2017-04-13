@@ -39,7 +39,6 @@ Fancier:
     my $curl = LibCurl::Easy.new;
     $curl.setopt(URL => 'http://example.com', download => './myfile.html');
     $curl.perform;
-    print $curl.content;
     say $curl.response-code;
     say $curl.statusline;
 
