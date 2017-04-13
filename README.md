@@ -1,7 +1,7 @@
 Perl6 LibCurl
 =============
 
-A [Perl 6](https://perl6.org/) implementation of
+A [Perl 6](https://perl6.org/) interface to
 [libcurl](https://curl.haxx.se/libcurl/).
 
     libcurl is a free and easy-to-use client-side URL transfer
