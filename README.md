@@ -43,6 +43,17 @@ Fancier:
     say $curl.response-code;
     say $curl.statusline;
 
+SEE ALSO
+========
+
+There is another Perl 6 interface to libcurl
+[Net::Curl](https://github.com/azawawi/perl6-net-curl) developed by
+Ahmad M. Zawawi.  If you already use it and it works well for you,
+great, keep using it.  Ahmad did a nice job developing it.  I would
+encourage you to also take a look at this module.  LibCurl provides a
+more 'perlish' OO interface to libcurl than Net::Curl, and wraps
+things in a manner to make using it a little easier (IMHO).
+
 LICENSE
 =======
 
