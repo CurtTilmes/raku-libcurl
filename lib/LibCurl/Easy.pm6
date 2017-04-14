@@ -3,69 +3,72 @@ use v6;
 use NativeCall;
 use LibCurl::EasyHandle;
 
-my enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG
-    LIBCURL_HEADER LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND>;
+my %allhandles;
+
+my enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG LIBCURL_HEADER
+    LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND LIBCURL_DEBUG>;
 
 my %opts =
-    verbose           => (CURLOPT_VERBOSE,           CURLOPT_BOOL     ),
-    header            => (CURLOPT_HEADER,            CURLOPT_BOOL     ),
-    nosignal          => (CURLOPT_NOSIGNAL,          CURLOPT_BOOL     ),
-    wildcardmatch     => (CURLOPT_WILDCARDMATCH,     CURLOPT_BOOL     ),
-    followlocation    => (CURLOPT_FOLLOWLOCATION,    CURLOPT_BOOL     ),
-    autoreferer       => (CURLOPT_AUTOREFERER,       CURLOPT_BOOL     ),
-    referer           => (CURLOPT_REFERER,           CURLOPT_STR      ),
-    httpget           => (CURLOPT_HTTPGET,           CURLOPT_BOOL     ),
-    URL               => (CURLOPT_URL,               CURLOPT_STR      ),
-    proxy             => (CURLOPT_PROXY,             CURLOPT_STR      ),
-    proxyport         => (CURLOPT_PROXYPORT,         CURLOPT_LONG     ),
-    proxytype         => (CURLOPT_PROXYTYPE,         CURLOPT_LONG     ),
-    httpproxytunnel   => (CURLOPT_HTTPPROXYTUNNEL,   CURLOPT_BOOL     ),
-    accept-encoding   => (CURLOPT_ACCEPT_ENCODING,   CURLOPT_STR      ),
-    useragent         => (CURLOPT_USERAGENT,         CURLOPT_STR      ),
-    failonerror       => (CURLOPT_FAILONERROR,       CURLOPT_BOOL     ),
-    postfields        => (CURLOPT_POSTFIELDS,        CURLOPT_STR      ),
-    postfieldsize     => (CURLOPT_POSTFIELDSIZE,     CURLOPT_LONG     ),
-    userpwd           => (CURLOPT_USERPWD,           CURLOPT_STR      ),
-    proxyuserpwd      => (CURLOPT_PROXYUSERPWD,      CURLOPT_STR      ),
-    netrc             => (CURLOPT_NETRC,             CURLOPT_LONG     ),
-    username          => (CURLOPT_USERNAME,          CURLOPT_STR      ),
-    password          => (CURLOPT_PASSWORD,          CURLOPT_STR      ),
-    httpauth          => (CURLOPT_HTTPAUTH,          CURLOPT_LONG     ),
-    maxconnects       => (CURLOPT_MAXCONNECTS,       CURLOPT_LONG     ),
-    fresh-connect     => (CURLOPT_FRESH_CONNECT,     CURLOPT_BOOL     ),
-    forbid-reuse      => (CURLOPT_FORBID_REUSE,      CURLOPT_BOOL     ),
-    customrequest     => (CURLOPT_CUSTOMREQUEST,     CURLOPT_STR      ),
-    nobody            => (CURLOPT_NOBODY,            CURLOPT_BOOL     ),
-    cookie            => (CURLOPT_COOKIE,            CURLOPT_STR      ),
-    cookielist        => (CURLOPT_COOKIELIST,        CURLOPT_STR      ),
-    cookiefile        => (CURLOPT_COOKIEFILE,        CURLOPT_STR      ),
-    cookiejar         => (CURLOPT_COOKIEJAR,         CURLOPT_STR      ),
-    ftp-use-epsv      => (CURLOPT_FTP_USE_EPSV,      CURLOPT_LONG     ),
-    ftpport           => (CURLOPT_FTPPORT,           CURLOPT_STR      ),
-    ftp-use-eprt      => (CURLOPT_FTP_USE_EPRT,      CURLOPT_BOOL     ),
-    ftp-skip-pasv-ip  => (CURLOPT_FTP_SKIP_PASV_IP,  CURLOPT_BOOL     ),
-    redir-protocols   => (CURLOPT_REDIR_PROTOCOLS,   CURLOPT_LONG     ),
-    protocols         => (CURLOPT_PROTOCOLS,         CURLOPT_LONG     ),
-    unrestricted-auth => (CURLOPT_UNRESTRICTED_AUTH, CURLOPT_BOOL     ),
-    use-ssl           => (CURLOPT_USE_SSL,           CURLOPT_LONG     ),
-    ssl-verifypeer    => (CURLOPT_SSL_VERIFYPEER,    CURLOPT_BOOL     ),
-    ssl-verifyhost    => (CURLOPT_SSL_VERIFYHOST,    CURLOPT_LONG     ),
-    CAinfo            => (CURLOPT_CAINFO,            CURLOPT_STR      ),
-    CApath            => (CURLOPT_CAPATH,            CURLOPT_STR      ),
-    timeout           => (CURLOPT_TIMEOUT,           CURLOPT_LONG     ),
-    timeout-ms        => (CURLOPT_TIMEOUT_MS,        CURLOPT_LONG     ),
-    low-speed-limit   => (CURLOPT_LOW_SPEED_LIMIT,   CURLOPT_LONG     ),
-    low-speed-time    => (CURLOPT_LOW_SPEED_TIME,    CURLOPT_LONG     ),
-    maxfilesize-large => (CURLOPT_MAXFILESIZE_LARGE, CURLOPT_LONG     ),
-    maxredirs         => (CURLOPT_MAXREDIRS,         CURLOPT_LONG     ),
-    Content-MD5       => (0,                         LIBCURL_HEADER   ),
-    Content-Type      => (0,                         LIBCURL_HEADER   ),
-    Host              => (0,                         LIBCURL_HEADER   ),
-    Accept            => (0,                         LIBCURL_HEADER   ),
-    Expect            => (0,                         LIBCURL_HEADER   ),
-    download          => (0,                         LIBCURL_DOWNLOAD ),
-    upload            => (0,                         LIBCURL_UPLOAD   ),
-    send              => (0,                         LIBCURL_SEND     ),
+    verbose              => (CURLOPT_VERBOSE,              CURLOPT_BOOL     ),
+    header               => (CURLOPT_HEADER,               CURLOPT_BOOL     ),
+    nosignal             => (CURLOPT_NOSIGNAL,             CURLOPT_BOOL     ),
+    wildcardmatch        => (CURLOPT_WILDCARDMATCH,        CURLOPT_BOOL     ),
+    followlocation       => (CURLOPT_FOLLOWLOCATION,       CURLOPT_BOOL     ),
+    autoreferer          => (CURLOPT_AUTOREFERER,          CURLOPT_BOOL     ),
+    referer              => (CURLOPT_REFERER,              CURLOPT_STR      ),
+    httpget              => (CURLOPT_HTTPGET,              CURLOPT_BOOL     ),
+    URL                  => (CURLOPT_URL,                  CURLOPT_STR      ),
+    proxy                => (CURLOPT_PROXY,                CURLOPT_STR      ),
+    proxyport            => (CURLOPT_PROXYPORT,            CURLOPT_LONG     ),
+    proxytype            => (CURLOPT_PROXYTYPE,            CURLOPT_LONG     ),
+    httpproxytunnel      => (CURLOPT_HTTPPROXYTUNNEL,      CURLOPT_BOOL     ),
+    accept-encoding      => (CURLOPT_ACCEPT_ENCODING,      CURLOPT_STR      ),
+    useragent            => (CURLOPT_USERAGENT,            CURLOPT_STR      ),
+    failonerror          => (CURLOPT_FAILONERROR,          CURLOPT_BOOL     ),
+    postfields           => (CURLOPT_POSTFIELDS,           CURLOPT_STR      ),
+    postfieldsize        => (CURLOPT_POSTFIELDSIZE,        CURLOPT_LONG     ),
+    userpwd              => (CURLOPT_USERPWD,              CURLOPT_STR      ),
+    proxyuserpwd         => (CURLOPT_PROXYUSERPWD,         CURLOPT_STR      ),
+    netrc                => (CURLOPT_NETRC,                CURLOPT_LONG     ),
+    username             => (CURLOPT_USERNAME,             CURLOPT_STR      ),
+    password             => (CURLOPT_PASSWORD,             CURLOPT_STR      ),
+    httpauth             => (CURLOPT_HTTPAUTH,             CURLOPT_LONG     ),
+    maxconnects          => (CURLOPT_MAXCONNECTS,          CURLOPT_LONG     ),
+    fresh-connect        => (CURLOPT_FRESH_CONNECT,        CURLOPT_BOOL     ),
+    forbid-reuse         => (CURLOPT_FORBID_REUSE,         CURLOPT_BOOL     ),
+    customrequest        => (CURLOPT_CUSTOMREQUEST,        CURLOPT_STR      ),
+    nobody               => (CURLOPT_NOBODY,               CURLOPT_BOOL     ),
+    cookie               => (CURLOPT_COOKIE,               CURLOPT_STR      ),
+    cookielist           => (CURLOPT_COOKIELIST,           CURLOPT_STR      ),
+    cookiefile           => (CURLOPT_COOKIEFILE,           CURLOPT_STR      ),
+    cookiejar            => (CURLOPT_COOKIEJAR,            CURLOPT_STR      ),
+    ftp-use-epsv         => (CURLOPT_FTP_USE_EPSV,         CURLOPT_LONG     ),
+    ftpport              => (CURLOPT_FTPPORT,              CURLOPT_STR      ),
+    ftp-use-eprt         => (CURLOPT_FTP_USE_EPRT,         CURLOPT_BOOL     ),
+    ftp-skip-pasv-ip     => (CURLOPT_FTP_SKIP_PASV_IP,     CURLOPT_BOOL     ),
+    redir-protocols      => (CURLOPT_REDIR_PROTOCOLS,      CURLOPT_LONG     ),
+    protocols            => (CURLOPT_PROTOCOLS,            CURLOPT_LONG     ),
+    unrestricted-auth    => (CURLOPT_UNRESTRICTED_AUTH,    CURLOPT_BOOL     ),
+    use-ssl              => (CURLOPT_USE_SSL,              CURLOPT_LONG     ),
+    ssl-verifypeer       => (CURLOPT_SSL_VERIFYPEER,       CURLOPT_BOOL     ),
+    ssl-verifyhost       => (CURLOPT_SSL_VERIFYHOST,       CURLOPT_LONG     ),
+    CAinfo               => (CURLOPT_CAINFO,               CURLOPT_STR      ),
+    CApath               => (CURLOPT_CAPATH,               CURLOPT_STR      ),
+    timeout              => (CURLOPT_TIMEOUT,              CURLOPT_LONG     ),
+    timeout-ms           => (CURLOPT_TIMEOUT_MS,           CURLOPT_LONG     ),
+    low-speed-limit      => (CURLOPT_LOW_SPEED_LIMIT,      CURLOPT_LONG     ),
+    low-speed-time       => (CURLOPT_LOW_SPEED_TIME,       CURLOPT_LONG     ),
+    maxfilesize-large    => (CURLOPT_MAXFILESIZE_LARGE,    CURLOPT_LONG     ),
+    maxredirs            => (CURLOPT_MAXREDIRS,            CURLOPT_LONG     ),
+    private              => (CURLOPT_PRIVATE,              CURLOPT_STR      ),
+    Content-MD5          => (0,                            LIBCURL_HEADER   ),
+    Content-Type         => (0,                            LIBCURL_HEADER   ),
+    Host                 => (0,                            LIBCURL_HEADER   ),
+    Accept               => (0,                            LIBCURL_HEADER   ),
+    Expect               => (0,                            LIBCURL_HEADER   ),
+    download             => (0,                            LIBCURL_DOWNLOAD ),
+    upload               => (0,                            LIBCURL_UPLOAD   ),
+    send                 => (0,                            LIBCURL_SEND     ),
 ;
 
 my %infofields =
@@ -104,66 +107,113 @@ my %infofields =
     local-ip         => (CURLINFO_LOCAL_IP,         CURLINFO_STRING  ),
     local-port       => (CURLINFO_LOCAL_PORT,       CURLINFO_LONG    ),
     tls-session      => (CURLINFO_TLS_SESSION,      CURLINFO_SLIST   ),
+    private          => (CURLINFO_PRIVATE,          CURLINFO_STRING  ),
 ;
 
 INIT { curl_global_init(CURL_GLOBAL_DEFAULT) }
 
 END { curl_global_cleanup() }
 
+sub easy-lookup(Pointer $handleptr)
+{
+    %allhandles{nativecast(LibCurl::EasyHandle, $handleptr).id}
+}
+
+sub headerfunction(Pointer $ptr, uint32 $size, uint32 $nitems,
+                   Pointer $handleptr --> uint32)
+{
+    my $bytes = nativecast(CArray[int8], $ptr);
+
+    my $easy = easy-lookup($handleptr);
+
+    my $header = Buf.new($bytes[0 ..^ $size * $nitems]).decode;
+
+    if $header ~~ /^HTTP\/1.1 /
+    {
+        $easy.statusline = $header.trim;
+    }
+    elsif $header ~~ /^(<-[:]>+) ': ' (.*)$/
+    {
+        $easy.receiveheaders{$0} = $1.trim;
+    }
+
+    return $size * $nitems;
+}
+
+sub memcpy(Pointer $dest, CArray[int8], uint32 $n) is native { * }
+
+sub readfunction-string(Pointer $ptr, uint32 $size, uint32 $nmemb,
+                        Pointer $handleptr) returns uint32
+{
+    my $easy = easy-lookup($handleptr);
+
+    return 0 if $easy.sendindex >= $easy.sendbuf.elems;
+
+    my $tosend = min $easy.sendbuf.elems - $easy.sendindex, $size * $nmemb;
+
+    my $subbuf = CArray[int8].new($easy.sendbuf.subbuf($easy.sendindex,
+                                                       $tosend));
+
+    memcpy($ptr, $subbuf, $tosend);
+
+    $easy.sendindex += $tosend;
+
+    return $tosend;
+}
+
+sub writefunction-buf(Pointer $ptr, uint32 $size, uint32 $nmemb,
+                      Pointer $handleptr) returns uint32
+{
+    my $easy = easy-lookup($handleptr);
+    my $bytes = nativecast(CArray[int8], $ptr);
+    $easy.buf ~= Buf.new($bytes[0 ..^ $size * $nmemb]);
+    return $size * $nmemb;
+}
+
 class LibCurl::Easy
 {
-    has LibCurl::EasyHandle $.handle handles <cleanup version>;
-    has %.receiveheaders;
-    has $.statusline;
+    has LibCurl::EasyHandle $.handle;
+    has %.receiveheaders is rw;
+    has $.statusline is rw;
     has %.sendheaders;
     has Pointer $.header-slist;
     has Pointer $.upload-fh;
     has Pointer $.download-fh;
     has Buf $.sendbuf;
-    has Int $.sendindex;
-    has Buf $.buf;
+    has Int $.sendindex is rw;
+    has Buf $.buf is rw;
+    has $.errorbuffer;
 
     sub fopen(Str $path, Str $mode) returns Pointer is native { * }
 
     sub fclose(Pointer $fp) returns int32 is native { * }
 
-    sub memcpy(Pointer $dest, CArray[int8], uint32 $n) is native { * }
-
     sub curl_slist_append(Pointer, Str) is native(LIBCURL) returns Pointer { * }
 
     sub curl_slist_free_all(Pointer) is native(LIBCURL) { * }
 
+    method version { curl_version }
+
     method new(|opts)
     {
-        my $self = self.bless(handle => LibCurl::EasyHandle.new);
+        my $handle = LibCurl::EasyHandle.new;
+        my $errorbuffer = CArray[int8].new;
+        $errorbuffer[0] = 0;
+        $errorbuffer[CURL_ERROR_SIZE] = 0;
+        my $self = self.bless(:$handle, :$errorbuffer);
+        %allhandles{$handle.id} = $self;
+        $handle.setopt(CURLOPT_HEADERDATA, $handle);
+        $handle.setopt(CURLOPT_HEADERFUNCTION, &headerfunction);
+        $handle.setopt(CURLOPT_ERRORBUFFER, $errorbuffer);
         $self.setopt(|opts);
-        $self.header-function;
         return $self;
     }
 
-    method header-function()
-    {
-        sub callback(Pointer $ptr, uint32 $size, uint32 $nitems,
-                     Pointer $userdata --> uint32)
-        {
-            my $bytes = nativecast(CArray[int8], $ptr);
-            my $header = Buf.new($bytes[0 ..^ $size * $nitems]).decode;
-            
-            if $header ~~ /^HTTP\/1.1 /
-            {
-                $!statusline = $header.trim;
-            }
-            elsif $header ~~ /^(<-[:]>+) ': ' (.*)$/
-            {
-                %!receiveheaders{$0} = $1.trim;
-            }
-
-            return $size * $nitems;
-        }
-        $!handle.setopt_cb(CURLOPT_HEADERFUNCTION, &callback);
-    }
-
     method content($encoding = 'utf-8') { $!buf.decode($encoding) }
+
+    method error() { nativecast(Str, $!errorbuffer) }
+
+    method get-header($field) { %!receiveheaders{$field} }
 
     method setopt(*%options)
     {
@@ -176,15 +226,11 @@ class LibCurl::Easy
             given $type
             {
                 when CURLOPT_BOOL {
-                    $!handle.setopt_long($code, $param ?? 1 !! 0);
+                    $!handle.setopt($code, $param ?? 1 !! 0);
                 }
 
-                when CURLOPT_LONG {
-                    $!handle.setopt_long($code, $param);
-                }
-
-                when CURLOPT_STR {
-                    $!handle.setopt_str($code, $param);
+                when CURLOPT_LONG|CURLOPT_STR {
+                    $!handle.setopt($code, $param);
                 }
 
                 when LIBCURL_HEADER {
@@ -193,20 +239,28 @@ class LibCurl::Easy
 
                 when LIBCURL_DOWNLOAD {
                     $!download-fh = fopen($param, "wb");
-                    $!handle.setopt_ptr(CURLOPT_WRITEDATA, $!download-fh);
+                    $!handle.setopt(CURLOPT_WRITEDATA, $!download-fh);
                 }
 
                 when LIBCURL_UPLOAD {
                     $!upload-fh = fopen($param, "rb");
-                    $!handle.setopt_long(CURLOPT_UPLOAD, 1);
-                    $!handle.setopt_long(CURLOPT_INFILESIZE_LARGE,
+                    $!handle.setopt(CURLOPT_UPLOAD, 1);
+                    $!handle.setopt(CURLOPT_INFILESIZE_LARGE,
                                          IO::Path.new($param).s);
-                    $!handle.setopt_ptr(CURLOPT_READDATA, $!upload-fh);
+                    $!handle.setopt(CURLOPT_READDATA, $!upload-fh);
                 }
 
                 when LIBCURL_SEND {
-                    $!sendbuf = Buf.new($param.encode);
+                    given $param {
+                        when Buf { $!sendbuf = $param }
+                        when Str { $!sendbuf = Buf.new($param.encode) }
+                        default  { die "Don't know how to send $param" }
+                    }
                     $!sendindex = 0;
+                    $!handle.setopt(CURLOPT_UPLOAD, 1);
+                    $!handle.setopt(CURLOPT_INFILESIZE_LARGE, $!sendbuf.elems);
+                    $!handle.setopt(CURLOPT_READDATA, $!handle);
+                    $!handle.setopt(CURLOPT_READFUNCTION, &readfunction-string);
                 }
             }
         }
@@ -221,11 +275,6 @@ class LibCurl::Easy
         return self;
     }
 
-    method get-header($field)
-    {
-        %!receiveheaders{$field};
-    }
-
     method prepare()
     {
         if %!sendheaders.elems and !$!header-slist
@@ -234,52 +283,14 @@ class LibCurl::Easy
                 $!header-slist = curl_slist_append($!header-slist, 
                                                    "$header: $value");
             }
-            $!handle.setopt_ptr(CURLOPT_HTTPHEADER, $!header-slist);
+            $!handle.setopt(CURLOPT_HTTPHEADER, $!header-slist);
         }
 
-        #
-        # Download into buffer if download file not specified
-        #
         unless $!download-fh 
         {
             $!buf = Buf.new;
-            sub callback(Pointer $ptr, uint32 $size, uint32 $nmemb,
-                         Pointer $userdata --> uint32)
-            {
-                my $bytes = nativecast(CArray[int8], $ptr);
-                $!buf ~= Buf.new($bytes[0 ..^ $size * $nmemb]);
-                return $size * $nmemb;
-            }
-
-            $!handle.setopt_cb(CURLOPT_WRITEFUNCTION, &callback);
-        }
-
-        #
-        # Send from buffer if specified
-        #
-        if $!sendbuf
-        {
-            sub callback(Pointer $ptr, uint32 $size, uint32 $nmemb,
-                         Pointer $userdata --> uint32)
-            {
-                return 0 if $!sendindex >= $!sendbuf.elems;
-
-                my $tosend = min $!sendbuf.elems-$!sendindex,
-                                 $size * $nmemb;
-
-                my CArray[int8] $subbuf = 
-                    CArray[int8].new($!sendbuf.subbuf($!sendindex, $tosend));
-
-                memcpy($ptr, $subbuf, $tosend);
-
-                $!sendindex += $tosend;
-
-                return $tosend;
-            }
-
-            $!handle.setopt_long(CURLOPT_UPLOAD, 1);
-            $!handle.setopt_long(CURLOPT_INFILESIZE_LARGE, $!sendbuf.elems);
-            $!handle.setopt_cb(CURLOPT_READFUNCTION, &callback);
+            $!handle.setopt(CURLOPT_WRITEDATA, $!handle);
+            $!handle.setopt(CURLOPT_WRITEFUNCTION, &writefunction-buf);
         }
 
         %!receiveheaders = ();
@@ -302,7 +313,7 @@ class LibCurl::Easy
         self.prepare;
 
         my $ret = $!handle.perform;
-        
+
         self.finish;
 
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
@@ -350,9 +361,13 @@ class LibCurl::Easy
 
     method FALLBACK($name, $param?)
     {
+        return self.setopt(|($name => $param))
+            if %opts{$name} and $param.defined;
+
         return $_ with %!receiveheaders{$name};
+
         return self.getinfo($name) if %infofields{$name};
-        return self.setopt(|($name => $param)) if %opts{$name};
+
         die "Unknown method $name";
     }
 
@@ -361,6 +376,7 @@ class LibCurl::Easy
         curl_slist_free_all($!header-slist) if $!header-slist;
         fclose($!download-fh) if $!download-fh;
         fclose($!upload-fh) if $!upload-fh;
+        %allhandles{$!handle.id}:delete;
         $!handle.cleanup;
     }
 }

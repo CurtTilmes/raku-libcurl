@@ -104,6 +104,7 @@ constant CURLOPT_KEYPASSWD                     = 10026;
 constant CURLOPT_CRLF                          = 27;
 constant CURLOPT_QUOTE                         = 10028;
 constant CURLOPT_WRITEHEADER                   = 10029;
+constant CURLOPT_HEADERDATA                    = 10029;
 constant CURLOPT_COOKIEFILE                    = 10031;
 constant CURLOPT_SSLVERSION                    = 32;
 constant CURLOPT_TIMECONDITION                 = 33;
@@ -280,6 +281,8 @@ sub curl_global_init(int32) returns uint32 is native(LIBCURL) is export { * }
 
 sub curl_global_cleanup() is native(LIBCURL) is export { * }
 
+sub curl_version() returns Str is native(LIBCURL) is export { * }
+
 class X::LibCurl is Exception
 {
     has Int $.code;
@@ -293,8 +296,6 @@ class X::LibCurl is Exception
 
 class LibCurl::EasyHandle is repr('CPointer')
 {
-    sub curl_version() returns Str is native(LIBCURL) { * }
-
     sub curl_easy_init() returns LibCurl::EasyHandle is native(LIBCURL) { * }
 
     sub curl_easy_cleanup(LibCurl::EasyHandle) is native(LIBCURL) { * }
@@ -313,9 +314,12 @@ class LibCurl::EasyHandle is repr('CPointer')
     sub curl_easy_setopt_ptr(LibCurl::EasyHandle, uint32, Pointer)
         returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
+    sub curl_easy_setopt_array(LibCurl::EasyHandle, uint32, CArray[int8])
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
+
     sub curl_easy_setopt_cb(LibCurl::EasyHandle, uint32,
                             &cb (Pointer $ptr, uint32 $size, uint32 $nmemb,
-                                 OpaquePointer $stream --> uint32))
+                                 Pointer $userdata --> uint32))
     returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_perform(LibCurl::EasyHandle) returns uint32
@@ -330,7 +334,17 @@ class LibCurl::EasyHandle is repr('CPointer')
     sub curl_easy_getinfo_str(LibCurl::EasyHandle, int32, CArray[Str])
         returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
+    sub sprintf-pointer(CArray[int8], Str, Pointer) returns int32
+        is symbol('sprintf') is native { * }
+
     method new() { curl_easy_init }
+
+    method id() {
+        my $id = CArray[int8].new;
+        $id[20] = 0;
+        sprintf-pointer($id, "%p", self);
+        return nativecast(Str, $id);
+    }
 
     method cleanup() { curl_easy_cleanup(self) }
 
@@ -338,29 +352,39 @@ class LibCurl::EasyHandle is repr('CPointer')
 
     method duphandle() { curl_easy_duphandle(self) }
 
-    method version() { curl_version }
-
     method perform() { curl_easy_perform(self); }
 
-    method setopt_str(Int $option, Str $param) {
+    multi method setopt(Int $option, Str $param) {
         my $ret = curl_easy_setopt_str(self, $option, $param);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $ret;
     }
 
-    method setopt_long(Int $option, Int $param) {
+    multi method setopt(Int $option, Int $param) {
         my $ret = curl_easy_setopt_long(self, $option, $param);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $ret;
     }
 
-    method setopt_cb(Int $option, &callback) {
+    multi method setopt(Int $option, &callback) {
         my $ret = curl_easy_setopt_cb(self, $option, &callback);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $ret;
     }
 
-    method setopt_ptr(Int $option, Pointer $ptr) {
+    multi method setopt(Int $option, Pointer $ptr) {
+        my $ret = curl_easy_setopt_ptr(self, $option, $ptr);
+        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
+        return $ret;
+    }
+
+    multi method setopt(Int $option, CArray[int8] $ptr) {
+        my $ret = curl_easy_setopt_array(self, $option, $ptr);
+        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
+        return $ret;
+    }
+
+    multi method setopt(Int $option, LibCurl::EasyHandle $ptr) {
         my $ret = curl_easy_setopt_ptr(self, $option, $ptr);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $ret;
