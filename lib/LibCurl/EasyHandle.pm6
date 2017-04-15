@@ -25,6 +25,14 @@ constant CURLUSESSL_TRY                        = 1;
 constant CURLUSESSL_CONTROL                    = 2;
 constant CURLUSESSL_ALL                        = 3;
 
+constant CURLINFO_TEXT                         = 0;
+constant CURLINFO_HEADER_IN                    = 1;
+constant CURLINFO_HEADER_OUT                   = 2;
+constant CURLINFO_DATA_IN                      = 3;
+constant CURLINFO_DATA_OUT                     = 4;
+constant CURLINFO_SSL_DATA_IN                  = 5;
+constant CURLINFO_SSL_DATA_OUT                 = 6;
+
 constant CURLINFO_STRING                       = 0x100000;
 constant CURLINFO_LONG                         = 0x200000;
 constant CURLINFO_DOUBLE                       = 0x300000;
@@ -128,6 +136,7 @@ constant CURLOPT_TRANSFERTEXT                  = 53;
 constant CURLOPT_PUT                           = 54;
 constant CURLOPT_PROGRESSFUNCTION              = 20056;
 constant CURLOPT_PROGRESSDATA                  = 10057;
+constant CURLOPT_XFERINFODATA                  = 10057;
 constant CURLOPT_AUTOREFERER                   = 58;
 constant CURLOPT_PROXYPORT                     = 59;
 constant CURLOPT_POSTFIELDSIZE                 = 60;
@@ -276,6 +285,7 @@ constant CURLOPT_TCP_KEEPIDLE                  = 214;
 constant CURLOPT_TCP_KEEPINTVL                 = 215;
 constant CURLOPT_SSL_OPTIONS                   = 216;
 constant CURLOPT_MAIL_AUTH                     = 10217;
+constant CURLOPT_XFERINFOFUNCTION              = 20219;
 
 sub curl_global_init(int32) returns uint32 is native(LIBCURL) is export { * }
 
@@ -317,10 +327,17 @@ class LibCurl::EasyHandle is repr('CPointer')
     sub curl_easy_setopt_array(LibCurl::EasyHandle, uint32, CArray[int8])
         returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
-    sub curl_easy_setopt_cb(LibCurl::EasyHandle, uint32,
-                            &cb (Pointer $ptr, uint32 $size, uint32 $nmemb,
-                                 Pointer $userdata --> uint32))
-    returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
+    sub curl_easy_setopt_data-cb(LibCurl::EasyHandle, uint32,
+        &cb (Pointer, uint32, uint32, Pointer --> uint32))
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
+
+    sub curl_easy_setopt_debug-cb(LibCurl::EasyHandle, uint32,
+	&cb (Pointer, uint32, Pointer, size_t, Pointer --> int32))
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
+
+    sub curl_easy_setopt_xfer-cb(LibCurl::EasyHandle, uint32,
+	&cb (Pointer, long, long, long, long --> int32))
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_perform(LibCurl::EasyHandle) returns uint32
         is native(LIBCURL) { * }
@@ -367,7 +384,18 @@ class LibCurl::EasyHandle is repr('CPointer')
     }
 
     multi method setopt(Int $option, &callback) {
-        my $ret = curl_easy_setopt_cb(self, $option, &callback);
+        my $ret = do given $option {
+	   when CURLOPT_WRITEFUNCTION|CURLOPT_READFUNCTION|
+	        CURLOPT_HEADERFUNCTION {
+	       curl_easy_setopt_data-cb(self, $option, &callback);
+	   }
+	   when CURLOPT_DEBUGFUNCTION {
+	       curl_easy_setopt_debug-cb(self, $option, &callback);
+	   }
+	   when CURLOPT_XFERINFOFUNCTION {
+	       curl_easy_setopt_xfer-cb(self, $option, &callback);
+	   }
+	};
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $ret;
     }

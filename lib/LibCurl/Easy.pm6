@@ -10,6 +10,7 @@ my enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG LIBCURL_HEADER
 
 my %opts =
     verbose              => (CURLOPT_VERBOSE,              CURLOPT_BOOL     ),
+    noprogress           => (CURLOPT_NOPROGRESS,           CURLOPT_BOOL     ),
     header               => (CURLOPT_HEADER,               CURLOPT_BOOL     ),
     nosignal             => (CURLOPT_NOSIGNAL,             CURLOPT_BOOL     ),
     wildcardmatch        => (CURLOPT_WILDCARDMATCH,        CURLOPT_BOOL     ),
@@ -69,45 +70,46 @@ my %opts =
     download             => (0,                            LIBCURL_DOWNLOAD ),
     upload               => (0,                            LIBCURL_UPLOAD   ),
     send                 => (0,                            LIBCURL_SEND     ),
+    debug                => (0,                            LIBCURL_DEBUG    ),
 ;
 
 my %infofields =
-    effective-url    => (CURLINFO_EFFECTIVE_URL,    CURLINFO_STRING  ),
-    response-code    => (CURLINFO_RESPONSE_CODE,    CURLINFO_LONG    ),
-    total-time       => (CURLINFO_TOTAL_TIME,       CURLINFO_DOUBLE  ),
-    namelookup-time  => (CURLINFO_NAMELOOKUP_TIME,  CURLINFO_DOUBLE  ),
-    connect-time     => (CURLINFO_CONNECT_TIME,     CURLINFO_DOUBLE  ),
-    pretransfer-time => (CURLINFO_PRETRANSFER_TIME, CURLINFO_DOUBLE  ),
-    size-upload      => (CURLINFO_SIZE_UPLOAD,      CURLINFO_DOUBLE  ),
-    size-download    => (CURLINFO_SIZE_DOWNLOAD,    CURLINFO_DOUBLE  ),
-    speed-download   => (CURLINFO_SPEED_DOWNLOAD,   CURLINFO_DOUBLE  ),
-    speed-upload     => (CURLINFO_SPEED_UPLOAD,     CURLINFO_DOUBLE  ),
-    header-size      => (CURLINFO_HEADER_SIZE,      CURLINFO_LONG    ),
-    request-size     => (CURLINFO_REQUEST_SIZE,     CURLINFO_LONG    ),
-    content-type     => (CURLINFO_CONTENT_TYPE,     CURLINFO_STRING  ),
-    http-connectcode => (CURLINFO_EFFECTIVE_URL,    CURLINFO_LONG    ),
-    httpauth-avail   => (CURLINFO_HTTPAUTH_AVAIL,   CURLINFO_LONG    ),
-    proxyauth-avail  => (CURLINFO_PROXYAUTH_AVAIL,  CURLINFO_LONG    ),
-    os-errno         => (CURLINFO_OS_ERRNO,         CURLINFO_LONG    ),
-    num-connects     => (CURLINFO_NUM_CONNECTS,     CURLINFO_LONG    ),
-    ssl_engines      => (CURLINFO_SSL_ENGINES,      CURLINFO_SLIST   ),
-    cookielist       => (CURLINFO_COOKIELIST,       CURLINFO_SLIST   ),
-    lastsocket       => (CURLINFO_LASTSOCKET,       CURLINFO_LONG    ),
-    ftp-entry-path   => (CURLINFO_FTP_ENTRY_PATH,   CURLINFO_STRING  ),
-    redirect-url     => (CURLINFO_REDIRECT_URL,     CURLINFO_STRING  ),
-    primary-ip       => (CURLINFO_PRIMARY_IP,       CURLINFO_STRING  ),
-    appconnect_time  => (CURLINFO_APPCONNECT_TIME,  CURLINFO_DOUBLE  ),
-    certinfo         => (CURLINFO_CERTINFO,         CURLINFO_SLIST   ),
-    condition-unmet  => (CURLINFO_CONDITION_UNMET,  CURLINFO_LONG    ),
-    rtsp-session-id  => (CURLINFO_RTSP_SESSION_ID,  CURLINFO_STRING  ),
-    rtsp-client-cseq => (CURLINFO_RTSP_CLIENT_CSEQ, CURLINFO_LONG    ),
-    rtsp-server-cseq => (CURLINFO_RTSP_SERVER_CSEQ, CURLINFO_LONG    ),
-    rtsp-cseq-recv   => (CURLINFO_RTSP_CSEQ_RECV,   CURLINFO_LONG    ),
-    primary-port     => (CURLINFO_PRIMARY_PORT,     CURLINFO_LONG    ),
-    local-ip         => (CURLINFO_LOCAL_IP,         CURLINFO_STRING  ),
-    local-port       => (CURLINFO_LOCAL_PORT,       CURLINFO_LONG    ),
-    tls-session      => (CURLINFO_TLS_SESSION,      CURLINFO_SLIST   ),
-    private          => (CURLINFO_PRIVATE,          CURLINFO_STRING  ),
+    effective-url        => (CURLINFO_EFFECTIVE_URL,    CURLINFO_STRING     ),
+    response-code        => (CURLINFO_RESPONSE_CODE,    CURLINFO_LONG       ),
+    total-time           => (CURLINFO_TOTAL_TIME,       CURLINFO_DOUBLE     ),
+    namelookup-time      => (CURLINFO_NAMELOOKUP_TIME,  CURLINFO_DOUBLE     ),
+    connect-time         => (CURLINFO_CONNECT_TIME,     CURLINFO_DOUBLE     ),
+    pretransfer-time     => (CURLINFO_PRETRANSFER_TIME, CURLINFO_DOUBLE     ),
+    size-upload          => (CURLINFO_SIZE_UPLOAD,      CURLINFO_DOUBLE     ),
+    size-download        => (CURLINFO_SIZE_DOWNLOAD,    CURLINFO_DOUBLE     ),
+    speed-download       => (CURLINFO_SPEED_DOWNLOAD,   CURLINFO_DOUBLE     ),
+    speed-upload         => (CURLINFO_SPEED_UPLOAD,     CURLINFO_DOUBLE     ),
+    header-size          => (CURLINFO_HEADER_SIZE,      CURLINFO_LONG       ),
+    request-size         => (CURLINFO_REQUEST_SIZE,     CURLINFO_LONG       ),
+    content-type         => (CURLINFO_CONTENT_TYPE,     CURLINFO_STRING     ),
+    http-connectcode     => (CURLINFO_EFFECTIVE_URL,    CURLINFO_LONG       ),
+    httpauth-avail       => (CURLINFO_HTTPAUTH_AVAIL,   CURLINFO_LONG       ),
+    proxyauth-avail      => (CURLINFO_PROXYAUTH_AVAIL,  CURLINFO_LONG       ),
+    os-errno             => (CURLINFO_OS_ERRNO,         CURLINFO_LONG       ),
+    num-connects         => (CURLINFO_NUM_CONNECTS,     CURLINFO_LONG       ),
+    ssl_engines          => (CURLINFO_SSL_ENGINES,      CURLINFO_SLIST      ),
+    cookielist           => (CURLINFO_COOKIELIST,       CURLINFO_SLIST      ),
+    lastsocket           => (CURLINFO_LASTSOCKET,       CURLINFO_LONG       ),
+    ftp-entry-path       => (CURLINFO_FTP_ENTRY_PATH,   CURLINFO_STRING     ),
+    redirect-url         => (CURLINFO_REDIRECT_URL,     CURLINFO_STRING     ),
+    primary-ip           => (CURLINFO_PRIMARY_IP,       CURLINFO_STRING     ),
+    appconnect_time      => (CURLINFO_APPCONNECT_TIME,  CURLINFO_DOUBLE     ),
+    certinfo             => (CURLINFO_CERTINFO,         CURLINFO_SLIST      ),
+    condition-unmet      => (CURLINFO_CONDITION_UNMET,  CURLINFO_LONG       ),
+    rtsp-session-id      => (CURLINFO_RTSP_SESSION_ID,  CURLINFO_STRING     ),
+    rtsp-client-cseq     => (CURLINFO_RTSP_CLIENT_CSEQ, CURLINFO_LONG       ),
+    rtsp-server-cseq     => (CURLINFO_RTSP_SERVER_CSEQ, CURLINFO_LONG       ),
+    rtsp-cseq-recv       => (CURLINFO_RTSP_CSEQ_RECV,   CURLINFO_LONG       ),
+    primary-port         => (CURLINFO_PRIMARY_PORT,     CURLINFO_LONG       ),
+    local-ip             => (CURLINFO_LOCAL_IP,         CURLINFO_STRING     ),
+    local-port           => (CURLINFO_LOCAL_PORT,       CURLINFO_LONG       ),
+    tls-session          => (CURLINFO_TLS_SESSION,      CURLINFO_SLIST      ),
+    private              => (CURLINFO_PRIVATE,          CURLINFO_STRING     ),
 ;
 
 INIT { curl_global_init(CURL_GLOBAL_DEFAULT) }
@@ -120,7 +122,7 @@ sub easy-lookup(Pointer $handleptr)
 }
 
 sub headerfunction(Pointer $ptr, uint32 $size, uint32 $nitems,
-                   Pointer $handleptr --> uint32)
+                   Pointer $handleptr) returns uint32
 {
     my $bytes = nativecast(CArray[int8], $ptr);
 
@@ -142,7 +144,7 @@ sub headerfunction(Pointer $ptr, uint32 $size, uint32 $nitems,
 
 sub memcpy(Pointer $dest, CArray[int8], uint32 $n) is native { * }
 
-sub readfunction-string(Pointer $ptr, uint32 $size, uint32 $nmemb,
+sub readfunction(Pointer $ptr, uint32 $size, uint32 $nmemb,
                         Pointer $handleptr) returns uint32
 {
     my $easy = easy-lookup($handleptr);
@@ -161,13 +163,34 @@ sub readfunction-string(Pointer $ptr, uint32 $size, uint32 $nmemb,
     return $tosend;
 }
 
-sub writefunction-buf(Pointer $ptr, uint32 $size, uint32 $nmemb,
+sub writefunction(Pointer $ptr, uint32 $size, uint32 $nmemb,
                       Pointer $handleptr) returns uint32
 {
     my $easy = easy-lookup($handleptr);
     my $bytes = nativecast(CArray[int8], $ptr);
     $easy.buf ~= Buf.new($bytes[0 ..^ $size * $nmemb]);
     return $size * $nmemb;
+}
+
+sub debugfunction(Pointer $handleptr, uint32 $type, Pointer $data, size_t $size,
+    Pointer $userptr)
+{
+    my $easy = easy-lookup($handleptr);
+
+    my $bytes = nativecast(CArray[int8], $data);
+    my $buf = Buf.new($bytes[0 ..^ $size]);
+    say $type, $buf.decode;
+
+    return 0;
+}
+
+sub xferinfofunction(Pointer $handleptr, long $dltotal, long $dlnow,
+		     long $ultotal, long $ulnow)
+{
+    my $easy = easy-lookup($handleptr);
+    say "$dltotal $dlnow $ultotal $ulnow";
+
+    return 0;
 }
 
 class LibCurl::Easy
@@ -183,6 +206,8 @@ class LibCurl::Easy
     has Int $.sendindex is rw;
     has Buf $.buf is rw;
     has $.errorbuffer;
+    has &.debugfunction;
+    has &.xferinfofunction;
 
     sub fopen(Str $path, Str $mode) returns Pointer is native { * }
 
@@ -260,7 +285,16 @@ class LibCurl::Easy
                     $!handle.setopt(CURLOPT_UPLOAD, 1);
                     $!handle.setopt(CURLOPT_INFILESIZE_LARGE, $!sendbuf.elems);
                     $!handle.setopt(CURLOPT_READDATA, $!handle);
-                    $!handle.setopt(CURLOPT_READFUNCTION, &readfunction-string);
+                    $!handle.setopt(CURLOPT_READFUNCTION, &readfunction);
+                }
+
+		when LIBCURL_DEBUG {
+		    $!handle.setopt(CURLOPT_DEBUGFUNCTION, &debugfunction);
+		    $!handle.setopt(CURLOPT_VERBOSE, 1);
+		}
+
+                default {
+                    die "Unknown option $option";
                 }
             }
         }
@@ -290,7 +324,7 @@ class LibCurl::Easy
         {
             $!buf = Buf.new;
             $!handle.setopt(CURLOPT_WRITEDATA, $!handle);
-            $!handle.setopt(CURLOPT_WRITEFUNCTION, &writefunction-buf);
+            $!handle.setopt(CURLOPT_WRITEFUNCTION, &writefunction);
         }
 
         %!receiveheaders = ();
