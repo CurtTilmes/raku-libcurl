@@ -6,7 +6,7 @@ use LibCurl::EasyHandle;
 my %allhandles;
 
 my enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG LIBCURL_HEADER
-    LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND LIBCURL_DEBUG>;
+    LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND LIBCURL_DEBUG LIBCURL_PRIVATE>;
 
 my %opts =
     verbose              => (CURLOPT_VERBOSE,              CURLOPT_BOOL     ),
@@ -61,7 +61,6 @@ my %opts =
     low-speed-time       => (CURLOPT_LOW_SPEED_TIME,       CURLOPT_LONG     ),
     maxfilesize-large    => (CURLOPT_MAXFILESIZE_LARGE,    CURLOPT_LONG     ),
     maxredirs            => (CURLOPT_MAXREDIRS,            CURLOPT_LONG     ),
-    private              => (CURLOPT_PRIVATE,              CURLOPT_STR      ),
     Content-MD5          => (0,                            LIBCURL_HEADER   ),
     Content-Type         => (0,                            LIBCURL_HEADER   ),
     Host                 => (0,                            LIBCURL_HEADER   ),
@@ -71,6 +70,7 @@ my %opts =
     upload               => (0,                            LIBCURL_UPLOAD   ),
     send                 => (0,                            LIBCURL_SEND     ),
     debug                => (0,                            LIBCURL_DEBUG    ),
+    private              => (0,                            LIBCURL_PRIVATE  ),
 ;
 
 my %infofields =
@@ -109,7 +109,6 @@ my %infofields =
     local-ip             => (CURLINFO_LOCAL_IP,         CURLINFO_STRING     ),
     local-port           => (CURLINFO_LOCAL_PORT,       CURLINFO_LONG       ),
     tls-session          => (CURLINFO_TLS_SESSION,      CURLINFO_SLIST      ),
-    private              => (CURLINFO_PRIVATE,          CURLINFO_STRING     ),
 ;
 
 INIT { curl_global_init(CURL_GLOBAL_DEFAULT) }
@@ -208,6 +207,7 @@ class LibCurl::Easy
     has $.errorbuffer;
     has &.debugfunction;
     has &.xferinfofunction;
+    has $.private;
 
     sub fopen(Str $path, Str $mode) returns Pointer is native { * }
 
@@ -292,6 +292,10 @@ class LibCurl::Easy
 		    $!handle.setopt(CURLOPT_DEBUGFUNCTION, &debugfunction);
 		    $!handle.setopt(CURLOPT_VERBOSE, 1);
 		}
+
+                when LIBCURL_PRIVATE {
+                    $!private = $param;
+                }
 
                 default {
                     die "Unknown option $option";
