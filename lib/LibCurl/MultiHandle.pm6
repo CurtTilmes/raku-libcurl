@@ -19,11 +19,6 @@ constant CURLPIPE_NOTHING          = 0;
 constant CURLPIPE_HTTP1            = 1;
 constant CURLPIPE_MULTIPLEX        = 2;
 
-constant CURLOPTTYPE_LONG          = 0;
-constant CURLOPTTYPE_OBJECTPOINT   = 10000;
-constant CURLOPTTYPE_FUNCTIONPOINT = 20000;
-constant CURLOPTTYPE_OFF_T         = 30000;
-
 constant CURLMOPT_SOCKETFUNCTION                = CURLOPTTYPE_FUNCTIONPOINT + 1;
 constant CURLMOPT_SOCKETDATA                    = CURLOPTTYPE_OBJECTPOINT + 2;
 constant CURLMOPT_PIPELINING                    = CURLOPTTYPE_LONG + 3;

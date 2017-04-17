@@ -5,7 +5,7 @@ use LibCurl::EasyHandle;
 use LibCurl::Easy;
 use LibCurl::MultiHandle;
 
-my enum CURLMOPT_TYPE <CURLMOPT_STR CURLMOPT_LONG>;
+my enum CURLMOPT_TYPE <CURLMOPT_STR CURLMOPT_LONG CURLMOPT_CALLBACK>;
 
 my %opts =
     max-host-connections  => (CURLMOPT_MAX_HOST_CONNECTIONS,  CURLMOPT_LONG ),
@@ -13,13 +13,14 @@ my %opts =
     max-total-connections => (CURLMOPT_MAX_TOTAL_CONNECTIONS, CURLMOPT_LONG ),
     max-connects          => (CURLMOPT_MAXCONNECTS,           CURLMOPT_LONG ),
     pipelining            => (CURLMOPT_PIPELINING,            CURLMOPT_LONG ),
+    callback              => (0,                          CURLMOPT_CALLBACK ),
 ;
 
 class LibCurl::Multi
 {
     has LibCurl::MultiHandle $.multi;
     has %.easy-handles;
-    has %.callbacks;
+    has &.callback;
 
     method new(|opts)
     {
@@ -41,23 +42,29 @@ class LibCurl::Multi
                 when CURLMOPT_LONG {
                     $!multi.setopt($code, $param);
                 }
+
+                when CURLMOPT_CALLBACK {
+                    &!callback = $param;
+                }
             }
         }
     }
 
-    method add-handle(LibCurl::Easy $easy, &callback?)
+    method add-handle(*@handles)
     {
-        $easy.prepare;
-        %!easy-handles{$easy.handle.id} = $easy;
-        %!callbacks{$easy.handle.id} = &callback if &callback;
-        $!multi.add-handle($easy.handle);
+        for @handles -> $easy
+        {
+            $easy.prepare;
+            %!easy-handles{$easy.handle.id} = $easy;
+            $!multi.add-handle($easy.handle);
+        }
+        return self;
     }
 
     method remove-handle(LibCurl::Easy $easy)
     {
         $!multi.remove-handle($easy.handle);
         %!easy-handles{$easy.handle.id}:delete;
-        %!callbacks{$easy.handle.id}:delete;
     }
 
     method perform($timeout-ms = 1000)
@@ -75,16 +82,16 @@ class LibCurl::Multi
             {
                 next unless $msg.msg == CURLMSG_DONE;
                 my $easy = %!easy-handles{$msg.handle.id};
-                my $callback = %!callbacks{$easy.handle.id};
                 $easy.finish;
                 self.remove-handle($easy);
-                next unless $callback;
-                $callback($easy, 
-                          $msg.code == CURLE_OK
-                          ?? Exception
-                          !! X::LibCurl.new(code => $msg.code));
+                next unless &!callback;
+                &!callback($easy, 
+                           $msg.code == CURLE_OK
+                           ?? Exception
+                           !! X::LibCurl.new(code => $msg.code));
             }
         } while $running-handles;
+        return self;
     }
 
     submethod DESTROY { $!multi.cleanup }

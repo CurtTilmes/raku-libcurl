@@ -36,11 +36,59 @@ Fancier:
 
     use LibCurl::Easy;
 
-    my $curl = LibCurl::Easy.new;
-    $curl.setopt(URL => 'http://example.com', download => './myfile.html');
+    my $curl = LibCurl::Easy.new(:verbose, :followlocation);
+    $curl.setopt(URL => 'http://example.com',
+                 download => './myfile.html');
     $curl.perform;
+    say $curl.Content-Type;
+    say $curl.Content-Length;
+    say $curl.Date;
     say $curl.response-code;
     say $curl.statusline;
+
+Multiple simultaneous:
+
+    use LibCurl::Easy;
+    use LibCurl::Multi;
+
+    my $curl1 = LibCurl::Easy.new(:verbose, :followlocation,
+                         URL => 'http://example.com',
+                         download => './myfile1.html');
+
+    my $curl2 = LibCurl::Easy.new(:verbose, :followlocation,
+                         URL => 'http://example.com',
+                         download => './myfile2.html');
+
+    my $multi = LibCurl:Multi.new;
+
+    $multi.add-handle($curl1);
+    $multi.add-handle($curl2);
+
+    $multi.perform;
+
+    say $curl1.statusline;
+    say $curl2.statusline;
+
+Multiple with asynchronous callbacks:
+
+    use LibCurl::Easy;
+    use LibCurl::Multi;
+
+    my $curl1 = LibCurl::Easy.new(:followlocation, URL => 'http://example.com');
+    my $curl2 = LibCurl::Easy.new(:followlocation, URL => 'http://example.com');
+
+    sub callback(LibCurl::Easy $easy, Exception $e)
+    {
+        die $e if $e;
+        say $easy.statusline;
+    }
+
+    my $multi = LibCurl::Multi.new(callback => &callback);
+
+    $multi.add-handle($curl1, $curl2);
+
+    $multi.perform;
+
 
 SEE ALSO
 ========
