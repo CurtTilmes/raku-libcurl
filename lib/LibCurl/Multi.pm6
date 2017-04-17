@@ -13,7 +13,6 @@ my %opts =
     max-total-connections => (CURLMOPT_MAX_TOTAL_CONNECTIONS, CURLMOPT_LONG ),
     max-connects          => (CURLMOPT_MAXCONNECTS,           CURLMOPT_LONG ),
     pipelining            => (CURLMOPT_PIPELINING,            CURLMOPT_LONG ),
-
 ;
 
 class LibCurl::Multi
