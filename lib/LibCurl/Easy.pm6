@@ -199,10 +199,9 @@ sub xferinfofunction(Pointer $handleptr, long $dltotal, long $dlnow,
 class LibCurl::Easy
 {
     has LibCurl::EasyHandle $.handle;
+    has LibCurl::slist $.header-slist;
     has %.receiveheaders is rw;
     has $.statusline is rw;
-    has %.sendheaders;
-    has Pointer $.header-slist;
     has Pointer $.upload-fh;
     has Pointer $.download-fh;
     has Buf $.sendbuf;
@@ -216,10 +215,6 @@ class LibCurl::Easy
     sub fopen(Str $path, Str $mode) returns Pointer is native { * }
 
     sub fclose(Pointer $fp) returns int32 is native { * }
-
-    sub curl_slist_append(Pointer, Str) is native(LIBCURL) returns Pointer { * }
-
-    sub curl_slist_free_all(Pointer) is native(LIBCURL) { * }
 
     method version { curl_version }
 
@@ -263,7 +258,7 @@ class LibCurl::Easy
                 }
 
                 when LIBCURL_HEADER {
-                    self.set-header($option, $param);
+                    self.set-header($option => $param);
                 }
 
                 when LIBCURL_DOWNLOAD {
@@ -318,24 +313,27 @@ class LibCurl::Easy
         return self;
     }
 
-    method set-header($field, $value)
+    method clear-header()
     {
-        %!sendheaders{$field} = $value;
-        curl_slist_free_all($!header-slist) if defined $!header-slist;
-        $!header-slist = Pointer;
+        $!header-slist.free if $!header-slist;
+        $!header-slist = LibCurl::slist;
+    }
+
+    method set-header(*%headers)
+    {
+        for %headers.kv -> $field, $value
+        {
+            $!header-slist = $!header-slist.append(
+                $value eq ';' ?? "$field;" !! "$field: $value"
+            );
+        }
+        
         return self;
     }
 
     method prepare()
     {
-        if %!sendheaders.elems and !$!header-slist
-        {
-            for %!sendheaders.kv -> $header, $value {
-                $!header-slist = curl_slist_append($!header-slist, 
-                                                   "$header: $value");
-            }
-            $!handle.setopt(CURLOPT_HTTPHEADER, $!header-slist);
-        }
+        $!handle.setopt(CURLOPT_HTTPHEADER, $!header-slist);
 
         unless $!download-fh 
         {
@@ -424,7 +422,7 @@ class LibCurl::Easy
 
     submethod DESTROY
     {
-        curl_slist_free_all($!header-slist) if $!header-slist;
+        $!header-slist.free if $!header-slist;
         fclose($!download-fh) if $!download-fh;
         fclose($!upload-fh) if $!upload-fh;
         %allhandles{$!handle.id}:delete;

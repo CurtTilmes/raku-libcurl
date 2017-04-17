@@ -296,6 +296,30 @@ class X::LibCurl is Exception
     method message() { curl_easy_strerror($!code) }
 }
 
+class LibCurl::slist is repr('CPointer')
+{
+    sub curl_slist_append(LibCurl::slist, Str) returns LibCurl::slist
+        is native(LIBCURL) { * }
+
+    sub curl_slist_free_all(LibCurl::slist) is native(LIBCURL) { * }
+
+    sub new(@str-list)
+    {
+        my $self = LibCurl::slist;
+        $self = $self.append($_) for @str-list;
+    }
+
+    method append(Str $str)
+    {
+        curl_slist_append(self, $str);
+    }
+
+    method free
+    {
+        curl_slist_free_all(self);
+    }
+}
+
 class LibCurl::EasyHandle is repr('CPointer')
 {
     sub curl_easy_init() returns LibCurl::EasyHandle is native(LIBCURL) { * }
@@ -314,6 +338,9 @@ class LibCurl::EasyHandle is repr('CPointer')
         is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_ptr(LibCurl::EasyHandle, uint32, Pointer)
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
+
+    sub curl_easy_setopt_slist(LibCurl::EasyHandle, uint32, LibCurl::slist)
         returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_array(LibCurl::EasyHandle, uint32, CArray[int8])
@@ -394,6 +421,12 @@ class LibCurl::EasyHandle is repr('CPointer')
 
     multi method setopt(Int $option, Pointer $ptr) {
         my $ret = curl_easy_setopt_ptr(self, $option, $ptr);
+        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
+        return $ret;
+    }
+
+    multi method setopt(Int $option, LibCurl::slist $slist) {
+        my $ret = curl_easy_setopt_slist(self, $option, $slist);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $ret;
     }
