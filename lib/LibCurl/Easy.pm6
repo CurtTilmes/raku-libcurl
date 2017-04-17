@@ -11,7 +11,8 @@ my enum CURL-INFO-TYPE is export <CURLINFO_TEXT
     CURLINFO_SSL_DATA_IN CURLINFO_SSL_DATA_OUT>;
 
 my enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG LIBCURL_HEADER
-    LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND LIBCURL_DEBUG LIBCURL_PRIVATE>;
+    LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND LIBCURL_DEBUG LIBCURL_XFER
+    LIBCURL_PRIVATE>;
 
 my %opts =
     verbose              => (CURLOPT_VERBOSE,              CURLOPT_BOOL     ),
@@ -75,6 +76,7 @@ my %opts =
     upload               => (0,                            LIBCURL_UPLOAD   ),
     send                 => (0,                            LIBCURL_SEND     ),
     debugfunction        => (0,                            LIBCURL_DEBUG    ),
+    xferinfofunction     => (0,                            LIBCURL_XFER     ),
     private              => (0,                            LIBCURL_PRIVATE  ),
 ;
 
@@ -189,9 +191,9 @@ sub xferinfofunction(Pointer $handleptr, long $dltotal, long $dlnow,
 		     long $ultotal, long $ulnow)
 {
     my $easy = easy-lookup($handleptr);
-    say "$dltotal $dlnow $ultotal $ulnow";
 
-    return 0;
+    $easy.xferinfofunction.($easy, $dltotal.Int, $dlnow.Int,
+                                   $ultotal.Int, $ulnow.Int);
 }
 
 class LibCurl::Easy
@@ -295,6 +297,14 @@ class LibCurl::Easy
 		    $!handle.setopt(CURLOPT_DEBUGFUNCTION, &debugfunction);
 		    $!handle.setopt(CURLOPT_VERBOSE, 1);
 		}
+
+                when LIBCURL_XFER {
+                    &!xferinfofunction = $param;
+                    $!handle.setopt(CURLOPT_XFERINFODATA, $!handle);
+                    $!handle.setopt(CURLOPT_XFERINFOFUNCTION,
+                                    &xferinfofunction);
+                    $!handle.setopt(CURLOPT_NOPROGRESS, 0);
+                }
 
                 when LIBCURL_PRIVATE {
                     $!private = $param;
