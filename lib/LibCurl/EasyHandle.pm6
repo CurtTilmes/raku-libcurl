@@ -25,14 +25,6 @@ constant CURLUSESSL_TRY                        = 1;
 constant CURLUSESSL_CONTROL                    = 2;
 constant CURLUSESSL_ALL                        = 3;
 
-constant CURLINFO_TEXT                         = 0;
-constant CURLINFO_HEADER_IN                    = 1;
-constant CURLINFO_HEADER_OUT                   = 2;
-constant CURLINFO_DATA_IN                      = 3;
-constant CURLINFO_DATA_OUT                     = 4;
-constant CURLINFO_SSL_DATA_IN                  = 5;
-constant CURLINFO_SSL_DATA_OUT                 = 6;
-
 constant CURLINFO_STRING                       = 0x100000;
 constant CURLINFO_LONG                         = 0x200000;
 constant CURLINFO_DOUBLE                       = 0x300000;

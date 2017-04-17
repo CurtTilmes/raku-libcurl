@@ -5,6 +5,11 @@ use LibCurl::EasyHandle;
 
 my %allhandles;
 
+my enum CURL-INFO-TYPE is export <CURLINFO_TEXT
+    CURLINFO_HEADER_IN CURLINFO_HEADER_OUT
+    CURLINFO_DATA_IN   CURLINFO_DATA_OUT
+    CURLINFO_SSL_DATA_IN CURLINFO_SSL_DATA_OUT>;
+
 my enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG LIBCURL_HEADER
     LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND LIBCURL_DEBUG LIBCURL_PRIVATE>;
 
@@ -69,7 +74,7 @@ my %opts =
     download             => (0,                            LIBCURL_DOWNLOAD ),
     upload               => (0,                            LIBCURL_UPLOAD   ),
     send                 => (0,                            LIBCURL_SEND     ),
-    debug                => (0,                            LIBCURL_DEBUG    ),
+    debugfunction        => (0,                            LIBCURL_DEBUG    ),
     private              => (0,                            LIBCURL_PRIVATE  ),
 ;
 
@@ -176,11 +181,8 @@ sub debugfunction(Pointer $handleptr, uint32 $type, Pointer $data, size_t $size,
 {
     my $easy = easy-lookup($handleptr);
 
-    my $bytes = nativecast(CArray[int8], $data);
-    my $buf = Buf.new($bytes[0 ..^ $size]);
-    say $type, $buf.decode;
-
-    return 0;
+    $easy.debugfunction.($easy, CURL-INFO-TYPE($type),
+                         Buf.new(nativecast(CArray[int8], $data)[0 ..^ $size]));
 }
 
 sub xferinfofunction(Pointer $handleptr, long $dltotal, long $dlnow,
@@ -289,6 +291,7 @@ class LibCurl::Easy
                 }
 
 		when LIBCURL_DEBUG {
+                    &!debugfunction = $param;
 		    $!handle.setopt(CURLOPT_DEBUGFUNCTION, &debugfunction);
 		    $!handle.setopt(CURLOPT_VERBOSE, 1);
 		}
