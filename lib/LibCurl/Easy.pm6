@@ -10,9 +10,9 @@ enum CURL-INFO-TYPE is export <CURLINFO_TEXT
     CURLINFO_DATA_IN   CURLINFO_DATA_OUT
     CURLINFO_SSL_DATA_IN CURLINFO_SSL_DATA_OUT>;
 
-enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG LIBCURL_HEADER
-    LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND LIBCURL_DEBUG LIBCURL_XFER
-    LIBCURL_PRIVATE>;
+enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG CURLOPT_OFF_T
+    LIBCURL_HEADER LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND
+    LIBCURL_DEBUG LIBCURL_XFER LIBCURL_PRIVATE>;
 
 my %opts =
     CAinfo               => (CURLOPT_CAINFO,               CURLOPT_STR      ),
@@ -45,15 +45,17 @@ my %opts =
     low-speed-limit      => (CURLOPT_LOW_SPEED_LIMIT,      CURLOPT_LONG     ),
     low-speed-time       => (CURLOPT_LOW_SPEED_TIME,       CURLOPT_LONG     ),
     maxconnects          => (CURLOPT_MAXCONNECTS,          CURLOPT_LONG     ),
-    maxfilesize-large    => (CURLOPT_MAXFILESIZE_LARGE,    CURLOPT_LONG     ),
+    maxfilesize          => (CURLOPT_MAXFILESIZE_LARGE,    CURLOPT_OFF_T    ),
     maxredirs            => (CURLOPT_MAXREDIRS,            CURLOPT_LONG     ),
+    max-send-speed       => (CURLOPT_MAX_SEND_SPEED_LARGE, CURLOPT_OFF_T    ),
+    max-recv-speed       => (CURLOPT_MAX_RECV_SPEED_LARGE, CURLOPT_OFF_T    ),
     netrc                => (CURLOPT_NETRC,                CURLOPT_LONG     ),
     nobody               => (CURLOPT_NOBODY,               CURLOPT_BOOL     ),
     noprogress           => (CURLOPT_NOPROGRESS,           CURLOPT_BOOL     ),
     nosignal             => (CURLOPT_NOSIGNAL,             CURLOPT_BOOL     ),
     password             => (CURLOPT_PASSWORD,             CURLOPT_STR      ),
     postfields           => (CURLOPT_POSTFIELDS,           CURLOPT_STR      ),
-    postfieldsize        => (CURLOPT_POSTFIELDSIZE,        CURLOPT_LONG     ),
+    postfieldsize        => (CURLOPT_POSTFIELDSIZE_LARGE,  CURLOPT_OFF_T    ),
     protocols            => (CURLOPT_PROTOCOLS,            CURLOPT_LONG     ),
     proxy                => (CURLOPT_PROXY,                CURLOPT_STR      ),
     proxyport            => (CURLOPT_PROXYPORT,            CURLOPT_LONG     ),
@@ -258,7 +260,7 @@ class LibCurl::Easy
                     $!handle.setopt($code, $param ?? 1 !! 0);
                 }
 
-                when CURLOPT_LONG|CURLOPT_STR {
+                when CURLOPT_LONG | CURLOPT_STR | CURLOPT_OFF_T {
                     $!handle.setopt($code, $param);
                 }
 
