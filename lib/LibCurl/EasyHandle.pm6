@@ -424,7 +424,7 @@ class LibCurl::EasyHandle is repr('CPointer')
 
     multi method setopt(Int $option, &callback) {
         my $ret = do given $option {
-	   when CURLOPT_WRITEFUNCTION|CURLOPT_READFUNCTION|
+	   when CURLOPT_WRITEFUNCTION | CURLOPT_READFUNCTION |
 	        CURLOPT_HEADERFUNCTION {
 	       curl_easy_setopt_data-cb(self, $option, &callback);
 	   }

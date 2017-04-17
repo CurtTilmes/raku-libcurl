@@ -11,7 +11,7 @@ my %opts =
     max-host-connections  => (CURLMOPT_MAX_HOST_CONNECTIONS,  CURLMOPT_LONG ),
     max-pipeline-length   => (CURLMOPT_MAX_PIPELINE_LENGTH,   CURLMOPT_LONG ),
     max-total-connections => (CURLMOPT_MAX_TOTAL_CONNECTIONS, CURLMOPT_LONG ),
-    max-connects          => (CURLMOPT_MAXCONNECTS,           CURLMOPT_LONG ),
+    maxconnects           => (CURLMOPT_MAXCONNECTS,           CURLMOPT_LONG ),
     pipelining            => (CURLMOPT_PIPELINING,            CURLMOPT_LONG ),
     callback              => (0,                          CURLMOPT_CALLBACK ),
 ;
@@ -48,6 +48,7 @@ class LibCurl::Multi
                 }
             }
         }
+        return self;
     }
 
     method add-handle(*@handles)
@@ -61,10 +62,14 @@ class LibCurl::Multi
         return self;
     }
 
-    method remove-handle(LibCurl::Easy $easy)
+    method remove-handle(*@handles)
     {
-        $!multi.remove-handle($easy.handle);
-        %!easy-handles{$easy.handle.id}:delete;
+        for @handles -> $easy
+        {
+            $!multi.remove-handle($easy.handle);
+            %!easy-handles{$easy.handle.id}:delete;
+        }
+        return self;
     }
 
     method perform($timeout-ms = 1000)
