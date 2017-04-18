@@ -19,7 +19,7 @@ is $curl.response-code, 206, 'response-code';
 is $server.input,
 "GET /want/12 HTTP/1.1
 Range: bytes=100-200
-Host: 127.0.0.1:8990
+Host: $HOSTIP:$HTTPPORT
 Accept: */*
 
 ", 'input';
