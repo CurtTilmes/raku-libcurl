@@ -167,6 +167,7 @@ me know):
 [proxyport](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYPORT.html)
 [proxytype](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYTYPE.html)
 [proxyuserpwd](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYUSERPWD.html)
+[range](https://curl.haxx.se/libcurl/c/CURLOPT_RANGE.html)
 [redir-protocols](https://curl.haxx.se/libcurl/c/CURLOPT_REDIR_PROTOCOLS.html)
 [referer](https://curl.haxx.se/libcurl/c/CURLOPT_REFERER.html)
 [ssl-verifyhost](https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYHOST.html)

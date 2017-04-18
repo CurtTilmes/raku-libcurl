@@ -72,6 +72,7 @@ my %opts =
     proxyport            => (CURLOPT_PROXYPORT,            CURLOPT_LONG     ),
     proxytype            => (CURLOPT_PROXYTYPE,            CURLOPT_LONG     ),
     proxyuserpwd         => (CURLOPT_PROXYUSERPWD,         CURLOPT_STR      ),
+    range                => (CURLOPT_RANGE,                CURLOPT_STR      ),
     redir-protocols      => (CURLOPT_REDIR_PROTOCOLS,      CURLOPT_LONG     ),
     referer              => (CURLOPT_REFERER,              CURLOPT_STR      ),
     ssl-verifyhost       => (CURLOPT_SSL_VERIFYHOST,       CURLOPT_LONG     ),
