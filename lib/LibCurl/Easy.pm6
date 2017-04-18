@@ -10,6 +10,17 @@ enum CURL-INFO-TYPE is export <CURLINFO_TEXT
     CURLINFO_DATA_IN   CURLINFO_DATA_OUT
     CURLINFO_SSL_DATA_IN CURLINFO_SSL_DATA_OUT>;
 
+enum CURLAUTH is export (
+    CURLAUTH_NONE         => 0,
+    CURLAUTH_BASIC        => 1,
+    CURLAUTH_DIGEST       => 1 +< 1,
+    CURLAUTH_GSSNEGOTIATE => 1 +< 2,
+    CURLAUTH_NTLM         => 1 +< 3,
+    CURLAUTH_DIGEST_IE    => 1 +< 4,
+    CURLAUTH_NTLM_WB      => 1 +< 5,
+    CURLAUTH_ONLY         => 1 +< 31,
+);
+
 enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG CURLOPT_OFF_T
     LIBCURL_HEADER LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND
     LIBCURL_DEBUG LIBCURL_XFER LIBCURL_PRIVATE>;
@@ -264,7 +275,7 @@ class LibCurl::Easy
                 }
 
                 when LIBCURL_HEADER {
-                    self.set-header($option => $param);
+                    self.set-header(|($option => $param));
                 }
 
                 when LIBCURL_DOWNLOAD {

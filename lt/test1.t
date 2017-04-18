@@ -40,4 +40,3 @@ is $curl.Connection, 'close', 'Connection';
 
 
 done-testing;
-

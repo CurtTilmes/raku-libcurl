@@ -299,6 +299,19 @@ constant CURLOPT_FTP_SSL                    = CURLOPT_USE_SSL;
 constant CURLOPT_SSLCERTPASSWD              = CURLOPT_KEYPASSWD;
 constant CURLOPT_KRB4LEVEL                  = CURLOPT_KRBLEVEL;
 
+enum CURLform <CURLFORM_NOTHING CURLFORM_COPYNAME CURLFORM_PTRNAME
+    CURLFORM_NAMELENGTH CURLFORM_COPYCONTENTS CURLFORM_PTRCONTENTS
+    CURLFORM_CONTENTSLENGTH CURLFORM_FILECONTENT CURLFORM_ARRAY
+    CURLFORM_OBSOLETE CURLFORM_FILE CURLFORM_BUFFER CURLFORM_BUFFERPTR
+    CURLFORM_BUFFERLENGTH CURLFORM_CONTENTTYPE CURLFORM_CONTENTHEADER
+    CURLFORM_FILENAME CURLFORM_END CURLFORM_OBSOLETE2
+    CURLFORM_STREAM>;
+
+enum CURLFORMcode <CURL_FORMADD_OK CURL_FORMADD_MEMORY
+    CURL_FORMADD_OPTION_TWICE CURL_FORMADD_NULL
+    CURL_FORMADD_UNKNOWN_OPTION CURL_FORMADD_INCOMPLETE
+    CURL_FORMADD_ILLEGAL_ARRAY CURL_FORMADD_DISABLED>;
+
 sub curl_global_init(int32) returns uint32 is native(LIBCURL) is export { * }
 
 sub curl_global_cleanup() is native(LIBCURL) is export { * }
@@ -331,7 +344,7 @@ class LibCurl::slist is repr('CPointer')
 
     method append(*@str-list)
     {
-        my $slist = LibCurl::slist;
+        my $slist = self;
         $slist = curl_slist_append($slist, $_) for @str-list;
         return $slist;
     }
@@ -410,7 +423,7 @@ class LibCurl::EasyHandle is repr('CPointer')
     sub curl_easy_getinfo_str(LibCurl::EasyHandle, int32, CArray[Str])
         returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
-    sub curl_easy_getinfo_ptr(LibCurl::EasyHandle, int32, Pointer is rw)
+    sub curl_easy_getinfo_ptr(LibCurl::EasyHandle, int32, CArray[Pointer])
         returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
     sub sprintf-pointer(CArray[int8], Str, Pointer) returns int32
@@ -509,20 +522,14 @@ class LibCurl::EasyHandle is repr('CPointer')
     }
 
     method getinfo_slist(Int $option) {
-        my Pointer $ptr;
-
-        my $ret = curl_easy_getinfo_ptr(self, $option, $ptr);
-
+        my $value = CArray[Pointer].new;
+        $value[0] = Pointer.new;
+        my $ret = curl_easy_getinfo_ptr(self, $option, $value);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
-
-        return [] unless $ptr;
-
-        my $slist = nativecast(LibCurl::slist, $ptr);
-
+        return [] unless $value[0];
+        my $slist = nativecast(LibCurl::slist, $$value[0]);
         my @list = $slist.list;
-
         $slist.free;
-
         return @list;
     }
 
@@ -531,5 +538,37 @@ class LibCurl::EasyHandle is repr('CPointer')
         my $ret = curl_easy_getinfo_ptr(self, CURLINFO_CERTINFO, $ptr);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return nativecast(LibCurl::certinfo, $ptr);
+    }
+}
+
+class LibCurl::httppost is repr('CPointer')
+{
+}
+
+class LibCurl::formopts is repr('CStruct')
+{
+    has uint32 $.option is rw;
+    has Str $.value is rw;
+}
+
+sub curl_formadd(LibCurl::httppost $firstitem is rw,
+                 LibCurl::httppost $lasttitem is rw,
+                 uint32, LibCurl::formopts, uint32) returns uint32
+    is native(LIBCURL) { * }
+
+class LibCurl::Form
+{
+    has $.firstitem;
+    has $.lastitem;
+
+    method add(Str :$name, Str :$content, Str :$contenttype)
+    {
+        my $formopts := CArray[Pointer].new;
+
+        ...
+
+        curl_formadd($!firstitem, $!lastitem,
+                     CURLFORM_ARRAY, $formopts,
+                     CURLFORM_END);
     }
 }
