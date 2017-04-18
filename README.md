@@ -106,6 +106,13 @@ equivalent:
     $curl.followlocation(1);
     $curl.URL('http://example.com');
 
+```postfields``` is actually
+[CURLOPT_COPYPOSTFIELDS](https://curl.haxx.se/libcurl/c/CURLOPT_COPYPOSTFIELDS.html) so it will always copy the fields.
+
+Some of the normal options have **_LARGE** versions.  LibCurl always
+maps the option to the **_LARGE** option where they exist, so you
+don't have to worry about overflows.
+
 These are the current options (If you want one not in this list, let
 me know):
 
