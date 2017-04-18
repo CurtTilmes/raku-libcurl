@@ -154,7 +154,7 @@ sub headerfunction(Pointer $ptr, uint32 $size, uint32 $nitems,
 
     my $header = Buf.new($bytes[0 ..^ $size * $nitems]).decode;
 
-    if $header ~~ /^HTTP\/1.1 /
+    if $header ~~ /^HTTP\//
     {
         $easy.statusline = $header.trim;
     }
