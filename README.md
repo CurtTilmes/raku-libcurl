@@ -26,28 +26,21 @@ A [Perl 6](https://perl6.org/) interface to
 
     use LibCurl::Easy;
 
-**GET**
-
+    # GET
     print LibCurl::Easy.new(URL => 'http://example.com').perform.content;
 
-**HEAD**
-
+    # HEAD
     say LibCurl::Easy.new(:nobody, URL => 'http://example.com')
         .perform.response-code;
 
-**PUT**
-
+    # PUT
     LibCurl::Easy.new(URL => 'http://example.com',
                       send => 'My Content').perform;
 
-**DELETE**
-
+    # DELETE
     LibCurl::Easy.new(URL => 'http://example.com/file-to-delete',
                       customrequest => 'DELETE').perform;
 
-**POST**
-
-    TBD
 
 ## LibCurl::HTTP
 
@@ -78,6 +71,10 @@ If even those aren't easy enough, there is a tiny sub-class
     say $curl.Date;
     say $curl.response-code;
     say $curl.statusline;
+
+Of course the full power of [libcurl](https://curl.haxx.se/libcurl) is
+available, so you aren't limited to HTTP URLs, you can use
+```ftp://host/path```, SMTP, TFTP, SCP, SFTP, and many, many more.
 
 ## Options
 
@@ -335,8 +332,15 @@ into a file, the content will be stashed in memory in a Buf object:
     say "Got binary content", $curl.buf;
 
 If you understand that the content is decodable as a string, you can
-call the ```.content($encoding = 'utf-8')``` which will decode the
-content into a Str, by default with the **utf-8** encoding.
+call the ```.content($encoding = 'utf-8')``` method which will decode
+the content into a Str, by default with the **utf-8** encoding if not
+specified.
+
+## Proxies
+
+[libcurl](https://curl.haxx.se/libcurl) has great proxy support, and
+you should be able to specify anything needed as options to LibCurl to
+use them.
 
 ## Multi
 
@@ -372,8 +376,8 @@ an individual transfer has completed.  The callback takes place in the
 same thread with all the transfers, so it should complete quickly (or
 start a new thread for heavy lifting as needed).  You can add
 additional handles to the ```LibCurl::Multi``` at any time, even
-re-using completed LibCurl::Easy handles (after setting URL, etc. as
-needed).
+re-using completed LibCurl::Easy handles (after setting ```URL```,
+etc. as needed).
 
     use LibCurl::Easy;
     use LibCurl::Multi;
