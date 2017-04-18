@@ -1,5 +1,4 @@
-Perl6 LibCurl
-=============
+# Perl6 LibCurl
 
 A [Perl 6](https://perl6.org/) interface to
 [libcurl](https://curl.haxx.se/libcurl/).
@@ -23,39 +22,37 @@ A [Perl 6](https://perl6.org/) interface to
     supported, fast, thoroughly documented and is already used by many
     known, big and successful companies and numerous applications.
 
-Simple Examples
-===============
+## Simple Examples
 
     use LibCurl::Easy;
 
-GET:
+**GET**
 
     print LibCurl::Easy.new(URL => 'http://example.com').perform.content;
 
-HEAD:
+**HEAD**
 
     say LibCurl::Easy.new(:nobody, URL => 'http://example.com')
         .perform.response-code;
 
-PUT:
+**PUT**
 
     LibCurl::Easy.new(URL => 'http://example.com',
                       send => 'My Content').perform;
 
-DELETE:
+**DELETE**
 
     LibCurl::Easy.new(URL => 'http://example.com/file-to-delete',
                       customrequest => 'DELETE').perform;
 
-POST:
+**POST**
 
     TBD
 
-LibCurl::HTTP
-=============
+## LibCurl::HTTP
 
-If even those aren't easy enough, there is a tiny sub-class LibCurl::HTTP
-that adds aliases for the common HTTP methods:
+If even those aren't easy enough, there is a tiny sub-class
+**LibCurl::HTTP** that adds aliases for the common HTTP methods:
 
     use LibCurl::Easy;
 
@@ -63,7 +60,7 @@ that adds aliases for the common HTTP methods:
 
     say $http.GET('http://example.com').perform.content;
 
-    say $http.GET('http://example.com', 'myfile.html').perform.response-code;
+    say $http.GET('http://example.com', 'myfile').perform.response-code;
 
     say $http.HEAD('http://example.com').perform.response-code;
 
@@ -71,8 +68,7 @@ that adds aliases for the common HTTP methods:
 
     $http.PUT('http://example.com', 'myfile').perform;
 
-Fancier Example
-===============
+## Fancier Example
 
     my $curl = LibCurl::Easy.new(:verbose, :followlocation);
     $curl.setopt(URL => 'http://example.com', download => './myfile.html');
@@ -83,8 +79,7 @@ Fancier Example
     say $curl.response-code;
     say $curl.statusline;
 
-Options
-=======
+## Options
 
 Many of the libcurl
 [options](https://curl.haxx.se/libcurl/c/curl_easy_setopt.html) are
@@ -117,23 +112,76 @@ equivalent:
 These are the current options (If you want one not in this list, let
 me know):
 
-CAinfo CApath URL accepttimeout-ms accept-encoding address-scope
-append autoreferer buffersize certinfo cookie cookiefile cookiejar
-cookielist customrequest failonerror followlocation forbid-reuse
-fresh-connect ftp-skip-pasv-ip ftp-use-eprt ftp-use-epsv ftpport
-header httpauth httpget httpproxytunnel low-speed-limit low-speed-time
-maxconnects maxfilesize maxredirs max-send-speed max-recv-speed netrc
-nobody noprogress nosignal password postfields postfieldsize protocols
-proxy proxyport proxytype proxyuserpwd redir-protocols referer
-ssl-verifyhost ssl-verifypeer timeout timeout-ms unrestricted-auth
-use-ssl useragent username userpwd verbose wildcardmatch
+[CAinfo](https://curl.haxx.se/libcurl/c/CURLOPT_CAINFO.html)
+[CApath](https://curl.haxx.se/libcurl/c/CURLOPT_CAPATH.html)
+[URL](https://curl.haxx.se/libcurl/c/CURLOPT_URL.html)
+[accepttimeout-ms](https://curl.haxx.se/libcurl/c/CURLOPT_ACCEPTTIMEOUT_MS.html)
+[accept-encoding](https://curl.haxx.se/libcurl/c/CURLOPT_ACCEPT_ENCODING.html)
+[address-scope](https://curl.haxx.se/libcurl/c/CURLOPT_ADDRESS_SCOPE.html)
+[append](https://curl.haxx.se/libcurl/c/CURLOPT_APPEND.html)
+[autoreferer](https://curl.haxx.se/libcurl/c/CURLOPT_AUTOREFERER.html)
+[buffersize](https://curl.haxx.se/libcurl/c/CURLOPT_BUFFERSIZE.html)
+[certinfo](https://curl.haxx.se/libcurl/c/CURLOPT_CERTINFO.html)
+[cookie](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIE.html)
+[cookiefile](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIEFILE.html)
+[cookiejar](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIEJAR.html)
+[cookielist](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIELIST.html)
+[customrequest](https://curl.haxx.se/libcurl/c/CURLOPT_CUSTOMREQUEST.html)
+[failonerror](https://curl.haxx.se/libcurl/c/CURLOPT_FAILONERROR.html)
+[followlocation](https://curl.haxx.se/libcurl/c/CURLOPT_FOLLOWLOCATION.html)
+[forbid-reuse](https://curl.haxx.se/libcurl/c/CURLOPT_FORBID_REUSE.html)
+[fresh-connect](https://curl.haxx.se/libcurl/c/CURLOPT_FRESH_CONNECT.html)
+[ftp-skip-pasv-ip](https://curl.haxx.se/libcurl/c/CURLOPT_FTP_SKIP_PASV_IP.html)
+[ftp-use-eprt](https://curl.haxx.se/libcurl/c/CURLOPT_FTP_USE_EPRT.html)
+[ftp-use-epsv](https://curl.haxx.se/libcurl/c/CURLOPT_FTP_USE_EPSV.html)
+[ftpport](https://curl.haxx.se/libcurl/c/CURLOPT_FTPPORT.html)
+[header](https://curl.haxx.se/libcurl/c/CURLOPT_HEADER.html)
+[httpauth](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPAUTH.html)
+[httpget](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPGET.html)
+[httpproxytunnel](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPPROXYTUNNEL.html)
+[low-speed-limit](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
+[low-speed-time](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
+[maxconnects](https://curl.haxx.se/libcurl/c/CURLOPT_MAXCONNECTS.html)
+[maxfilesize](https://curl.haxx.se/libcurl/c/CURLOPT_MAXFILESIZE.html)
+[maxredirs](https://curl.haxx.se/libcurl/c/CURLOPT_MAXREDIRS.html)
+[max-send-speed](https://curl.haxx.se/libcurl/c/CURLOPT_MAX_SEND_SPEED.html)
+[max-recv-speed](https://curl.haxx.se/libcurl/c/CURLOPT_MAX_RECV_SPEED.html)
+[netrc](https://curl.haxx.se/libcurl/c/CURLOPT_NETRC.html)
+[nobody](https://curl.haxx.se/libcurl/c/CURLOPT_NOBODY.html)
+[noprogress](https://curl.haxx.se/libcurl/c/CURLOPT_NOPROGRESS.html)
+[nosignal](https://curl.haxx.se/libcurl/c/CURLOPT_NOSIGNAL.html)
+[password](https://curl.haxx.se/libcurl/c/CURLOPT_PASSWORD.html)
+[postfields](https://curl.haxx.se/libcurl/c/CURLOPT_POSTFIELDS.html)
+[postfieldsize](https://curl.haxx.se/libcurl/c/CURLOPT_POSTFIELDSIZE.html)
+[protocols](https://curl.haxx.se/libcurl/c/CURLOPT_PROTOCOLS.html)
+[proxy](https://curl.haxx.se/libcurl/c/CURLOPT_PROXY.html)
+[proxyport](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYPORT.html)
+[proxytype](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYTYPE.html)
+[proxyuserpwd](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYUSERPWD.html)
+[redir-protocols](https://curl.haxx.se/libcurl/c/CURLOPT_REDIR_PROTOCOLS.html)
+[referer](https://curl.haxx.se/libcurl/c/CURLOPT_REFERER.html)
+[ssl-verifyhost](https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYHOST.html)
+[ssl-verifypeer](https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html)
+[timeout](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html)
+[timeout-ms](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT_MS.html)
+[unrestricted-auth](https://curl.haxx.se/libcurl/c/CURLOPT_UNRESTRICTED_AUTH.html)
+[use-ssl](https://curl.haxx.se/libcurl/c/CURLOPT_USE_SSL.html)
+[useragent](https://curl.haxx.se/libcurl/c/CURLOPT_USERAGENT.html)
+[username](https://curl.haxx.se/libcurl/c/CURLOPT_USERNAME.html)
+[userpwd](https://curl.haxx.se/libcurl/c/CURLOPT_USERPWD.html)
+[verbose](https://curl.haxx.se/libcurl/c/CURLOPT_VERBOSE.html)
+[wildcardmatch](https://curl.haxx.se/libcurl/c/CURLOPT_WILDCARDMATCH.html)
 
-Header Options
-==============
+## Header Options
 
-In addition to the normal libcurl special headers ('useragent',
-'referer', 'cookie'), there are some extra options for headers:
-Content-MD5, Content-Type, Host, Accept, Expect.
+In addition to the normal libcurl special options that set headers
+([useragent](https://curl.haxx.se/libcurl/c/CURLOPT_USERAGENT.html),
+[referer](https://curl.haxx.se/libcurl/c/CURLOPT_REFERER.html),
+[cookie](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIE.html)), there
+are some extra options for headers:
+
+```Content-MD5```, ```Content-Type```, ```Host```, ```Accept```,
+```Expect```.
 
     $curl.Host('somewhere.com');  # or $curl.setopt(Host => 'somewhere.com')
     $curl.Content-MD5('...');     # or $curl.setopt(Content-MD5 => '...')
@@ -154,60 +202,66 @@ If you are reusing the handle, you can also clear the set headers:
 
 This only clears the 'extra' headers, not useragent/referer/cookie.
 
-Special Options
-===============
+## Special Options
 
 In addition to the normal libcurl options, Perl6 LibCurl uses options
 for some special Perl functionality.
 
-*debugfunction* replaces the libcurl CURLOPT_DEBUGFUNCTION callback,
-with one that looks like this:
+```debugfunction``` replaces the libcurl ```CURLOPT_DEBUGFUNCTION```
+callback, with one that looks like this:
 
     sub debug(LibCurl::Easy $easy, CURL-INFO-TYPE $type, Buf $buf)
 
     $curl.setopt(debugfunction => &debug);
 
-*xferinfo* replaces the libcurl CURLOPT_XFERINFOFUNCTION (and
+```xferinfo``` replaces the libcurl CURLOPT_XFERINFOFUNCTION (and
 CURLOPT_PROGRESSFUNCTION) with one that looks like this:
 
     sub xferinfo(LibCurl::Easy $easy, $dltotal, $dlnow, $ultotal, $ulnow)
 
     $curl.setopt(xferinfofunction => &xferinfo
 
-*download* specifies a filename to download into.
+```download``` specifies a filename to download into.
 
-*upload* specifies a filename to upload from.
+```upload``` specifies a filename to upload from.
 
-*send* specifies a Perl Str or a Perl Buf to send content from.
+```send``` specifies a Perl Str or a Perl Buf to send content from.
 
-Finally there is a 'private' option which replaces CURLOPT_PRIVATE,
-but you can safely store any Perl object in it.
+Finally there is a ```private``` option which replaces
+CURLOPT_PRIVATE, and you can safely store any Perl object in it.
 
-Errors
-======
+## Errors
 
 In most circumstances, errors from libcurl functions will result in a
 thrown X::LibCurl exception.  You can catch these with CATCH.  You can
 see the string error, or cast to Int to see the [libcurl error
 code](https://curl.haxx.se/libcurl/c/libcurl-errors.html).
 
-As a special case, you might find the
-[```failonerror```](https://curl.haxx.se/libcurl/c/CURLOPT_FAILONERROR.html)
+You might find the
+[failonerror](https://curl.haxx.se/libcurl/c/CURLOPT_FAILONERROR.html)
 option useful to force an error if the HTTP code is equal to or larger
 than 400.
 
 On an error, you may find [extra human readable error
 messages](https://curl.haxx.se/libcurl/c/CURLOPT_ERRORBUFFER.html)
-with the ```.error``` method:
+with the ```.error``` method.
 
-    say $curl.error;
+    $curl.perform;
 
-Info
-====
+    CATCH {
+        say "Caught!";
+        when X::LibCurl {
+            say "$_.Int() : $_";
+            say $curl.response-code;
+            say $curl.error;
+        }
+    }
+
+## Info
 
 After a transfer, you can retrieve internal information about the curl
 session with the
-```.getinfo```(https://curl.haxx.se/libcurl/c/curl_easy_getinfo.html)
+[.getinfo](https://curl.haxx.se/libcurl/c/curl_easy_getinfo.html)
 method.
 
 You can explicitly request a single field, or a list of fields to get
@@ -226,17 +280,44 @@ there are also convenience methods for each info field.
 
 Fields currently defined are:
 
-appconnect_time certinfo condition-unmet connect-time content-type
-cookielist effective-url ftp-entry-path header-size http-connectcode
-httpauth-avail lastsocket local-ip local-port namelookup-time
-num-connects os-errno pretransfer-time primary-ip primary-port
-proxyauth-avail redirect-url request-size response-code
-rtsp-client-cseq rtsp-cseq-recv rtsp-server-cseq rtsp-session-id
-size-download size-upload speed-download speed-upload ssl_engines
-tls-session total-time
+[appconnect_time](https://curl.haxx.se/libcurl/c/CURLINFO_APPCONNECT_TIME.html)
+[certinfo](https://curl.haxx.se/libcurl/c/CURLINFO_CERTINFO.html)
+[condition-unmet](https://curl.haxx.se/libcurl/c/CURLINFO_CONDITION_UNMET.html)
+[connect-time](https://curl.haxx.se/libcurl/c/CURLINFO_CONNECT_TIME.html)
+[content-type](https://curl.haxx.se/libcurl/c/CURLINFO_CONTENT_TYPE.html)
+[cookielist](https://curl.haxx.se/libcurl/c/CURLINFO_COOKIELIST.html)
+[effective-url](https://curl.haxx.se/libcurl/c/CURLINFO_EFFECTIVE_URL.html)
+[ftp-entry-path](https://curl.haxx.se/libcurl/c/CURLINFO_FTP_ENTRY_PATH.html)
+[header-size](https://curl.haxx.se/libcurl/c/CURLINFO_HEADER_SIZE.html)
+[http-connectcode](https://curl.haxx.se/libcurl/c/CURLINFO_HTTP_CONNECTCODE.html)
+[httpauth-avail](https://curl.haxx.se/libcurl/c/CURLINFO_HTTPAUTH_AVAIL.html)
+[lastsocket](https://curl.haxx.se/libcurl/c/CURLINFO_LASTSOCKET.html)
+[local-ip](https://curl.haxx.se/libcurl/c/CURLINFO_LOCAL_IP.html)
+[local-port](https://curl.haxx.se/libcurl/c/CURLINFO_LOCAL_PORT.html)
+[namelookup-time](https://curl.haxx.se/libcurl/c/CURLINFO_NAMELOOKUP_TIME.html)
+[num-connects](https://curl.haxx.se/libcurl/c/CURLINFO_NUM_CONNECTS.html)
+[os-errno](https://curl.haxx.se/libcurl/c/CURLINFO_OS_ERRNO.html)
+[pretransfer-time](https://curl.haxx.se/libcurl/c/CURLINFO_PRETRANSFER_TIME.html)
+[primary-ip](https://curl.haxx.se/libcurl/c/CURLINFO_PRIMARY_IP.html)
+[primary-port](https://curl.haxx.se/libcurl/c/CURLINFO_PRIMARY_PORT.html)
+[proxyauth-avail](https://curl.haxx.se/libcurl/c/CURLINFO_PROXYAUTH_AVAIL.html)
+[redirect-url](https://curl.haxx.se/libcurl/c/CURLINFO_REDIRECT_URL.html)
+[request-size](https://curl.haxx.se/libcurl/c/CURLINFO_REQUEST_SIZE.html)
+[response-code](https://curl.haxx.se/libcurl/c/CURLINFO_RESPONSE_CODE.html)
+[rtsp-client-cseq](https://curl.haxx.se/libcurl/c/CURLINFO_RTSP_CLIENT_CSEQ.html)
+[rtsp-cseq-recv](https://curl.haxx.se/libcurl/c/CURLINFO_RTSP_CSEQ_RECV.html)
+[rtsp-server-cseq](https://curl.haxx.se/libcurl/c/CURLINFO_RTSP_SERVER_CSEQ.html)
+[rtsp-session-id](https://curl.haxx.se/libcurl/c/CURLINFO_RTSP_SESSION_ID.html)
+[size-download](https://curl.haxx.se/libcurl/c/CURLINFO_SIZE_DOWNLOAD.html)
+[size-upload](https://curl.haxx.se/libcurl/c/CURLINFO_SIZE_UPLOAD.html)
+[speed-download](https://curl.haxx.se/libcurl/c/CURLINFO_SPEED_DOWNLOAD.html)
+[speed-upload](https://curl.haxx.se/libcurl/c/CURLINFO_SPEED_UPLOAD.html)
+[ssl_engines](https://curl.haxx.se/libcurl/c/CURLINFO_SSL_ENGINES.html)
+[tls-session](https://curl.haxx.se/libcurl/c/CURLINFO_TLS_SESSION.html)
+[total-time](https://curl.haxx.se/libcurl/c/CURLINFO_TOTAL_TIME.html)
 
-Received header fields
-======================
+
+## Received header fields
 
 You can retrieve the header fields in several ways as well.
 
@@ -246,8 +327,7 @@ You can retrieve the header fields in several ways as well.
 
     say $curl.Content-Length;
 
-Content
-=======
+## Content
 
 If you did not specify the ```download``` option to download content
 into a file, the content will be stashed in memory in a Buf object:
@@ -256,10 +336,9 @@ into a file, the content will be stashed in memory in a Buf object:
 
 If you understand that the content is decodable as a string, you can
 call the ```.content($encoding = 'utf-8')``` which will decode the
-content into a Str, by default with the *utf-8* encoding.
+content into a Str, by default with the **utf-8** encoding.
 
-Multi
-=====
+## Multi
 
 Perl6 LibCurl also supports the libcurl
 [multi](https://curl.haxx.se/libcurl/c/libcurl-multi.html) interface.
@@ -321,8 +400,7 @@ needed).
     $multi.perform;
 
 
-SEE ALSO
-========
+## SEE ALSO
 
 There is another Perl 6 interface to libcurl
 [Net::Curl](https://github.com/azawawi/perl6-net-curl) developed by
@@ -332,8 +410,7 @@ encourage you to also take a look at this module.  LibCurl provides a
 more 'perlish' OO interface to libcurl than Net::Curl, and wraps
 things in a manner to make using it a little easier (IMHO).
 
-LICENSE
-=======
+## LICENSE
 
 Copyright © 2017 United States Government as represented by the
 Administrator of the National Aeronautics and Space Administration.
