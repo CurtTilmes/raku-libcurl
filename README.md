@@ -41,6 +41,9 @@ A [Perl 6](https://perl6.org/) interface to
     LibCurl::Easy.new(URL => 'http://example.com/file-to-delete',
                       customrequest => 'DELETE').perform;
 
+    # POST
+    LibCurl::Easy.new(URL => 'http://example.com/form.html',
+                      postfields => 'name=foo&opt=value');
 
 ## LibCurl::HTTP
 
@@ -60,6 +63,8 @@ If even those aren't easy enough, there is a tiny sub-class
     $http.DELETE('http://example.com').perform;
 
     $http.PUT('http://example.com', 'myfile').perform;
+
+    $http.POST('http://example.com/form.html', 'name=foo&opt=value');
 
 ## Fancier Example
 

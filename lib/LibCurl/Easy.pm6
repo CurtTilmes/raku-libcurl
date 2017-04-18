@@ -468,8 +468,8 @@ class LibCurl::HTTP is LibCurl::Easy
         self.setopt(URL => $URL, upload => $filename);
     }
 
-    method POST($URL)
+    method POST($URL, $content)
     {
-        ... #TODO
+        self.setopt(URL => $URL, postfields => $content);
     }
 }
