@@ -73,8 +73,8 @@ If even those aren't easy enough, there is a tiny sub-class
     say $curl.statusline;
 
 Of course the full power of [libcurl](https://curl.haxx.se/libcurl) is
-available, so you aren't limited to HTTP URLs, you can use
-```ftp://host/path```, SMTP, TFTP, SCP, SFTP, and many, many more.
+available, so you aren't limited to HTTP URLs, you can use FTP, SMTP,
+TFTP, SCP, SFTP, and many, many more.
 
 ## Options
 
