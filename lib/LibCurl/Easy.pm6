@@ -120,8 +120,7 @@ my %infofields =
     size-upload          => (CURLINFO_SIZE_UPLOAD,      CURLINFO_DOUBLE     ),
     speed-download       => (CURLINFO_SPEED_DOWNLOAD,   CURLINFO_DOUBLE     ),
     speed-upload         => (CURLINFO_SPEED_UPLOAD,     CURLINFO_DOUBLE     ),
-    ssl_engines          => (CURLINFO_SSL_ENGINES,      CURLINFO_SLIST      ),
-    tls-session          => (CURLINFO_TLS_SESSION,      CURLINFO_SLIST      ),
+    ssl-engines          => (CURLINFO_SSL_ENGINES,      CURLINFO_SLIST      ),
     total-time           => (CURLINFO_TOTAL_TIME,       CURLINFO_DOUBLE     ),
 ;
 
@@ -393,7 +392,15 @@ class LibCurl::Easy
                 $!handle.getinfo_double($code);
             }
             when CURLINFO_SLIST {
-                return []; # TODO
+                given $code {
+                    when CURLINFO_CERTINFO {
+                        $!handle.getinfo_certinfo;
+                    }
+
+                    when CURLINFO_COOKIELIST | CURLINFO_SSL_ENGINES {
+                        $!handle.getinfo_slist($code);
+                    }
+                }
             }
             default {
                 die "Unknown getinfo [$info]";

@@ -316,6 +316,12 @@ class X::LibCurl is Exception
     method message() { curl_easy_strerror($!code) }
 }
 
+class LibCurl::slist-struct is repr('CStruct')
+{
+    has Str $.data;
+    has Pointer $.next;
+}
+
 class LibCurl::slist is repr('CPointer')
 {
     sub curl_slist_append(LibCurl::slist, Str) returns LibCurl::slist
@@ -323,21 +329,35 @@ class LibCurl::slist is repr('CPointer')
 
     sub curl_slist_free_all(LibCurl::slist) is native(LIBCURL) { * }
 
-    sub new(@str-list)
+    method append(*@str-list)
     {
-        my $self = LibCurl::slist;
-        $self = $self.append($_) for @str-list;
+        my $slist = LibCurl::slist;
+        $slist = curl_slist_append($slist, $_) for @str-list;
+        return $slist;
     }
 
-    method append(Str $str)
+    method list()
     {
-        curl_slist_append(self, $str);
+        my @list;
+        my $slist = nativecast(LibCurl::slist-struct, self);
+        while $slist
+        {
+            @list.push($slist.data);
+            $slist = nativecast(LibCurl::slist-struct, $slist.next);
+        }
+        return @list;
     }
 
-    method free
+    method free()
     {
         curl_slist_free_all(self);
     }
+}
+
+class LibCurl::certinfo is repr('CStruct')
+{
+    has int32 $.num_of_certs;
+    has CArray[LibCurl::slist] $.certinfo;
 }
 
 class LibCurl::EasyHandle is repr('CPointer')
@@ -388,6 +408,9 @@ class LibCurl::EasyHandle is repr('CPointer')
         returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
     sub curl_easy_getinfo_str(LibCurl::EasyHandle, int32, CArray[Str])
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
+
+    sub curl_easy_getinfo_ptr(LibCurl::EasyHandle, int32, Pointer is rw)
         returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
     sub sprintf-pointer(CArray[int8], Str, Pointer) returns int32
@@ -483,5 +506,30 @@ class LibCurl::EasyHandle is repr('CPointer')
         my $ret = curl_easy_getinfo_str(self, $option, $value);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $value[0];
+    }
+
+    method getinfo_slist(Int $option) {
+        my Pointer $ptr;
+
+        my $ret = curl_easy_getinfo_ptr(self, $option, $ptr);
+
+        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
+
+        return [] unless $ptr;
+
+        my $slist = nativecast(LibCurl::slist, $ptr);
+
+        my @list = $slist.list;
+
+        $slist.free;
+
+        return @list;
+    }
+
+    method getinfo_certinfo() {
+        my Pointer $ptr;
+        my $ret = curl_easy_getinfo_ptr(self, CURLINFO_CERTINFO, $ptr);
+        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
+        return nativecast(LibCurl::certinfo, $ptr);
     }
 }

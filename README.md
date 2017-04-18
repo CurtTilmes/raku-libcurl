@@ -309,8 +309,7 @@ Fields currently defined are:
 [size-upload](https://curl.haxx.se/libcurl/c/CURLINFO_SIZE_UPLOAD.html)
 [speed-download](https://curl.haxx.se/libcurl/c/CURLINFO_SPEED_DOWNLOAD.html)
 [speed-upload](https://curl.haxx.se/libcurl/c/CURLINFO_SPEED_UPLOAD.html)
-[ssl_engines](https://curl.haxx.se/libcurl/c/CURLINFO_SSL_ENGINES.html)
-[tls-session](https://curl.haxx.se/libcurl/c/CURLINFO_TLS_SESSION.html)
+[ssl-engines](https://curl.haxx.se/libcurl/c/CURLINFO_SSL_ENGINES.html)
 [total-time](https://curl.haxx.se/libcurl/c/CURLINFO_TOTAL_TIME.html)
 
 
