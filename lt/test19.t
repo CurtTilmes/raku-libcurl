@@ -7,10 +7,6 @@ use LibCurl::Easy;
 
 plan 2;
 
-my $server = LibCurl::Test.new;
-
-$server.start;
-
 my $curl = LibCurl::Easy.new(URL => "$HOSTIP:60000");
 
 throws-like { $curl.perform }, X::LibCurl, message => "Couldn't connect to server";
