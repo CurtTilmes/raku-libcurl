@@ -5,7 +5,7 @@ use Test;
 use LibCurl::Test;
 use LibCurl::Easy;
 
-plan 3;
+plan 5;
 
 my $server = LibCurl::Test.new;
 
