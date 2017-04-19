@@ -160,6 +160,7 @@ me know):
 [noprogress](https://curl.haxx.se/libcurl/c/CURLOPT_NOPROGRESS.html)
 [nosignal](https://curl.haxx.se/libcurl/c/CURLOPT_NOSIGNAL.html)
 [password](https://curl.haxx.se/libcurl/c/CURLOPT_PASSWORD.html)
+[post](https://curl.haxx.se/libcurl/c/CURLOPT_POST.html)
 [postfields](https://curl.haxx.se/libcurl/c/CURLOPT_COPYPOSTFIELDS.html)
 [postfieldsize](https://curl.haxx.se/libcurl/c/CURLOPT_POSTFIELDSIZE_LARGE.html)
 [protocols](https://curl.haxx.se/libcurl/c/CURLOPT_PROTOCOLS.html)

@@ -65,6 +65,7 @@ my %opts =
     noprogress           => (CURLOPT_NOPROGRESS,           CURLOPT_BOOL     ),
     nosignal             => (CURLOPT_NOSIGNAL,             CURLOPT_BOOL     ),
     password             => (CURLOPT_PASSWORD,             CURLOPT_STR      ),
+    post                 => (CURLOPT_POST,                 CURLOPT_BOOL     ),
     postfields           => (CURLOPT_COPYPOSTFIELDS,       CURLOPT_STR      ),
     postfieldsize        => (CURLOPT_POSTFIELDSIZE_LARGE,  CURLOPT_OFF_T    ),
     protocols            => (CURLOPT_PROTOCOLS,            CURLOPT_LONG     ),
