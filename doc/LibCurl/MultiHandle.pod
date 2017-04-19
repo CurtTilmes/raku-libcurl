@@ -4,7 +4,7 @@
 
 LibCurl::MultiHandle
 
-=head2 SYNOPSIS
+=head1 SYNOPSIS
 
   use LibCurl::EasyHandle;
   use LibCurl::MultiHandle;
@@ -42,15 +42,15 @@ LibCurl::MultiHandle
 
   curl_global_cleanup;
 
-=head2 DESCRIPTION
+=head1 DESCRIPTION
 
 C<LibCurl::MultiHandle> is the low level NativeCall interface to
 libcurl's multi interface. In general you should be using the
 C<LibCurl::Multi> interface instead.
 
-=head2 CLASSES
+=head1 CLASSES
 
-=head3 class B<LibCurl::CURLMsg> is repr('CStruct')
+=head2 class B<LibCurl::CURLMsg> is repr('CStruct')
 
 Wrapper for B<struct CURLMsg>
 
@@ -60,7 +60,7 @@ Wrapper for B<struct CURLMsg>
 
 =item has uint32 $.code
 
-=head3 class B<X::LibCurl::Multi> is X::LibCurl
+=head2 class B<X::LibCurl::Multi> is X::LibCurl
 
 Exception, just like L<X::LibCurl>, but for B<CURLMcode>.
 
