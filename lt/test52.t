@@ -25,11 +25,11 @@ is $curl.Date, "Thu, 09 Nov 2010 14:49:00 GMT", 'Date';
 
 is $server.input,
 "GET /we/are/all/twits/52 HTTP/1.1
-Host: 127.0.0.1:8990
+Host: $HOSTIP:$HTTPPORT
 Accept: */*
 
 GET /we/are/all/twits/520002 HTTP/1.1
-Host: 127.0.0.1:8990
+Host: $HOSTIP:$HTTPPORT
 Accept: */*
 
 ", 'input';
