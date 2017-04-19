@@ -28,14 +28,22 @@ A [Perl 6](https://perl6.org/) interface to
 
     # GET
     print LibCurl::Easy.new(URL => 'http://example.com').perform.content;
+    
+    # GET (download a file)
+    LibCurl::Easy.new(URL => 'http://example.com/somefile',
+                      download => 'somefile').perform;
 
     # HEAD
     say LibCurl::Easy.new(:nobody, URL => 'http://example.com')
         .perform.response-code;
 
     # PUT
-    LibCurl::Easy.new(URL => 'http://example.com',
+    LibCurl::Easy.new(URL => 'http://example.com/somefile',
                       send => 'My Content').perform;
+
+    # PUT (upload a file)
+    LibCurl::Easy.new(URL => http://example.com/somefile',
+                      upload => 'somefile').perform;
 
     # DELETE
     LibCurl::Easy.new(URL => 'http://example.com/file-to-delete',
