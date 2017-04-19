@@ -48,21 +48,21 @@ A [Perl 6](https://perl6.org/) interface to
     say LibCurl::Easy.new(:nobody, URL => 'http://example.com')
         .perform.response-code;
 
-    # PUT
-    LibCurl::Easy.new(URL => 'http://example.com/somefile',
-                      send => 'My Content').perform;
-
     # PUT (upload a file)
     LibCurl::Easy.new(URL => http://example.com/somefile',
                       upload => 'somefile').perform;
 
-    # DELETE
+    # PUT (content from a string)
+    LibCurl::Easy.new(URL => 'http://example.com/somefile',
+                      send => 'My Content').perform;
+
+     # DELETE
     LibCurl::Easy.new(URL => 'http://example.com/file-to-delete',
                       customrequest => 'DELETE').perform;
 
     # POST
     LibCurl::Easy.new(URL => 'http://example.com/form.html',
-                      postfields => 'name=foo&opt=value');
+                      postfields => 'name=foo&opt=value').perform;
 
 ## LibCurl::HTTP
 
@@ -83,7 +83,7 @@ If even those aren't easy enough, there is a tiny sub-class
 
     $http.PUT('http://example.com', 'myfile').perform;
 
-    $http.POST('http://example.com/form.html', 'name=foo&opt=value');
+    $http.POST('http://example.com/form.html', 'name=foo&opt=value').perform;
 
 ## Fancier Example
 
