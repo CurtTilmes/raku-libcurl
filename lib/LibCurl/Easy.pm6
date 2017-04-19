@@ -238,8 +238,6 @@ class LibCurl::Easy
 
     sub fseek(Pointer $fp, long $offset, int32 $whence) is native { * }
 
-    method version { curl_version }
-
     method new(|opts)
     {
         my $handle = LibCurl::EasyHandle.new;
@@ -255,11 +253,13 @@ class LibCurl::Easy
         return $self;
     }
 
-    method content($encoding = 'utf-8') { $!buf.decode($encoding) }
+    method version returns Str { curl_version }
 
-    method error() { nativecast(Str, $!errorbuffer) }
+    method content($encoding = 'utf-8') returns Str { $!buf.decode($encoding) }
 
-    method get-header($field) { %!receiveheaders{$field} }
+    method error() returns Str { nativecast(Str, $!errorbuffer) }
+
+    method get-header($field) returns Str { %!receiveheaders{$field} }
 
     method setopt(*%options)
     {
@@ -502,3 +502,56 @@ class LibCurl::HTTP is LibCurl::Easy
         self.setopt(URL => $URL, postfields => $content);
     }
 }
+
+=begin pod
+
+=head1 NAME
+
+LibCurl::Easy
+
+=head1 SYNOPSIS
+
+  use LibCurl::Easy;
+
+  my $curl = LibCurl::Easy.new(URL => 'http://example.com');
+
+  $curl.setopt(:verbose, :followlocation);
+
+  $curl.perform;
+
+  say $curl.response-code;
+
+  my $http = LibCurl::HTTP.new;
+
+  say $http.GET('http://example.com').perform.content;
+
+=head1 DESCRIPTION
+
+This is a high-level interface to
+L<libcurl|https://curl.haxx.se/libcurl>, a free and easy-to-use
+client-side URL transfer library.
+
+It wraps the low-level interface provided in L<LibCurl::EasyHandle> in
+some high level constructs that make it a little easier to work with
+libcurl from Perl.
+
+=head2 class <LibCurl::Easy>
+
+The main class for C<LibCurl::Easy>.
+
+=item method B<new>(*%options) returns LibCurl::Easy
+
+Creates a new C<LibCurl::Easy> object and sets up a bunch of default
+stuff.
+
+You can optionally pass in options and they will get passed directly
+to C<.setopt> after object creation.
+
+=item method B<version>() returns Str
+
+Returns human readable version of the curl library.  Can be called on
+a LibCurl::Easy object:
+
+  $curl
+
+=end pod

@@ -8,7 +8,13 @@ constant CURLE_OK                           = 0;
 
 constant CURL_ERROR_SIZE                    = 256;
 
-constant CURL_GLOBAL_DEFAULT                = 0x3;
+constant CURL_GLOBAL_SSL                    = 1;
+constant CURL_GLOBAL_WIN32                  = 1 +< 1;
+constant CURL_GLOBAL_ALL                    = CURL_GLOBAL_SSL +|
+                                              CURL_GLOBAL_WIN32;
+constant CURL_GLOBAL_NOTHING                = 0;
+constant CURL_GLOBAL_DEFAULT                = CURL_GLOBAL_ALL;
+constant CURL_GLOBAL_ACK_EINTR              = 1 +< 2;
 
 constant CURL_NETRC_IGNORED                 = 0;
 constant CURL_NETRC_OPTIONAL                = 1;
@@ -312,7 +318,7 @@ enum CURLFORMcode <CURL_FORMADD_OK CURL_FORMADD_MEMORY
     CURL_FORMADD_UNKNOWN_OPTION CURL_FORMADD_INCOMPLETE
     CURL_FORMADD_ILLEGAL_ARRAY CURL_FORMADD_DISABLED>;
 
-sub curl_global_init(int32) returns uint32 is native(LIBCURL) is export { * }
+sub curl_global_init(long) returns uint32 is native(LIBCURL) is export { * }
 
 sub curl_global_cleanup() is native(LIBCURL) is export { * }
 
@@ -342,14 +348,14 @@ class LibCurl::slist is repr('CPointer')
 
     sub curl_slist_free_all(LibCurl::slist) is native(LIBCURL) { * }
 
-    method append(*@str-list)
+    method append(*@str-list) returns LibCurl::slist
     {
         my $slist = self;
         $slist = curl_slist_append($slist, $_) for @str-list;
         return $slist;
     }
 
-    method list()
+    method list() returns Array[Str]
     {
         my @list;
         my $slist = nativecast(LibCurl::slist-struct, self);
@@ -396,7 +402,7 @@ class LibCurl::EasyHandle is repr('CPointer')
     sub curl_easy_setopt_slist(LibCurl::EasyHandle, uint32, LibCurl::slist)
         returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
-    sub curl_easy_setopt_array(LibCurl::EasyHandle, uint32, CArray[int8])
+    sub curl_easy_setopt_array(LibCurl::EasyHandle, uint32, CArray[uint8])
         returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_data-cb(LibCurl::EasyHandle, uint32,
@@ -426,12 +432,12 @@ class LibCurl::EasyHandle is repr('CPointer')
     sub curl_easy_getinfo_ptr(LibCurl::EasyHandle, int32, CArray[Pointer])
         returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
-    sub sprintf-pointer(CArray[int8], Str, Pointer) returns int32
+    sub sprintf-pointer(CArray[uint8], Str, Pointer) returns int32
         is symbol('sprintf') is native { * }
 
-    method new() { curl_easy_init }
+    method new() returns LibCurl::EasyHandle { curl_easy_init }
 
-    method id() {
+    method id() returns Str {
         my $id = CArray[int8].new;
         $id[20] = 0;
         sprintf-pointer($id, "%p", self);
@@ -446,19 +452,17 @@ class LibCurl::EasyHandle is repr('CPointer')
 
     method perform() { curl_easy_perform(self); }
 
-    multi method setopt(Int $option, Str $param) {
+    multi method setopt($option, Str $param) {
         my $ret = curl_easy_setopt_str(self, $option, $param);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
-        return $ret;
     }
 
-    multi method setopt(Int $option, Int $param) {
-        my $ret = curl_easy_setopt_long(self, $option, $param);
+    multi method setopt($option, Int $param) {
+        my $ret = curl_easy_setopt_long(self, $option, $param)
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
-        return $ret;
     }
 
-    multi method setopt(Int $option, &callback) {
+    multi method setopt($option, &callback) {
         my $ret = do given $option {
 	   when CURLOPT_WRITEFUNCTION | CURLOPT_READFUNCTION |
 	        CURLOPT_HEADERFUNCTION {
@@ -471,49 +475,43 @@ class LibCurl::EasyHandle is repr('CPointer')
 	       curl_easy_setopt_xfer-cb(self, $option, &callback);
 	   }
 	};
-        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
-        return $ret;
     }
 
-    multi method setopt(Int $option, Pointer $ptr) {
-        my $ret = curl_easy_setopt_ptr(self, $option, $ptr);
+    multi method setopt($option, Pointer $ptr) {
+        my $ret = curl_easy_setopt_ptr(self, $option, $ptr)
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
-        return $ret;
     }
 
-    multi method setopt(Int $option, LibCurl::slist $slist) {
-        my $ret = curl_easy_setopt_slist(self, $option, $slist);
+    multi method setopt($option, LibCurl::slist $slist) {
+        my $ret = curl_easy_setopt_slist(self, $option, $slist)
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
-        return $ret;
     }
 
-    multi method setopt(Int $option, CArray[int8] $ptr) {
-        my $ret = curl_easy_setopt_array(self, $option, $ptr);
+    multi method setopt($option, CArray[uint8] $ptr) {
+        my $ret = curl_easy_setopt_array(self, $option, $ptr)
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
-        return $ret;
     }
 
-    multi method setopt(Int $option, LibCurl::EasyHandle $ptr) {
-        my $ret = curl_easy_setopt_ptr(self, $option, $ptr);
-        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
-        return $ret;
-    }
+# Does anything use this?
+#    multi method setopt($option, LibCurl::EasyHandle $ptr) {
+#        curl_easy_setopt_ptr(self, $option, $ptr)
+#    }
 
-    method getinfo_long(Int $option) {
+    method getinfo_long($option) returns long {
         my long $value;
         my $ret = curl_easy_getinfo_long(self, $option, $value);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $value;
     }
 
-    method getinfo_double(Int $option) {
+    method getinfo_double($option) {
         my num64 $value;
         my $ret = curl_easy_getinfo_double(self, $option, $value);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $value[0];
     }
 
-    method getinfo_str(Int $option) {
+    method getinfo_str($option) {
         my $value = CArray[Str].new;
         $value[0] = '';
         my $ret = curl_easy_getinfo_str(self, $option, $value);
@@ -521,7 +519,7 @@ class LibCurl::EasyHandle is repr('CPointer')
         return $value[0];
     }
 
-    method getinfo_slist(Int $option) {
+    method getinfo_slist($option) {
         my $value = CArray[Pointer].new;
         $value[0] = Pointer.new;
         my $ret = curl_easy_getinfo_ptr(self, $option, $value);
@@ -534,6 +532,7 @@ class LibCurl::EasyHandle is repr('CPointer')
     }
 
     method getinfo_certinfo() {
+	... # TODO
         my Pointer $ptr;
         my $ret = curl_easy_getinfo_ptr(self, CURLINFO_CERTINFO, $ptr);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
@@ -572,3 +571,158 @@ class LibCurl::Form
                      CURLFORM_END);
     }
 }
+
+=begin pod
+
+=head1 NAME
+
+LibCurl::EasyHandle
+
+=head2 SYNOPSIS
+
+  use LibCurl::EasyHandle;
+
+  curl_global_init(CURL_GLOBAL_DEFAULT);
+
+  say curl_version;
+
+  my $handle = LibCurl::EasyHandle.new;
+
+  $handle.setopt(CURLOPT_URL, "http://example.com");
+
+  $handle.perform;
+
+  say $handle.getinfo(CURL_GETINFO_RESPONSE_CODE);
+
+  $handle.cleanup;
+
+  curl_global_cleanup;
+
+=head2 DESCRIPTION
+
+C<LibCurl::EasyHandle> is the low level NativeCall interface to
+libcurl's easy interface.  In general you should be using the
+C<LibCurl::Easy> interface instead.
+
+=head2 SUBROUTINES
+
+=item sub B<curl_global_init>(long $flags) returns uint32
+
+Nativecall version of
+L<B<curl_global_init|>https://curl.haxx.se/libcurl/c/curl_global_init.html>. It
+can take the following I<$flags>: CURL_GLOBAL_SSL, CURL_GLOBAL_WIN32,
+CURL_GLOBAL_ALL, CURL_GLOBAL_NOTHING, CURL_GLOBAL_DEFAULT,
+CURL_GLOBAL_ACK_EINTR.
+
+=item sub B<curl_global_cleanup>()
+
+Nativecall version of
+L<B<curl_global_cleanup|>https://curl.haxx.se/libcurl/c/curl_global_cleanup.html>.
+
+=item sub B<curl_version>() returns Str
+
+Nativecall version of
+L<B<curl_version|>https://curl.haxx.se/libcurl/c/curl_version.html>.
+
+=head2 CLASSES
+
+=head3 class B<X::LibCurl> is Exception
+
+Wraps libcurl error code.
+
+=item method B<Int>() returns Int
+
+Returns the CURLcode for the error.
+
+=item method B<message>() returns Str
+
+Returns the Str version of the error from
+L<B<curl_easy_strerror|>https://curl.haxx.se/libcurl/c/curl_easy_strerror.html>.
+
+=head3 class B<LibCurl::slist-struct> is repr('CStruct')
+
+Wrapper for B<struct curl_slist>.
+
+=item has Str $.data
+=item has Poitner $.next
+
+=head3 class B<LibCurl::slist> is repr('CPointer')
+
+Wrapper for a pointer to a B<struct curl_slist>.
+
+=item method append(*@str-list) returns LibCurl::slist
+
+Wrapper for
+L<B<curl_slist_append|>https://curl.haxx.se/libcurl/c/curl_slist_append.html>,
+but can take a list of strings and they all get appended.
+
+=item method list() returns Array[Str]
+
+Extract the list of strings into a Perl Array[Str].
+
+=item method free()
+
+Wrapper for
+L<B<curl_slist_free_all|>https://curl.haxx.se/libcurl/c/curl_slist_free_all.html>.
+
+=head3 B<LibCurl::certinfo> is repr('CStruct')
+
+=head3 B<LibCurl::EasyHandle> is repr('CStruct')
+
+Wrapper for B<struct CURL>.
+
+=item method B<new>() returns LibCurl::EasyHandle
+
+Wrapper for
+L<B<curl_easy_init|>https://curl.haxx.se/libcurl/c/curl_easy_init.html>
+to create a new CURL easy handle.
+
+=item method B<id>() returns Str
+
+Returns an opaque string that will be unique for every
+B<LibCurl::EasyHandle>.
+
+=item method B<cleanup>()
+
+Wrapper for
+L<B<curl_easy_cleanup|>https://curl.haxx.se/libcurl/c/curl_easy_cleanup.html>.
+
+=item method B<reset>()
+
+Wrapper for
+L<B<curl_easy_reset|>https://curl.haxx.se/libcurl/c/curl_easy_reset.html>.
+
+=item method B<duphandle>() returns LibCurl::EasyHandle
+
+Wrapper for
+L<B<curl_easy_duphandle|>https://curl.haxx.se/libcurl/c/curl_easy_duphandle.html>.
+
+=item method B<perform>() return uint32
+
+Wrapper for
+L<B<curl_easy_perform|>https://curl.haxx.se/libcurl/c/curl_easy_perform.html>.
+
+=item multi method B<setopt>($option, Str $param)
+=item multi method B<setopt>($option, &callback)
+=item multi method B<setopt>($option, Pointer $ptr)
+=item multi method B<setopt>($option, LibCurl::slist $slist)
+=item multi method B<setopt>($option, CArray[uint8] $ptr)
+=item multi method B<setopt>($option, LibCurl::EasyHandle $ptr)
+
+Wrappers for various flavors of 
+L<B<curl_easy_setopt|>https://curl.haxx.se/libcurl/c/curl_easy_setopt.html>.
+
+These will throw an X::LibCurl on any error.
+
+=item method B<getinfo_long>($option) returns long
+=item method B<getinfo_double>($option) returns num64
+=item method B<getinfo_str>($option) returns Str
+=item method B<getinfo_certinfo>() returns Array[Str]
+=item method B<getinfo_slist>($option) returns Array[Str]
+
+Wrappers for various flavors of 
+L<B<curl_easy_getinfo|>https://curl.haxx.se/libcurl/c/curl_easy_getinfo.html>.
+
+These will throw an X::LibCurl on any error.
+
+=end pod
