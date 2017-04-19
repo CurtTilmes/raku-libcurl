@@ -5,7 +5,7 @@ use Test;
 use LibCurl::Test;
 use LibCurl::Easy;
 
-#plan 5;
+plan 6;
 
 my $server = LibCurl::Test.new;
 
@@ -32,5 +32,7 @@ Accept: */*
 is $curl.Location, 'this should be ignored', 'Location';
 
 is $curl.effective-url, "http://127.0.0.1:8990/we/are/all/m%20o%20o.html/420002", 'effective-url';
+
+is $curl.content, "body\n", 'Content';
 
 done-testing;
