@@ -355,7 +355,7 @@ class LibCurl::slist is repr('CPointer')
         return $slist;
     }
 
-    method list() returns Array[Str]
+    method list() returns Array
     {
         my @list;
         my $slist = nativecast(LibCurl::slist-struct, self);
@@ -458,7 +458,7 @@ class LibCurl::EasyHandle is repr('CPointer')
     }
 
     multi method setopt($option, Int $param) {
-        my $ret = curl_easy_setopt_long(self, $option, $param)
+        my $ret = curl_easy_setopt_long(self, $option, $param);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
     }
 
@@ -478,24 +478,24 @@ class LibCurl::EasyHandle is repr('CPointer')
     }
 
     multi method setopt($option, Pointer $ptr) {
-        my $ret = curl_easy_setopt_ptr(self, $option, $ptr)
+        my $ret = curl_easy_setopt_ptr(self, $option, $ptr);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
     }
 
     multi method setopt($option, LibCurl::slist $slist) {
-        my $ret = curl_easy_setopt_slist(self, $option, $slist)
+        my $ret = curl_easy_setopt_slist(self, $option, $slist);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
     }
 
     multi method setopt($option, CArray[uint8] $ptr) {
-        my $ret = curl_easy_setopt_array(self, $option, $ptr)
+        my $ret = curl_easy_setopt_array(self, $option, $ptr);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
     }
 
-# Does anything use this?
-#    multi method setopt($option, LibCurl::EasyHandle $ptr) {
-#        curl_easy_setopt_ptr(self, $option, $ptr)
-#    }
+    multi method setopt($option, LibCurl::EasyHandle $ptr) {
+        my $ret = curl_easy_setopt_ptr(self, $option, $ptr);
+        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
+    }
 
     method getinfo_long($option) returns long {
         my long $value;
@@ -656,9 +656,9 @@ Wrapper for
 L<B<curl_slist_append|>https://curl.haxx.se/libcurl/c/curl_slist_append.html>,
 but can take a list of strings and they all get appended.
 
-=item method list() returns Array[Str]
+=item method list() returns Array
 
-Extract the list of strings into a Perl Array[Str].
+Extract the list of strings into a Perl Array.
 
 =item method free()
 

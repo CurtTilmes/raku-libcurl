@@ -241,7 +241,7 @@ class LibCurl::Easy
     method new(|opts)
     {
         my $handle = LibCurl::EasyHandle.new;
-        my $errorbuffer = CArray[int8].new;
+        my $errorbuffer = CArray[uint8].new;
         $errorbuffer[0] = 0;
         $errorbuffer[CURL_ERROR_SIZE] = 0;
         my $self = self.bless(:$handle, :$errorbuffer);
