@@ -4,6 +4,40 @@ use NativeCall;
 
 constant LIBCURL = "curl";
 
+enum CURL_HTTP_VERSION_ENUM <
+    CURL_HTTP_VERSION_NONE
+    CURL_HTTP_VERSION_1_0
+    CURL_HTTP_VERSION_1_1
+    CURL_HTTP_VERSION_2_0
+>;
+
+enum CURL-INFO-TYPE <
+    CURLINFO_TEXT
+    CURLINFO_HEADER_IN
+    CURLINFO_HEADER_OUT
+    CURLINFO_DATA_IN
+    CURLINFO_DATA_OUT
+    CURLINFO_SSL_DATA_IN
+    CURLINFO_SSL_DATA_OUT
+>;
+
+enum CURLAUTH (
+    CURLAUTH_NONE         => 0,
+    CURLAUTH_BASIC        => 1,
+    CURLAUTH_DIGEST       => 1 +< 1,
+    CURLAUTH_GSSNEGOTIATE => 1 +< 2,
+    CURLAUTH_NTLM         => 1 +< 3,
+    CURLAUTH_DIGEST_IE    => 1 +< 4,
+    CURLAUTH_NTLM_WB      => 1 +< 5,
+    CURLAUTH_ONLY         => 1 +< 31,
+);
+
+enum CURL_NETRC <
+    CURL_NETRC_IGNORED
+    CURL_NETRC_OPTIONAL
+    CURL_NETRC_REQUIRED
+>;
+
 constant CURLE_OK                           = 0;
 
 constant CURL_ERROR_SIZE                    = 256;
@@ -15,10 +49,6 @@ constant CURL_GLOBAL_ALL                    = CURL_GLOBAL_SSL +|
 constant CURL_GLOBAL_NOTHING                = 0;
 constant CURL_GLOBAL_DEFAULT                = CURL_GLOBAL_ALL;
 constant CURL_GLOBAL_ACK_EINTR              = 1 +< 2;
-
-constant CURL_NETRC_IGNORED                 = 0;
-constant CURL_NETRC_OPTIONAL                = 1;
-constant CURL_NETRC_REQUIRED                = 2;
 
 constant CURLPROXY_HTTP                     = 0;
 constant CURLPROXY_HTTP_1_0                 = 1;
