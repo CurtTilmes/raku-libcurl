@@ -75,6 +75,7 @@ my %opts =
     range                => (CURLOPT_RANGE,                CURLOPT_STR      ),
     redir-protocols      => (CURLOPT_REDIR_PROTOCOLS,      CURLOPT_LONG     ),
     referer              => (CURLOPT_REFERER,              CURLOPT_STR      ),
+    resume-from          => (CURLOPT_RESUME_FROM_LARGE,    CURLOPT_OFF_T    ),
     ssl-verifyhost       => (CURLOPT_SSL_VERIFYHOST,       CURLOPT_LONG     ),
     ssl-verifypeer       => (CURLOPT_SSL_VERIFYPEER,       CURLOPT_BOOL     ),
     timeout              => (CURLOPT_TIMEOUT,              CURLOPT_LONG     ),
@@ -234,6 +235,8 @@ class LibCurl::Easy
 
     sub fclose(Pointer $fp) returns int32 is native { * }
 
+    sub fseek(Pointer $fp, long $offset, int32 $whence) is native { * }
+
     method version { curl_version }
 
     method new(|opts)
@@ -273,6 +276,11 @@ class LibCurl::Easy
 
                 when CURLOPT_LONG | CURLOPT_STR | CURLOPT_OFF_T {
                     $!handle.setopt($code, $param);
+
+                    if $code == CURLOPT_RESUME_FROM_LARGE && $!upload-fh
+                    {
+                        fseek($!upload-fh, $param, 0);
+                    }
                 }
 
                 when LIBCURL_HEADER {
