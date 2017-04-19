@@ -446,13 +446,21 @@ class LibCurl::Easy
         die "Unknown method $name";
     }
 
-    submethod DESTROY
+    method cleanup
     {
         $!header-slist.free if $!header-slist;
+        $!header-slist = LibCurl::slist;
         fclose($!download-fh) if $!download-fh;
         fclose($!upload-fh) if $!upload-fh;
+        $!download-fh = $!upload-fh = Pointer;
         %allhandles{$!handle.id}:delete;
-        $!handle.cleanup;
+        .cleanup with $!handle;
+        $!handle = LibCurl::EasyHandle;
+    }
+
+    submethod DESTROY
+    {
+        self.cleanup;
     }
 }
 

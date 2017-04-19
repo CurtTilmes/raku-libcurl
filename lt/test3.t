@@ -12,7 +12,6 @@ my $server = LibCurl::Test.new;
 $server.start;
 
 my $curl = LibCurl::Easy.new(URL => "http://$HOSTIP:$HTTPPORT/3",
-                             useragent => 'curltesting',
                              userpwd => 'fake:user',
                              Expect => '');
 
@@ -23,7 +22,6 @@ $curl.perform;
 is $server.input,
 "POST /3 HTTP/1.1
 Authorization: Basic ZmFrZTp1c2Vy
-User-Agent: curltesting
 Host: $HOSTIP:$HTTPPORT
 Accept: */*
 Content-Length: 37
