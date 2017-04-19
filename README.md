@@ -1,5 +1,18 @@
 # Perl6 LibCurl
 
+- [Simple Examples](#simple-examples)
+- [Options](#options)
+- [Header Options](#header-options)
+- [Special Options](#special-options)
+- [Errors](#errors)
+- [Info](#info)
+- [Received header fields](#received-header-fields)
+- [Content](#content)
+- [Proxies](#proxies)
+- [Multi](#multi)
+- [See Also](#see-also)
+- [License](#license)
+
 A [Perl 6](https://perl6.org/) interface to
 [libcurl](https://curl.haxx.se/libcurl/).
 
