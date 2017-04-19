@@ -2,7 +2,7 @@ use v6;
 
 use Test;
 
-use LibCurl::Easy;
+use LibCurl::HTTP;
 
 my $version = LibCurl::HTTP.version;
 

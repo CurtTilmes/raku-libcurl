@@ -69,7 +69,7 @@ A [Perl 6](https://perl6.org/) interface to
 If even those aren't easy enough, there is a tiny sub-class
 **LibCurl::HTTP** that adds aliases for the common HTTP methods:
 
-    use LibCurl::Easy;
+    use LibCurl::HTTP;
 
     my $http = LibCurl::HTTP.new;
 

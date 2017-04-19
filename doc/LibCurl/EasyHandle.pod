@@ -4,7 +4,7 @@
 
 LibCurl::EasyHandle
 
-=head2 SYNOPSIS
+=head1 SYNOPSIS
 
   use LibCurl::EasyHandle;
 
@@ -24,7 +24,7 @@ LibCurl::EasyHandle
 
   curl_global_cleanup;
 
-=head2 DESCRIPTION
+=head1 DESCRIPTION
 
 C<LibCurl::EasyHandle> is the low level NativeCall interface to
 libcurl's easy interface.  In general you should be using the
