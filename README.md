@@ -373,7 +373,8 @@ specified.
 
 [libcurl](https://curl.haxx.se/libcurl) has great proxy support, and
 you should be able to specify anything needed as options to LibCurl to
-use them.
+use them.  The easiest for most common cases is to just set the
+[proxy](https://curl.haxx.se/libcurl/c/CURLOPT_PROXY.html} option.
 
 ## Multi
 
