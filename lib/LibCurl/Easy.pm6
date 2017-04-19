@@ -259,7 +259,7 @@ class LibCurl::Easy
 
     method error() returns Str { nativecast(Str, $!errorbuffer) }
 
-    method get-header($field) returns Str { %!receiveheaders{$field} }
+    method get-header(Str $field) returns Str { %!receiveheaders{$field} }
 
     method setopt(*%options)
     {
@@ -344,6 +344,7 @@ class LibCurl::Easy
     {
         $!header-slist.free if $!header-slist;
         $!header-slist = LibCurl::slist;
+	return self;
     }
 
     method set-header(*%headers)
@@ -384,7 +385,7 @@ class LibCurl::Easy
         }
     }
 
-    method perform()
+    method perform() returns LibCurl::Easy
     {
         self.prepare;
 
@@ -429,7 +430,7 @@ class LibCurl::Easy
         }
     }
 
-    multi method getinfo(*@fields)
+    multi method getinfo(*@fields) returns Hash
     {
         my %info;
         for @fields {
@@ -438,7 +439,7 @@ class LibCurl::Easy
         return %info;
     }
 
-    multi method getinfo()
+    multi method getinfo() returns Hash
     {
         self.getinfo(%infofields.keys);
     }
@@ -552,6 +553,110 @@ to C<.setopt> after object creation.
 Returns human readable version of the curl library.  Can be called on
 a LibCurl::Easy object:
 
-  $curl
+  say $curl.version;
+
+or on the LibCurl::Easy type directly as a class method:
+
+  say LibCurl::Easy.version;
+
+=item method B<set-header>(*%headers) returns LibCurl::Easy
+
+Set header => 'value' pairs in headers to be sent with a request
+
+=item method B<clear-header>() returns LibCurl::Easy
+
+Clear 'extra' outgoing headers.
+
+=item method B<setopt>(*%options) returns LibCurl::Easy
+
+Pass options and parameters.  See ... for a description of the
+options.
+
+=item method B<perform>() returns LibCurl::Easy
+
+Perform the transaction for this handle.  As an alternative, the
+B<LibCurl::Easy> handle can be added to a B<LibCurl::Multi> object in
+which case you don't call perform directly.
+
+=item method B<buf>() returns Buf
+
+Received content as a Buf.
+
+=item method B<content>($encoding = 'utf-8') returns Str
+
+Received content decoded to a Str.
+
+=item method B<error>() returns Str
+
+Human readable "extra" error information that may or may not be
+available after an error condition.
+
+=item method B<receivedheaders>() returns Hash
+
+A Hash of all received headers from the last transaction.
+
+=item method B<get-header>(Str $field) returns Str
+
+Get a single from the received headers.
+
+=item multi method B<getinfo>(Str $info)
+
+Returns a single info object.  See ... for a description of all the
+info fields.
+
+=item multi method B<getinfo>(*@fields) returns Hash
+
+Get a hash of specific info fields.
+
+=item multi method B<getinfo>() returns Hash
+
+Get all info fields into a Hash.
+
+=item method B<cleanup>()
+
+Finish with the handle.  If you don't call this explicitly, it will be
+taken care of with a C<DESTROY> handler by the garbage collector, but
+the timing of that event is uncertain.
+
+Some things, such as the writing of the cookiejar file happen only on
+cleanup, so it may be useful to explicitly call.
+
+You can use Perl 6 phasers to make calling this easy:
+
+    {
+        my $curl will leave { .cleanup } = LibCurl::Easy.new;
+    }
+
+As soon as the scope ends, the LEAVE phaser will call the cleanup
+method on the LibCurl::Easy object.  This happens even if an exception
+causes premature exit from the scope.
+
+=item method B<FALLBACK>()
+
+There is a convenience FALLBACK method that catches other methods.  It
+checks for three things:
+
+Is the method an OPTION?  If so, call C<$curl.setopt()>.
+
+Is the method a received header?  If so, return it.
+
+Is the method an INFO field?  If so call C<$curl.getinfo()>.
+
+This makes it very easy to do things like:
+
+   $curl.URL("http://example.com");
+   $curl.download('myfile');
+
+   say $curl.Content-Type;
+   say $curl.ETag;
+   say $curl.Date;
+   say $curl.speed-download;
+
+See ... or ... for the lists.
+
+=head1 OPTIONS
+
+=head1 INFO fields
+
 
 =end pod
