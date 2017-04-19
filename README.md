@@ -1,5 +1,16 @@
 # Perl6 LibCurl
 
+[Simple Examples](#simple-examples)
+[Options](#options)
+[Header Options](#header-options)
+[Special Options](#special-options)
+[Errors](#errors)
+[Info](#info)
+[Received headers](#received-header-fields)
+[Content](#content)
+[Proxies](#proxies)
+[Multi](#multi)
+
 A [Perl 6](https://perl6.org/) interface to
 [libcurl](https://curl.haxx.se/libcurl/).
 
@@ -28,22 +39,30 @@ A [Perl 6](https://perl6.org/) interface to
 
     # GET
     print LibCurl::Easy.new(URL => 'http://example.com').perform.content;
+    
+    # GET (download a file)
+    LibCurl::Easy.new(URL => 'http://example.com/somefile',
+                      download => 'somefile').perform;
 
     # HEAD
     say LibCurl::Easy.new(:nobody, URL => 'http://example.com')
         .perform.response-code;
 
-    # PUT
-    LibCurl::Easy.new(URL => 'http://example.com',
+    # PUT (upload a file)
+    LibCurl::Easy.new(URL => http://example.com/somefile',
+                      upload => 'somefile').perform;
+
+    # PUT (content from a string)
+    LibCurl::Easy.new(URL => 'http://example.com/somefile',
                       send => 'My Content').perform;
 
-    # DELETE
+     # DELETE
     LibCurl::Easy.new(URL => 'http://example.com/file-to-delete',
                       customrequest => 'DELETE').perform;
 
     # POST
     LibCurl::Easy.new(URL => 'http://example.com/form.html',
-                      postfields => 'name=foo&opt=value');
+                      postfields => 'name=foo&opt=value').perform;
 
 ## LibCurl::HTTP
 
@@ -64,7 +83,7 @@ If even those aren't easy enough, there is a tiny sub-class
 
     $http.PUT('http://example.com', 'myfile').perform;
 
-    $http.POST('http://example.com/form.html', 'name=foo&opt=value');
+    $http.POST('http://example.com/form.html', 'name=foo&opt=value').perform;
 
 ## Fancier Example
 
@@ -354,7 +373,8 @@ specified.
 
 [libcurl](https://curl.haxx.se/libcurl) has great proxy support, and
 you should be able to specify anything needed as options to LibCurl to
-use them.
+use them.  The easiest for most common cases is to just set the
+[proxy](https://curl.haxx.se/libcurl/c/CURLOPT_PROXY.html) option.
 
 ## Multi
 
