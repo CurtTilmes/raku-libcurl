@@ -164,6 +164,7 @@ me know):
 [ftp-use-epsv](https://curl.haxx.se/libcurl/c/CURLOPT_FTP_USE_EPSV.html)
 [ftpport](https://curl.haxx.se/libcurl/c/CURLOPT_FTPPORT.html)
 [header](https://curl.haxx.se/libcurl/c/CURLOPT_HEADER.html)
+[http-version](https://curl.haxx.se/libcurl/c/CURLOPT_HTTP_VERSION.html)
 [httpauth](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPAUTH.html)
 [httpget](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPGET.html)
 [httpproxytunnel](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPPROXYTUNNEL.html)

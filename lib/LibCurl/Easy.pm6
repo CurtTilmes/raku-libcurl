@@ -21,6 +21,13 @@ enum CURLAUTH is export (
     CURLAUTH_ONLY         => 1 +< 31,
 );
 
+enum CURL_HTTP_VERSION_ENUM <
+    CURL_HTTP_VERSION_NONE
+    CURL_HTTP_VERSION_1_0
+    CURL_HTTP_VERSION_1_1
+    CURL_HTTP_VERSION_2_0
+>;
+
 enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG CURLOPT_OFF_T
     LIBCURL_HEADER LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND
     LIBCURL_DEBUG LIBCURL_XFER LIBCURL_PRIVATE>;
@@ -50,6 +57,7 @@ my %opts =
     ftp-use-epsv         => (CURLOPT_FTP_USE_EPSV,         CURLOPT_LONG     ),
     ftpport              => (CURLOPT_FTPPORT,              CURLOPT_STR      ),
     header               => (CURLOPT_HEADER,               CURLOPT_BOOL     ),
+    http-version         => (CURLOPT_HTTP_VERSION,         CURLOPT_LONG     ),
     httpauth             => (CURLOPT_HTTPAUTH,             CURLOPT_LONG     ),
     httpget              => (CURLOPT_HTTPGET,              CURLOPT_BOOL     ),
     httpproxytunnel      => (CURLOPT_HTTPPROXYTUNNEL,      CURLOPT_BOOL     ),
