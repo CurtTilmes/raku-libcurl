@@ -2,7 +2,6 @@ use v6;
 
 use NativeCall;
 
-use LibCurl::EasyHandle;
 use LibCurl::Easy;
 use LibCurl::MultiHandle;
 
@@ -21,6 +20,7 @@ class LibCurl::Multi
 {
     has LibCurl::MultiHandle $.multi;
     has %.easy-handles;
+    has $.easy-handles-lock = Lock.new;
     has &.callback;
 
     method new(|opts) returns LibCurl::Multi
@@ -57,7 +57,9 @@ class LibCurl::Multi
         for @handles -> $easy
         {
             $easy.prepare;
-            %!easy-handles{$easy.handle.id} = $easy;
+            $!easy-handles-lock.protect({
+                %!easy-handles{$easy.handle.id} = $easy;
+            });
             $!multi.add-handle($easy.handle);
         }
         return self;
@@ -68,7 +70,9 @@ class LibCurl::Multi
         for @handles -> $easy
         {
             $!multi.remove-handle($easy.handle);
-            %!easy-handles{$easy.handle.id}:delete;
+            $!easy-handles-lock.protect({
+                %!easy-handles{$easy.handle.id}:delete;
+            });
         }
         return self;
     }

@@ -4,10 +4,13 @@ use NativeCall;
 use LibCurl::EasyHandle;
 
 my %allhandles;
+my $allhandles-lock = Lock.new;
 
 # Re-export symbols user might want from EasyHandle
 my package EXPORT::DEFAULT { }
 BEGIN for <
+
+    CURLE_OK
 
     CURL_HTTP_VERSION_NONE
     CURL_HTTP_VERSION_1_0
@@ -274,7 +277,7 @@ class LibCurl::Easy
         $errorbuffer[0] = 0;
         $errorbuffer[CURL_ERROR_SIZE] = 0;
         my $self = self.bless(:$handle, :$errorbuffer);
-        %allhandles{$handle.id} = $self;
+        $allhandles-lock.protect({ %allhandles{$handle.id} = $self });
         $handle.setopt(CURLOPT_HEADERDATA, $handle);
         $handle.setopt(CURLOPT_HEADERFUNCTION, &headerfunction);
         $handle.setopt(CURLOPT_ERRORBUFFER, $errorbuffer);
@@ -492,7 +495,7 @@ class LibCurl::Easy
         fclose($!download-fh) if $!download-fh;
         fclose($!upload-fh) if $!upload-fh;
         $!download-fh = $!upload-fh = Pointer;
-        %allhandles{$!handle.id}:delete;
+        $allhandles-lock.protect({ %allhandles{$!handle.id}:delete });
         .cleanup with $!handle;
         $!handle = LibCurl::EasyHandle;
     }
