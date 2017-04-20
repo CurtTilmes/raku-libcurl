@@ -27,7 +27,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-**LibCurl::EasyHandle** is the low level NativeCall interface to libcurl's easy interface. In general you should be using the **LibCurl::Easy** interface instead.
+**LibCurl::EasyHandle** is the low level NativeCall interface to libcurl's easy interface. In general you should be using the [LibCurl::Easy](LibCurl::Easy) interface instead.
 
 SUBROUTINES
 -----------
