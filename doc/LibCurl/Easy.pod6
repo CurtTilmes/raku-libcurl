@@ -41,7 +41,7 @@ to C<.setopt> after object creation.
 =item method B<version>() returns Str
 
 Returns human readable version of the curl library.  Can be called on
-a LibCurl::Easy object:
+a C<LibCurl::Easy> object:
 
   say $curl.version;
 
@@ -65,7 +65,7 @@ options.
 =item method B<perform>() returns LibCurl::Easy
 
 Perform the transaction for this handle.  As an alternative, the
-B<LibCurl::Easy> handle can be added to a B<LibCurl::Multi> object in
+C<LibCurl::Easy> handle can be added to a C<LibCurl::Multi> object in
 which case you don't call perform directly.
 
 =item method B<buf>() returns Buf
@@ -78,8 +78,10 @@ Received content decoded to a Str.
 
 =item method B<error>() returns Str
 
-Human readable "extra" error information that may or may not be
-available after an error condition.
+Human readable
+L<"extra"|https://curl.haxx.se/libcurl/c/CURLOPT_ERRORBUFFER.html>
+error information that may or may not be available after an error
+condition.
 
 =item method B<receivedheaders>() returns Hash
 
@@ -146,7 +148,10 @@ See ... or ... for the lists.
 
 =head1 OPTIONS
 
+...TODO...
+
 =head1 INFO fields
 
+...TODO...
 
 =end pod
