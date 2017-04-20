@@ -28,7 +28,7 @@ is $curl.ETag, '"21025-dc7-39462498"', 'Etag';
 
 is $server.input,
 "GET /77 HTTP/1.1
-Host: 127.0.0.1:8990
+Host: $HOSTIP:$HTTPPORT
 Accept: */*
 If-Modified-Since: Sun, 12 Dec 1999 12:00:00 GMT
 
