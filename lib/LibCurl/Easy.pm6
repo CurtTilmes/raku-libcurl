@@ -336,7 +336,7 @@ class LibCurl::Easy
                 when LIBCURL_SEND {
                     given $param {
                         when Buf { $!sendbuf = $param }
-                        when Str { $!sendbuf = Buf.new($param.encode) }
+                        when Str { $!sendbuf = $param.encode }
                         default  { die "Don't know how to send $param" }
                     }
                     $!sendindex = 0;
