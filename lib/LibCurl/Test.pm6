@@ -6,6 +6,8 @@ our $HOSTIP is export = %*ENV{'PERL6-LIBCURL-HOSTIP'} // '127.0.0.1';
 
 our $HTTPPORT is export = %*ENV{'PERL6-LIBCURL-HTTPPORT'} // 8990;
 
+our $PROXYPORT is export = %*ENV{'PERL6-LIBCURL-PROXYPORT'} // 9013;
+
 my $CURL-TEST-DIR = %*ENV{'PERL6-LIBCURL-TESTDIR'}
                     // $*PROGRAM.parent.child('../../curl/tests');
 
@@ -19,7 +21,7 @@ class LibCurl::Test
     {
         indir $CURL-TEST-DIR,
         { 
-            unlink <log/server.input log/server.response log/http_server.log>;
+            unlink <log/server.input log/server.response>;
 
             return if self.running;
 
@@ -38,9 +40,37 @@ class LibCurl::Test
         };
     }
 
+    method start-proxy
+    {
+        indir $CURL-TEST-DIR,
+        { 
+            unlink <log/proxy.input log/proxy.response>;
+
+            return if self.running-proxy;
+
+            if fork() == 0
+            {
+                daemon(1, 0);
+
+                my $cmd = shell "./httpserver.pl --connect $HOSTIP --pidfile .http2_server.pid --logfile log/http2_server.log --id 2 --ipv4 --port $PROXYPORT --srcdir . &", :out;
+
+                $cmd.out.close;
+
+                sysexit 0;
+            }
+
+            sleep 2;
+        };
+    }
+
     method running()
     {
         '.http_server.pid'.IO.e;
+    }
+
+    method running-proxy()
+    {
+        '.http2_server.pid'.IO.e;
     }
 
     method stop()
@@ -50,6 +80,18 @@ class LibCurl::Test
             while self.running
             {
                 shell Q<kill `cat .http_server.pid`>;
+                sleep 1;
+            }
+        };
+    }
+
+    method stop-proxy()
+    {
+        indir $CURL-TEST-DIR,
+        {
+            while self.running
+            {
+                shell Q<kill `cat .http2_server.pid`>;
                 sleep 1;
             }
         };
@@ -65,6 +107,11 @@ class LibCurl::Test
     method input()
     {
         $CURL-TEST-DIR.child('log/server.input').slurp;
+    }
+
+    method input-proxy()
+    {
+        $CURL-TEST-DIR.child('log/proxy.input').slurp;
     }
 
     method response()
