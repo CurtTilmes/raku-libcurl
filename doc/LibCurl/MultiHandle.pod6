@@ -45,8 +45,9 @@ LibCurl::MultiHandle
 =head1 DESCRIPTION
 
 C<LibCurl::MultiHandle> is the low level NativeCall interface to
-libcurl's multi interface. In general you should be using the
-C<LibCurl::Multi> interface instead.
+libcurl's L<multi
+interface|https://curl.haxx.se/libcurl/c/libcurl-multi.html>. In
+general you should be using the C<LibCurl::Multi> interface instead.
 
 =head1 CLASSES
 
@@ -67,7 +68,7 @@ Exception, just like L<X::LibCurl>, but for B<CURLMcode>.
 =item method B<message>() returns Str
 
 Returns the Str version of the errror with
-L<B<curl_multi_strerror|>https://curl.haxx.se/libcurl/c/curl_multi_strerror.html>.
+L<B<curl_multi_strerror>|https://curl.haxx.se/libcurl/c/curl_multi_strerror.html>.
 
 =head3 class B<LibCurl::MultiHandle> is repr('CPointer')
 
@@ -76,32 +77,32 @@ Wrapper for pointer to a B<struct CURLM>.
 =item method B<new>() returns LibCurl::MultiHandle
 
 Wrapper for
-L<B<curl_multi_init|>https://curl.haxx.se/libcurl/c/curl_multi_init.html>.
+L<B<curl_multi_init>|https://curl.haxx.se/libcurl/c/curl_multi_init.html>.
 
 =item method B<cleanup>()
 
 Wrapper for
-L<B<curl_multi_cleanup|>https://curl.haxx.se/libcurl/c/curl_multi_cleanup.html>.
+L<B<curl_multi_cleanup>|https://curl.haxx.se/libcurl/c/curl_multi_cleanup.html>.
 
 =item method B<add-handle>(LibCurl::EasyHandle $handle)
 
 Wrapper for
-L<B<curl_multi_add_handle|>https://curl.haxx.se/libcurl/c/curl_multi_add_handle.html>.
+L<B<curl_multi_add_handle>|https://curl.haxx.se/libcurl/c/curl_multi_add_handle.html>.
 
-=item method B<remove-handle(LibCurl::EasyHandle $handle)
+=item method B<remove-handle>(LibCurl::EasyHandle $handle)
 
 Wrapper for
-L<B<curl_multi_remove_handle|>https://curl.haxx.se/libcurl/c/curl_multi_remove_handle.html>.
+L<B<curl_multi_remove_handle>|https://curl.haxx.se/libcurl/c/curl_multi_remove_handle.html>.
 
 =item multi method B<setopt>($option, long $param)
 
 Wrapper for
-L<B<curl_multi_setopt|>https://curl.haxx.se/libcurl/c/curl_multi_setopt.html>.
+L<B<curl_multi_setopt>|https://curl.haxx.se/libcurl/c/curl_multi_setopt.html>.
 
 =item method B<perform>(int32 $running-handles is rw)
 
 Wrapper for
-L<B<curl_multi_perform|>https://curl.haxx.se/libcurl/c/curl_multi_perform.html.
+L<B<curl_multi_perform>|https://curl.haxx.se/libcurl/c/curl_multi_perform.html.
 
 If B<CURLM_CALL_MULTI_PERFORM> is returned, perform is immediately
 called again.
@@ -109,11 +110,11 @@ called again.
 =item method B<wait>(int32 $timeout-ms, int32 $numfds is rw)
 
 Wrapper for
-L<B<curl_multi_wait|>https://curl.haxx.se/libcurl/c/curl_multi_wait.html>.
+L<B<curl_multi_wait>|https://curl.haxx.se/libcurl/c/curl_multi_wait.html>.
 
 =item method B<info>(int32 $msgs-in-queue is rw) returns LibCurl::CURLMsg
 
 Wrapper for
-L<B<curl_multi_info_read|>https://curl.haxx.se/libcurl/c/curl_multi_info_read.html>.
+L<B<curl_multi_info_read>|https://curl.haxx.se/libcurl/c/curl_multi_info_read.html>.
 
 =end pod
