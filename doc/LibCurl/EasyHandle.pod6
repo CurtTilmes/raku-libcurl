@@ -27,8 +27,9 @@ LibCurl::EasyHandle
 =head1 DESCRIPTION
 
 B<LibCurl::EasyHandle> is the low level NativeCall interface to
-libcurl's easy interface.  In general you should be using the
-B<LibCurl::Easy> interface instead.
+libcurl's L<easy
+interface|https://curl.haxx.se/libcurl/c/libcurl-easy.html>.  In
+general you should be using the B<LibCurl::Easy> interface instead.
 
 =head2 SUBROUTINES
 
