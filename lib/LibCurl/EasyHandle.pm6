@@ -38,6 +38,22 @@ enum CURL_NETRC <
     CURL_NETRC_REQUIRED
 >;
 
+enum CURLPROXY (
+    CURLPROXY_HTTP             => 0,
+    CURLPROXY_HTTP_1_0         => 1,
+    CURLPROXY_SOCKS4           => 4,
+    CURLPROXY_SOCKS5           => 5,
+    CURLPROXY_SOCKS4A          => 6,
+    CURLPROXY_SOCKS5_HOSTNAME  => 7,
+);
+
+enum CURLUSESSL <
+    CURLUSESSL_NONE
+    CURLUSESSL_TRY
+    CURLUSESSL_CONTROL
+    CURLUSESSL_ALL
+>;
+
 constant CURLE_OK                           = 0;
 
 constant CURL_ERROR_SIZE                    = 256;
@@ -49,18 +65,6 @@ constant CURL_GLOBAL_ALL                    = CURL_GLOBAL_SSL +|
 constant CURL_GLOBAL_NOTHING                = 0;
 constant CURL_GLOBAL_DEFAULT                = CURL_GLOBAL_ALL;
 constant CURL_GLOBAL_ACK_EINTR              = 1 +< 2;
-
-constant CURLPROXY_HTTP                     = 0;
-constant CURLPROXY_HTTP_1_0                 = 1;
-constant CURLPROXY_SOCKS4                   = 4;
-constant CURLPROXY_SOCKS5                   = 5;
-constant CURLPROXY_SOCKS4A                  = 6;
-constant CURLPROXY_SOCKS5_HOSTNAME          = 7;
-
-constant CURLUSESSL_NONE                    = 0;
-constant CURLUSESSL_TRY                     = 1;
-constant CURLUSESSL_CONTROL                 = 2;
-constant CURLUSESSL_ALL                     = 3;
 
 constant CURLINFO_STRING                    = 0x100000;
 constant CURLINFO_LONG                      = 0x200000;
