@@ -124,6 +124,16 @@ L<B<curl_easy_reset>|https://curl.haxx.se/libcurl/c/curl_easy_reset.html>.
 Wrapper for
 L<B<curl_easy_duphandle>|https://curl.haxx.se/libcurl/c/curl_easy_duphandle.html>.
 
+=item method B<escape>(Str $str, $encoding = 'utf-8')
+
+Wrapper for
+L<B<curl_easy_escape>|https://curl.haxx.se/libcurl/c/curl_easy_escape.html>.
+
+=item method B<unescape>(Str $str, $encoding = 'utf-8')
+
+Wrapper for
+L<B<curl_easy_unescape>|https://curl.haxx.se/libcurl/c/curl_easy_unescape.html>.
+
 =item method B<perform>() return uint32
 
 Wrapper for

@@ -109,6 +109,14 @@ Wrapper for [**curl_easy_reset**](https://curl.haxx.se/libcurl/c/curl_easy_reset
 
 Wrapper for [**curl_easy_duphandle**](https://curl.haxx.se/libcurl/c/curl_easy_duphandle.html).
 
+  * method **escape**(Str $str, $encoding = 'utf-8')
+
+Wrapper for [**curl_easy_escape**](https://curl.haxx.se/libcurl/c/curl_easy_escape.html).
+
+  * method **unescape**(Str $str, $encoding = 'utf-8')
+
+Wrapper for [**curl_easy_unescape**](https://curl.haxx.se/libcurl/c/curl_easy_unescape.html).
+
   * method **perform**() return uint32
 
 Wrapper for [**curl_easy_perform**](https://curl.haxx.se/libcurl/c/curl_easy_perform.html).
