@@ -40,6 +40,11 @@ BEGIN for <
     CURL_NETRC_OPTIONAL
     CURL_NETRC_REQUIRED
 
+    CURL_TIMECOND_NONE
+    CURL_TIMECOND_IFMODSINCE
+    CURL_TIMECOND_IFUNMODSINCE
+    CURL_TIMECOND_LASTMOD
+
     CURLPROXY_HTTP
     CURLPROXY_HTTP_1_0
     CURLPROXY_SOCKS4
@@ -114,8 +119,10 @@ my %opts =
     resume-from          => (CURLOPT_RESUME_FROM_LARGE,    CURLOPT_OFF_T    ),
     ssl-verifyhost       => (CURLOPT_SSL_VERIFYHOST,       CURLOPT_LONG     ),
     ssl-verifypeer       => (CURLOPT_SSL_VERIFYPEER,       CURLOPT_BOOL     ),
+    timecondition        => (CURLOPT_TIMECONDITION,        CURLOPT_LONG     ),
     timeout              => (CURLOPT_TIMEOUT,              CURLOPT_LONG     ),
     timeout-ms           => (CURLOPT_TIMEOUT_MS,           CURLOPT_LONG     ),
+    timevalue            => (CURLOPT_TIMEVALUE,            CURLOPT_LONG     ),
     unrestricted-auth    => (CURLOPT_UNRESTRICTED_AUTH,    CURLOPT_BOOL     ),
     use-ssl              => (CURLOPT_USE_SSL,              CURLOPT_LONG     ),
     useragent            => (CURLOPT_USERAGENT,            CURLOPT_STR      ),
