@@ -168,6 +168,7 @@ me know):
 [httpauth](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPAUTH.html)
 [httpget](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPGET.html)
 [httpproxytunnel](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPPROXYTUNNEL.html)
+[infilesize](https://curl.haxx.se/libcurl/c/CURLOPT_INFILESIZE_LARGE.html)
 [low-speed-limit](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
 [low-speed-time](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
 [maxconnects](https://curl.haxx.se/libcurl/c/CURLOPT_MAXCONNECTS.html)
@@ -212,8 +213,8 @@ In addition to the normal libcurl special options that set headers
 [cookie](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIE.html)), there
 are some extra options for headers:
 
-```Content-MD5```, ```Content-Type```, ```Host```, ```Accept```,
-```Expect```.
+`Content-MD5`, `Content-Type`, `Content-Length`, `Host`, `Accept`,
+`Expect`.
 
     $curl.Host('somewhere.com');  # or $curl.setopt(Host => 'somewhere.com')
     $curl.Content-MD5('...');     # or $curl.setopt(Content-MD5 => '...')

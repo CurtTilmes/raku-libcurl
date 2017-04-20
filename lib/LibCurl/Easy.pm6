@@ -85,6 +85,7 @@ my %opts =
     httpauth             => (CURLOPT_HTTPAUTH,             CURLOPT_LONG     ),
     httpget              => (CURLOPT_HTTPGET,              CURLOPT_BOOL     ),
     httpproxytunnel      => (CURLOPT_HTTPPROXYTUNNEL,      CURLOPT_BOOL     ),
+    infilesize           => (CURLOPT_INFILESIZE_LARGE,     CURLOPT_OFF_T    ),
     low-speed-limit      => (CURLOPT_LOW_SPEED_LIMIT,      CURLOPT_LONG     ),
     low-speed-time       => (CURLOPT_LOW_SPEED_TIME,       CURLOPT_LONG     ),
     maxconnects          => (CURLOPT_MAXCONNECTS,          CURLOPT_LONG     ),
@@ -122,6 +123,7 @@ my %opts =
     wildcardmatch        => (CURLOPT_WILDCARDMATCH,        CURLOPT_BOOL     ),
     Content-MD5          => (0,                            LIBCURL_HEADER   ),
     Content-Type         => (0,                            LIBCURL_HEADER   ),
+    Content-Length       => (0,                            LIBCURL_HEADER   ),
     Host                 => (0,                            LIBCURL_HEADER   ),
     Accept               => (0,                            LIBCURL_HEADER   ),
     Expect               => (0,                            LIBCURL_HEADER   ),
@@ -256,9 +258,9 @@ class LibCurl::Easy
     has $.statusline is rw;
     has Pointer $.upload-fh;
     has Pointer $.download-fh;
-    has Buf $.sendbuf;
+    has Blob $.sendbuf;
     has Int $.sendindex is rw;
-    has Buf $.buf is rw;
+    has Blob $.buf is rw;
     has $.errorbuffer;
     has &.debugfunction;
     has &.xferinfofunction;
