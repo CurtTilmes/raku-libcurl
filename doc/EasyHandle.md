@@ -27,7 +27,7 @@ SYNOPSIS
 DESCRIPTION
 ===========
 
-`LibCurl::EasyHandle` is the low level NativeCall interface to libcurl's easy interface. In general you should be using the `LibCurl::Easy` interface instead.
+**LibCurl::EasyHandle** is the low level NativeCall interface to libcurl's easy interface. In general you should be using the **LibCurl::Easy** interface instead.
 
 SUBROUTINES
 -----------
@@ -65,21 +65,21 @@ Wrapper for **struct curl_slist**.
 
   * has Str $.data
 
-  * has Poitner $.next
+  * has Pointer $.next
 
 ### class **LibCurl::slist** is repr('CPointer')
 
 Wrapper for a pointer to a **struct curl_slist**.
 
-  * method append(*@str-list) returns LibCurl::slist
+  * method **append**(*@str-list) returns LibCurl::slist
 
 Wrapper for [**curl_slist_append**](https://curl.haxx.se/libcurl/c/curl_slist_append.html), but can take a list of strings and they all get appended.
 
-  * method list() returns Array
+  * method **list**() returns Array
 
 Extract the list of strings into a Perl Array.
 
-  * method free()
+  * method **free**()
 
 Wrapper for [**curl_slist_free_all**](https://curl.haxx.se/libcurl/c/curl_slist_free_all.html).
 

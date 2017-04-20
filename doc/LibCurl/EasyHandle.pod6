@@ -26,9 +26,9 @@ LibCurl::EasyHandle
 
 =head1 DESCRIPTION
 
-C<LibCurl::EasyHandle> is the low level NativeCall interface to
+B<LibCurl::EasyHandle> is the low level NativeCall interface to
 libcurl's easy interface.  In general you should be using the
-C<LibCurl::Easy> interface instead.
+B<LibCurl::Easy> interface instead.
 
 =head2 SUBROUTINES
 
@@ -70,23 +70,23 @@ L<B<curl_easy_strerror>|https://curl.haxx.se/libcurl/c/curl_easy_strerror.html>.
 Wrapper for B<struct curl_slist>.
 
 =item has Str $.data
-=item has Poitner $.next
+=item has Pointer $.next
 
 =head3 class B<LibCurl::slist> is repr('CPointer')
 
 Wrapper for a pointer to a B<struct curl_slist>.
 
-=item method append(*@str-list) returns LibCurl::slist
+=item method B<append>(*@str-list) returns LibCurl::slist
 
 Wrapper for
 L<B<curl_slist_append>|https://curl.haxx.se/libcurl/c/curl_slist_append.html>,
 but can take a list of strings and they all get appended.
 
-=item method list() returns Array
+=item method B<list>() returns Array
 
 Extract the list of strings into a Perl Array.
 
-=item method free()
+=item method B<free>()
 
 Wrapper for
 L<B<curl_slist_free_all>|https://curl.haxx.se/libcurl/c/curl_slist_free_all.html>.
