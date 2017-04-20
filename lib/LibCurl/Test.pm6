@@ -11,6 +11,7 @@ my $CURL-TEST-DIR = %*ENV{'PERL6-LIBCURL-TESTDIR'}
 
 sub fork() returns int32 is native { * }
 sub daemon(int32 $nochdir, int32 $noclose) returns int32 is native { * }
+sub sysexit(int32 $status) is symbol('exit') is native { * }
 
 class LibCurl::Test
 {
@@ -18,30 +19,47 @@ class LibCurl::Test
     {
         indir $CURL-TEST-DIR,
         { 
-            unlink <log/server.input log/server.response>;
+            unlink <log/server.input log/server.response log/http_server.log>;
 
-            return if '.http_server.pid'.IO.e;
+            return if self.running;
 
             if fork() == 0
             {
                 daemon(1, 0);
 
-                shell "./httpserver.pl --pidfile .http_server.pid --logfile log/http_server.log --ipv4 --port $HTTPPORT --srcdir .";
+                my $cmd = shell "./httpserver.pl --pidfile .http_server.pid --logfile log/http_server.log --ipv4 --port $HTTPPORT --srcdir . &", :out;
 
-                exit 0;
+                $cmd.out.close;
+
+                sysexit 0;
             }
 
-            sleep 1;
+            sleep 2;
         };
+    }
+
+    method running()
+    {
+        '.http_server.pid'.IO.e;
     }
 
     method stop()
     {
         indir $CURL-TEST-DIR,
         {
-            shell Q<kill `cat .http_server.pid`>;
-            sleep 1;
+            while self.running
+            {
+                shell Q<kill `cat .http_server.pid`>;
+                sleep 1;
+            }
         };
+    }
+
+    method restart()
+    {
+        self.stop;
+        sleep 2;
+        self.start;
     }
 
     method input()
