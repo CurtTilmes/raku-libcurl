@@ -27,6 +27,4 @@ Accept: */*
 
 ", 'input';
 
-$server.stop;
-
 done-testing;
