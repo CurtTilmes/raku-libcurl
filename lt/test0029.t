@@ -20,6 +20,6 @@ throws-like { $curl.perform }, X::LibCurl,
 throws-like { $curl.perform }, X::LibCurl,
     Int => 28;
 
-sleep 10;
+$server.stop;
 
 done-testing;
