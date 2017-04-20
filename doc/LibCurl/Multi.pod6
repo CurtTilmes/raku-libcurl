@@ -1,0 +1,71 @@
+=begin pod
+
+=head1 NAME
+
+LibCurl::Multi
+
+=head1 SYNOPSIS
+
+  use LibCurl::Easy;
+  use LibCurl::Multi;
+
+  my $curl = LibCurl::Easy.new(URL => 'http://example.com');
+
+  sub callback(LibCurl::Easy $easy, Exception $e)
+  {
+      die $e if $e;
+      say $easy.statusline;
+  }
+
+  my $multi = LibCurl::Multi.new(callback => &callback);
+
+  $multi.add-handle($curl);
+
+  $multi.perform;
+
+=head1 DESCRIPTION
+
+This is a high-level interface to the libcurl L<multi
+interface|https://curl.haxx.se/libcurl/c/libcurl-multi.html>.
+
+It wraps the low-level interface provided in L<LibCurl::MultiHandle>
+in some high level constructs that make it a little easier to work
+with.
+
+=head2 class B<LibCurl::Multi>
+
+=item method B<new>(*%options) returns LibCurl::Multi
+
+Creates a new C<LibCurl::Multi> object.  You can optionally pass in
+options and they will get passed directly to C<.setopt> after object
+creation.
+
+=item method B<setopt>(*%options) returns LibCurl::Multi
+
+Pass options and parameters.  See ... for a description of the
+options.
+
+A special extra option C<callback> allows you to specify a callback
+function that will get called when any C<LibCurl::Easy> completes its
+work.
+
+=item method B<add-handle>(*@handles) returns LibCurl::Multi
+
+Add C<LibCurl::Easy> objects to the C<LibCurl::Multi>.
+
+=item method B<remove-handle>(*@handles) returns LibCurl::Multi
+
+Remove C<LibCurl::Easy> objects from the C<LibCurl::Multi>.
+
+In general you shouldn't need to remove them directly, they will get
+removed as they complete.  If you want to abort a transfer for any
+reason, you can remove them prior to that.
+
+=item method B<perform>($timeout-ms = 1000) returns LibCurl::Multi
+
+Main loop to perform all the transfers.
+
+As each transfer completes, the handles are removed, and if a callback
+is set, that gets called.
+
+=end pod

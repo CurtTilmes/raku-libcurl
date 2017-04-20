@@ -1,6 +1,7 @@
 use v6;
 
 use NativeCall;
+
 use LibCurl::EasyHandle;
 use LibCurl::Easy;
 use LibCurl::MultiHandle;
@@ -22,14 +23,14 @@ class LibCurl::Multi
     has %.easy-handles;
     has &.callback;
 
-    method new(|opts)
+    method new(|opts) returns LibCurl::Multi
     {
         my $self = self.bless(multi => LibCurl::MultiHandle.new);
         $self.setopt(|opts);
         return $self;
     }
 
-    method setopt(*%options)
+    method setopt(*%options) returns LibCurl::Multi
     {
         for %options.kv -> $option, $param
         {
@@ -51,7 +52,7 @@ class LibCurl::Multi
         return self;
     }
 
-    method add-handle(*@handles)
+    method add-handle(*@handles) returns LibCurl::Multi
     {
         for @handles -> $easy
         {
@@ -62,7 +63,7 @@ class LibCurl::Multi
         return self;
     }
 
-    method remove-handle(*@handles)
+    method remove-handle(*@handles) returns LibCurl::Multi
     {
         for @handles -> $easy
         {
@@ -96,6 +97,7 @@ class LibCurl::Multi
                            !! X::LibCurl.new(code => $msg.code));
             }
         } while $running-handles;
+
         return self;
     }
 

@@ -23,8 +23,8 @@ This is a high-level interface to [libcurl](https://curl.haxx.se/libcurl), a fre
 
 It wraps the low-level interface provided in [LibCurl::EasyHandle](LibCurl::EasyHandle) in some high level constructs that make it a little easier to work with libcurl from Perl.
 
-class <LibCurl::Easy>
----------------------
+class **LibCurl::Easy**
+-----------------------
 
 The main class for `LibCurl::Easy`.
 

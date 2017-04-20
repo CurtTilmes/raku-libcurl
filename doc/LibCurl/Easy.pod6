@@ -26,7 +26,7 @@ It wraps the low-level interface provided in L<LibCurl::EasyHandle> in
 some high level constructs that make it a little easier to work with
 libcurl from Perl.
 
-=head2 class <LibCurl::Easy>
+=head2 class B<LibCurl::Easy>
 
 The main class for C<LibCurl::Easy>.
 
