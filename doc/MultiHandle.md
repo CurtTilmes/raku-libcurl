@@ -99,9 +99,9 @@ Wrapper for [**curl_multi_setopt**](https://curl.haxx.se/libcurl/c/curl_multi_se
 
   * method **perform**(int32 $running-handles is rw)
 
-Wrapper for [**curl_multi_perform**](https://curl.haxx.se/libcurl/c/curl_multi_perform.html.
+Wrapper for [**curl_multi_perform**](https://curl.haxx.se/libcurl/c/curl_multi_perform.html).
 
-If B<CURLM_CALL_MULTI_PERFORM) is returned, perform is immediately called again.
+If **CURLM_CALL_MULTI_PERFORM** is returned, perform is immediately called again.
 
   * method **wait**(int32 $timeout-ms, int32 $numfds is rw)
 

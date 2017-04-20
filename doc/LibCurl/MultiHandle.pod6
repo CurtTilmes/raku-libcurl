@@ -102,7 +102,7 @@ L<B<curl_multi_setopt>|https://curl.haxx.se/libcurl/c/curl_multi_setopt.html>.
 =item method B<perform>(int32 $running-handles is rw)
 
 Wrapper for
-L<B<curl_multi_perform>|https://curl.haxx.se/libcurl/c/curl_multi_perform.html.
+L<B<curl_multi_perform>|https://curl.haxx.se/libcurl/c/curl_multi_perform.html>.
 
 If B<CURLM_CALL_MULTI_PERFORM> is returned, perform is immediately
 called again.
