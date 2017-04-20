@@ -287,7 +287,12 @@ class LibCurl::Easy
         return $self;
     }
 
-    method version returns Str { curl_version }
+    method version returns Str { state $v = curl_version }
+
+    method version-info returns LibCurl::version-info
+    {
+        state $v = LibCurl::version.new.info
+    }
 
     method content($encoding = 'utf-8') returns Str { $!buf.decode($encoding) }
 

@@ -54,6 +54,35 @@ enum CURLUSESSL <
     CURLUSESSL_ALL
 >;
 
+enum CURL_VERSION_FEATURE (
+    CURL_VERSION_IPV6             => 1,
+    CURL_VERSION_KERBEROS4        => 1 +< 1,
+    CURL_VERSION_SSL              => 1 +< 2,
+    CURL_VERSION_LIBZ             => 1 +< 3,
+    CURL_VERSION_NTLM             => 1 +< 4,
+    CURL_VERSION_GSSNEGOTIATE     => 1 +< 5,
+    CURL_VERSION_DEBUG            => 1 +< 6,
+    CURL_VERSION_ASYNCHDNS        => 1 +< 7,
+    CURL_VERSION_SPNEGO           => 1 +< 8,
+    CURL_VERSION_LARGEFILE        => 1 +< 9,
+    CURL_VERSION_IDN              => 1 +< 10,
+    CURL_VERSION_SSPI             => 1 +< 11,
+    CURL_VERSION_CONV             => 1 +< 12,
+    CURL_VERSION_CURLDEBUG        => 1 +< 13,
+    CURL_VERSION_TLSAUTH_SRP      => 1 +< 14,
+    CURL_VERSION_NTLM_WB          => 1 +< 15,
+    CURL_VERSION_HTTP2            => 1 +< 16
+);
+
+enum CURLversion <
+    CURLVERSION_FIRST
+    CURLVERSION_SECOND
+    CURLVERSION_THIRD
+    CURLVERSION_FOURTH
+>;
+
+constant CURLVERSION_NOW = CURLVERSION_FOURTH;
+
 constant CURLE_OK                           = 0;
 
 constant CURL_ERROR_SIZE                    = 256;
@@ -413,6 +442,52 @@ class LibCurl::certinfo is repr('CStruct')
 {
     has int32 $.num_of_certs;
     has CArray[LibCurl::slist] $.certinfo;
+}
+
+class LibCurl::version-info is repr('CStruct')
+{
+    has uint32      $.age;
+    has Str         $.version;
+    has uint32      $.version-num;
+    has Str         $.host;
+    has int32       $.features-code;
+    has Str         $.ssl-version;
+    has long        $.ssl-version-num;
+    has Str         $.libz-version;
+    has CArray[Str] $!protocols;
+    has Str         $.ares;
+    has int32       $.ares-num;
+    has Str         $.libidn;
+    has int32       $.iconv-ver-num;
+    has Str         $.libssh-version;
+
+    method features
+    {
+        state $feature-set = CURL_VERSION_FEATURE.enums
+                             .grep({$!features-code +& $_.value})
+                             .map({ $_.key ~~ /^CURL_VERSION_(.*)$/; ~$0 })
+                             .Set;
+    }
+
+    method protocols
+    {
+        state $protocol-set = set gather {
+            loop (my $i = 0; $!protocols[$i]; $i++)
+            {
+                take $!protocols[$i];
+            }
+        };
+    }
+}
+
+class LibCurl::version is repr('CPointer')
+{
+    sub curl_version_info(uint32 $type) returns LibCurl::version
+        is native(LIBCURL) { * }
+
+    method new() { curl_version_info(CURLVERSION_NOW) }
+
+    method info() { nativecast(LibCurl::version-info, self) }
 }
 
 class LibCurl::EasyHandle is repr('CPointer')
