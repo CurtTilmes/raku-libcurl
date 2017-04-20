@@ -354,6 +354,8 @@ sub curl_global_cleanup() is native(LIBCURL) is export { * }
 
 sub curl_version() returns Str is native(LIBCURL) is export { * }
 
+sub curl_free(Pointer $ptr) is native(LIBCURL) is export { * }
+
 class X::LibCurl is Exception
 {
     has Int $.code;
@@ -420,6 +422,12 @@ class LibCurl::EasyHandle is repr('CPointer')
     sub curl_easy_duphandle(LibCurl::EasyHandle) returns LibCurl::EasyHandle
         is native(LIBCURL) { * }
 
+    sub curl_easy_escape(LibCurl::EasyHandle, Buf, int32) returns Pointer
+        is native(LIBCURL) { * }
+
+    sub curl_easy_unescape(LibCurl::EasyHandle, Buf, int32, int32 is rw)
+        returns Pointer is native(LIBCURL) { * }
+
     sub curl_easy_setopt_str(LibCurl::EasyHandle, uint32, Str) returns uint32
         is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
@@ -479,6 +487,26 @@ class LibCurl::EasyHandle is repr('CPointer')
     method reset() { curl_easy_reset(self) }
 
     method duphandle() { curl_easy_duphandle(self) }
+
+    method escape(Str $str, $encoding = 'utf-8')
+    {
+        my $buf = $str.encode($encoding);
+        my $ptr = curl_easy_escape(self, $buf, $buf.elems);
+        my $esc = nativecast(Str, $ptr);
+        curl_free($ptr);
+        return $esc;
+    }
+
+    method unescape(Str $str, $encoding = 'utf-8')
+    {
+        my $buf = $str.encode($encoding);
+        my int32 $outlength;
+        my $ptr = curl_easy_unescape(self, $buf, $buf.elems, $outlength);
+        my $arr = nativecast(CArray[int8], $ptr);
+        my $outstr = Buf.new($arr[0 ..^ $outlength]).decode($encoding);
+        curl_free($ptr);
+        return $outstr;
+    }
 
     method perform() { curl_easy_perform(self); }
 

@@ -235,7 +235,7 @@ sub xferinfofunction(Pointer $handleptr, long $dltotal, long $dlnow,
 
 class LibCurl::Easy
 {
-    has LibCurl::EasyHandle $.handle;
+    has LibCurl::EasyHandle $.handle handles <escape unescape>;
     has LibCurl::slist $.header-slist;
     has %.receiveheaders is rw;
     has $.statusline is rw;
