@@ -186,6 +186,7 @@ me know):
 [postfieldsize](https://curl.haxx.se/libcurl/c/CURLOPT_POSTFIELDSIZE_LARGE.html)
 [protocols](https://curl.haxx.se/libcurl/c/CURLOPT_PROTOCOLS.html)
 [proxy](https://curl.haxx.se/libcurl/c/CURLOPT_PROXY.html)
+[proxyauth](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYAUTH.html)
 [proxyport](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYPORT.html)
 [proxytype](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYTYPE.html)
 [proxyuserpwd](https://curl.haxx.se/libcurl/c/CURLOPT_PROXYUSERPWD.html)

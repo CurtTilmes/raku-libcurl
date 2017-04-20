@@ -110,6 +110,7 @@ my %opts =
     postfieldsize        => (CURLOPT_POSTFIELDSIZE_LARGE,  CURLOPT_OFF_T    ),
     protocols            => (CURLOPT_PROTOCOLS,            CURLOPT_LONG     ),
     proxy                => (CURLOPT_PROXY,                CURLOPT_STR      ),
+    proxyauth            => (CURLOPT_PROXYAUTH,            CURLOPT_LONG     ),
     proxyport            => (CURLOPT_PROXYPORT,            CURLOPT_LONG     ),
     proxytype            => (CURLOPT_PROXYTYPE,            CURLOPT_LONG     ),
     proxyuserpwd         => (CURLOPT_PROXYUSERPWD,         CURLOPT_STR      ),
