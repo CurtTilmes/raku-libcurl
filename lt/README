@@ -13,3 +13,6 @@ etc. to enable the tests here.
 
 You can read the actual test cases themselves in the curl/tests/data/*
 files (format described in curl/tests/FILEFORMAT).
+
+Also note these tests will only work serially.  If you run them in
+parallel, they will stomp on one another.  Don't do that.
