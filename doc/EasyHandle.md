@@ -34,15 +34,15 @@ SUBROUTINES
 
   * sub **curl_global_init**(long $flags) returns uint32
 
-Nativecall version of [**curl_global_init|**https://curl.haxx.se/libcurl/c/curl_global_init.html](**curl_global_init|**https://curl.haxx.se/libcurl/c/curl_global_init.html). It can take the following *$flags*: CURL_GLOBAL_SSL, CURL_GLOBAL_WIN32, CURL_GLOBAL_ALL, CURL_GLOBAL_NOTHING, CURL_GLOBAL_DEFAULT, CURL_GLOBAL_ACK_EINTR.
+Nativecall version of [**curl_global_init**](https://curl.haxx.se/libcurl/c/curl_global_init.html). It can take the following *$flags*: CURL_GLOBAL_SSL, CURL_GLOBAL_WIN32, CURL_GLOBAL_ALL, CURL_GLOBAL_NOTHING, CURL_GLOBAL_DEFAULT, CURL_GLOBAL_ACK_EINTR.
 
   * sub **curl_global_cleanup**()
 
-Nativecall version of [**curl_global_cleanup|**https://curl.haxx.se/libcurl/c/curl_global_cleanup.html](**curl_global_cleanup|**https://curl.haxx.se/libcurl/c/curl_global_cleanup.html).
+Nativecall version of [**curl_global_cleanup**](https://curl.haxx.se/libcurl/c/curl_global_cleanup.html).
 
   * sub **curl_version**() returns Str
 
-Nativecall version of [**curl_version|**https://curl.haxx.se/libcurl/c/curl_version.html](**curl_version|**https://curl.haxx.se/libcurl/c/curl_version.html).
+Nativecall version of [**curl_version**](https://curl.haxx.se/libcurl/c/curl_version.html).
 
 CLASSES
 -------
@@ -57,7 +57,7 @@ Returns the CURLcode for the error.
 
   * method **message**() returns Str
 
-Returns the Str version of the error from [**curl_easy_strerror|**https://curl.haxx.se/libcurl/c/curl_easy_strerror.html](**curl_easy_strerror|**https://curl.haxx.se/libcurl/c/curl_easy_strerror.html).
+Returns the Str version of the error from [**curl_easy_strerror**](https://curl.haxx.se/libcurl/c/curl_easy_strerror.html).
 
 ### class **LibCurl::slist-struct** is repr('CStruct')
 
@@ -73,7 +73,7 @@ Wrapper for a pointer to a **struct curl_slist**.
 
   * method append(*@str-list) returns LibCurl::slist
 
-Wrapper for [**curl_slist_append|**https://curl.haxx.se/libcurl/c/curl_slist_append.html](**curl_slist_append|**https://curl.haxx.se/libcurl/c/curl_slist_append.html), but can take a list of strings and they all get appended.
+Wrapper for [**curl_slist_append**](https://curl.haxx.se/libcurl/c/curl_slist_append.html), but can take a list of strings and they all get appended.
 
   * method list() returns Array
 
@@ -81,7 +81,7 @@ Extract the list of strings into a Perl Array.
 
   * method free()
 
-Wrapper for [**curl_slist_free_all|**https://curl.haxx.se/libcurl/c/curl_slist_free_all.html](**curl_slist_free_all|**https://curl.haxx.se/libcurl/c/curl_slist_free_all.html).
+Wrapper for [**curl_slist_free_all**](https://curl.haxx.se/libcurl/c/curl_slist_free_all.html).
 
 ### **LibCurl::certinfo** is repr('CStruct')
 
@@ -91,7 +91,7 @@ Wrapper for **struct CURL**.
 
   * method **new**() returns LibCurl::EasyHandle
 
-Wrapper for [**curl_easy_init|**https://curl.haxx.se/libcurl/c/curl_easy_init.html](**curl_easy_init|**https://curl.haxx.se/libcurl/c/curl_easy_init.html) to create a new CURL easy handle.
+Wrapper for [**curl_easy_init**](https://curl.haxx.se/libcurl/c/curl_easy_init.html) to create a new CURL easy handle.
 
   * method **id**() returns Str
 
@@ -99,19 +99,19 @@ Returns an opaque string that will be unique for every **LibCurl::EasyHandle**.
 
   * method **cleanup**()
 
-Wrapper for [**curl_easy_cleanup|**https://curl.haxx.se/libcurl/c/curl_easy_cleanup.html](**curl_easy_cleanup|**https://curl.haxx.se/libcurl/c/curl_easy_cleanup.html).
+Wrapper for [**curl_easy_cleanup**](https://curl.haxx.se/libcurl/c/curl_easy_cleanup.html).
 
   * method **reset**()
 
-Wrapper for [**curl_easy_reset|**https://curl.haxx.se/libcurl/c/curl_easy_reset.html](**curl_easy_reset|**https://curl.haxx.se/libcurl/c/curl_easy_reset.html).
+Wrapper for [**curl_easy_reset**](https://curl.haxx.se/libcurl/c/curl_easy_reset.html).
 
   * method **duphandle**() returns LibCurl::EasyHandle
 
-Wrapper for [**curl_easy_duphandle|**https://curl.haxx.se/libcurl/c/curl_easy_duphandle.html](**curl_easy_duphandle|**https://curl.haxx.se/libcurl/c/curl_easy_duphandle.html).
+Wrapper for [**curl_easy_duphandle**](https://curl.haxx.se/libcurl/c/curl_easy_duphandle.html).
 
   * method **perform**() return uint32
 
-Wrapper for [**curl_easy_perform|**https://curl.haxx.se/libcurl/c/curl_easy_perform.html](**curl_easy_perform|**https://curl.haxx.se/libcurl/c/curl_easy_perform.html).
+Wrapper for [**curl_easy_perform**](https://curl.haxx.se/libcurl/c/curl_easy_perform.html).
 
   * multi method **setopt**($option, Str $param)
 
@@ -125,7 +125,7 @@ Wrapper for [**curl_easy_perform|**https://curl.haxx.se/libcurl/c/curl_easy_perf
 
   * multi method **setopt**($option, LibCurl::EasyHandle $ptr)
 
-Wrappers for various flavors of  [**curl_easy_setopt|**https://curl.haxx.se/libcurl/c/curl_easy_setopt.html](**curl_easy_setopt|**https://curl.haxx.se/libcurl/c/curl_easy_setopt.html).
+Wrappers for various flavors of  [**curl_easy_setopt**](https://curl.haxx.se/libcurl/c/curl_easy_setopt.html).
 
 These will throw an X::LibCurl on any error.
 
@@ -139,6 +139,6 @@ These will throw an X::LibCurl on any error.
 
   * method **getinfo_slist**($option) returns Array[Str]
 
-Wrappers for various flavors of  [**curl_easy_getinfo|**https://curl.haxx.se/libcurl/c/curl_easy_getinfo.html](**curl_easy_getinfo|**https://curl.haxx.se/libcurl/c/curl_easy_getinfo.html).
+Wrappers for various flavors of  [**curl_easy_getinfo**](https://curl.haxx.se/libcurl/c/curl_easy_getinfo.html).
 
 These will throw an X::LibCurl on any error.
