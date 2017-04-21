@@ -22,6 +22,8 @@ is $curl.statusline, 'HTTP/1.1 200 OK swsclose', 'statusline';
 
 is $curl.content, "This IS the real page!\n", 'content';
 
+$curl.cleanup;
+
 is $server.input,
 qq<GET /64 HTTP/1.1
 Host: $HOSTIP:$HTTPPORT
