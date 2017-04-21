@@ -27,7 +27,7 @@ $curl.formadd(name => 'name', contents => 'daniel');
 
 $curl.formadd(name => 'tool', contents => 'curl');
 
-$curl.formadd(name => 'file', filename => 'test9.txt');
+$curl.formadd(name => 'file', file => 'test9.txt');
 
 $curl.perform;
 

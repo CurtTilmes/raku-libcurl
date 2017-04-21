@@ -552,6 +552,34 @@ class LibCurl::Form
         returns uint32 is symbol('curl_formadd')
         is native(LIBCURL) { * }
 
+    sub curl_formadd_ssss(CArray[Pointer], CArray[Pointer],
+                          uint32, Str,
+                          uint32, Str,
+                          uint32, Str,
+                          uint32, Str,
+                          uint32)
+        returns uint32 is symbol('curl_formadd')
+        is native(LIBCURL) { * }
+
+    sub curl_formadd_ssbn(CArray[Pointer], CArray[Pointer],
+                          uint32, Str,
+                          uint32, Str,
+                          uint32, Blob,
+                          uint32, long,
+                          uint32)
+        returns uint32 is symbol('curl_formadd')
+        is native(LIBCURL) { * }
+
+    sub curl_formadd_sssbn(CArray[Pointer], CArray[Pointer],
+                           uint32, Str,
+                           uint32, Str,
+                           uint32, Str,
+                           uint32, Blob,
+                           uint32, long,
+                           uint32)
+        returns uint32 is symbol('curl_formadd')
+        is native(LIBCURL) { * }
+
     sub curl_formfree(Pointer) is native(LIBCURL) { * }
 
     multi method add(Str :$name!, Str :$contents!, Str :$content-type)
@@ -582,7 +610,8 @@ class LibCurl::Form
         $!lastitem = $last[0];
     }
 
-    multi method add(Str :$name!, Str :$filename!, Str :$content-type)
+    multi method add(Str :$name!, Str :$file!, Str :$filename = $file,
+                     Str :$content-type)
     {
         my $first = CArray[Pointer].new($!firstitem);
         my $last = CArray[Pointer].new($!lastitem);
@@ -590,18 +619,53 @@ class LibCurl::Form
         my $ret;
         if $content-type
         {
-            $ret = curl_formadd_sss($first, $last,
-                                    CURLFORM_COPYNAME, $name,
-                                    CURLFORM_FILE, $filename,
-                                    CURLFORM_CONTENTTYPE, $content-type,
-                                    CURLFORM_END);
+            $ret = curl_formadd_ssss($first, $last,
+                                     CURLFORM_COPYNAME, $name,
+                                     CURLFORM_FILE, $file,
+                                     CURLFORM_FILENAME, $filename,
+                                     CURLFORM_CONTENTTYPE, $content-type,
+                                     CURLFORM_END);
         }
         else
         {
-            $ret = curl_formadd_ss($first, $last,
+            $ret = curl_formadd_sss($first, $last,
                                    CURLFORM_COPYNAME, $name,
-                                   CURLFORM_FILE, $filename,
+                                   CURLFORM_FILE, $file,
+                                   CURLFORM_FILENAME, $filename,
                                    CURLFORM_END);
+        }
+
+        die X::LibCurl::Form(code => $ret) if $ret != CURL_FORMADD_OK;
+
+        $!firstitem = $first[0];
+        $!lastitem = $last[0];
+    }
+
+    multi method add(Str :$name!, Str :$filename!, Blob :$contents!,
+                     Str :$content-type)
+    {
+        my $first = CArray[Pointer].new($!firstitem);
+        my $last = CArray[Pointer].new($!lastitem);
+
+        my $ret;
+        if $content-type
+        {
+            $ret = curl_formadd_sssbn($first, $last,
+                                      CURLFORM_COPYNAME, $name,
+                                      CURLFORM_CONTENTTYPE, $content-type,
+                                      CURLFORM_BUFFER, $filename,
+                                      CURLFORM_BUFFERPTR, $contents,
+                                      CURLFORM_BUFFERLENGTH, $contents.elems,
+                                      CURLFORM_END);
+        }
+        else
+        {
+            $ret = curl_formadd_ssbn($first, $last,
+                                     CURLFORM_COPYNAME, $name,
+                                     CURLFORM_BUFFER, $filename,
+                                     CURLFORM_BUFFERPTR, $contents,
+                                     CURLFORM_BUFFERLENGTH, $contents.elems,
+                                     CURLFORM_END);
         }
 
         die X::LibCurl::Form(code => $ret) if $ret != CURL_FORMADD_OK;
