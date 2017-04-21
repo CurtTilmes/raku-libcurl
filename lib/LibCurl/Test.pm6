@@ -4,6 +4,8 @@ use NativeCall;
 
 our $HOSTIP is export = %*ENV{'PERL6-LIBCURL-HOSTIP'} // '127.0.0.1';
 
+our $CLIENTIP is export = %*ENV{'PERL6-LIBCURL-CLIENTIP'} // '127.0.0.1';
+
 our $HTTPPORT is export = %*ENV{'PERL6-LIBCURL-HTTPPORT'} // 8990;
 
 our $FTPPORT is export = %*ENV{'PERL6-LIBCURL-FTPPORT'} // 8992;
