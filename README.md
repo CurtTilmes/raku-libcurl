@@ -217,7 +217,7 @@ In addition to the normal libcurl special options that set headers
 are some extra options for headers:
 
 `Content-MD5`, `Content-Type`, `Content-Length`, `Host`, `Accept`,
-`Expect`.
+`Expect`, `Transfer-Encoding`.
 
     $curl.Host('somewhere.com');  # or $curl.setopt(Host => 'somewhere.com')
     $curl.Content-MD5('...');     # or $curl.setopt(Content-MD5 => '...')
