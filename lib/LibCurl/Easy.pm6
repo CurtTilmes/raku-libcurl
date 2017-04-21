@@ -354,6 +354,7 @@ class LibCurl::Easy
 {
     has LibCurl::EasyHandle $.handle handles <escape unescape>;
     has LibCurl::slist $.header-slist;
+    has LibCurl::Form $.form;
     has %.receiveheaders is rw;
     has $.statusline is rw;
     has Pointer $.upload-fh;
@@ -498,6 +499,18 @@ class LibCurl::Easy
         return self;
     }
 
+    method formadd(|c)
+    {
+        $!form //= LibCurl::Form.new;
+        $!form.add(|c);
+    }
+
+    method clear-form()
+    {
+        .free with $!form;
+        $!form = LibCurl::Form;
+    }
+
     method prepare()
     {
         $!handle.setopt(CURLOPT_HTTPHEADER, $!header-slist);
@@ -508,6 +521,8 @@ class LibCurl::Easy
             $!handle.setopt(CURLOPT_WRITEDATA, $!handle);
             $!handle.setopt(CURLOPT_WRITEFUNCTION, &writefunction);
         }
+
+        $!handle.setopt(CURLOPT_HTTPPOST, $!form.firstitem) if $!form;
 
         %!receiveheaders = ();
     }
@@ -605,6 +620,7 @@ class LibCurl::Easy
         $allhandles-lock.protect({ %allhandles{$!handle.id}:delete });
         .cleanup with $!handle;
         $!handle = LibCurl::EasyHandle;
+        self.clear-form;
     }
 
     submethod DESTROY

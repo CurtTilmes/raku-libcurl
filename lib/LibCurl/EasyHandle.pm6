@@ -469,18 +469,38 @@ constant CURLOPT_FTP_SSL                    = CURLOPT_USE_SSL;
 constant CURLOPT_SSLCERTPASSWD              = CURLOPT_KEYPASSWD;
 constant CURLOPT_KRB4LEVEL                  = CURLOPT_KRBLEVEL;
 
-enum CURLform <CURLFORM_NOTHING CURLFORM_COPYNAME CURLFORM_PTRNAME
-    CURLFORM_NAMELENGTH CURLFORM_COPYCONTENTS CURLFORM_PTRCONTENTS
-    CURLFORM_CONTENTSLENGTH CURLFORM_FILECONTENT CURLFORM_ARRAY
-    CURLFORM_OBSOLETE CURLFORM_FILE CURLFORM_BUFFER CURLFORM_BUFFERPTR
-    CURLFORM_BUFFERLENGTH CURLFORM_CONTENTTYPE CURLFORM_CONTENTHEADER
-    CURLFORM_FILENAME CURLFORM_END CURLFORM_OBSOLETE2
+enum CURLform <
+    CURLFORM_NOTHING
+    CURLFORM_COPYNAME
+    CURLFORM_PTRNAME
+    CURLFORM_NAMELENGTH
+    CURLFORM_COPYCONTENTS
+    CURLFORM_PTRCONTENTS
+    CURLFORM_CONTENTSLENGTH
+    CURLFORM_FILECONTENT
+    CURLFORM_ARRAY
+    CURLFORM_OBSOLETE
+    CURLFORM_FILE
+    CURLFORM_BUFFER
+    CURLFORM_BUFFERPTR
+    CURLFORM_BUFFERLENGTH
+    CURLFORM_CONTENTTYPE
+    CURLFORM_CONTENTHEADER
+    CURLFORM_FILENAME
+    CURLFORM_END
+    CURLFORM_OBSOLETE2
     CURLFORM_STREAM>;
 
-enum CURLFORMcode <CURL_FORMADD_OK CURL_FORMADD_MEMORY
-    CURL_FORMADD_OPTION_TWICE CURL_FORMADD_NULL
-    CURL_FORMADD_UNKNOWN_OPTION CURL_FORMADD_INCOMPLETE
-    CURL_FORMADD_ILLEGAL_ARRAY CURL_FORMADD_DISABLED>;
+enum CURLFORMcode <
+    CURL_FORMADD_OK
+    CURL_FORMADD_MEMORY
+    CURL_FORMADD_OPTION_TWICE
+    CURL_FORMADD_NULL
+    CURL_FORMADD_UNKNOWN_OPTION
+    CURL_FORMADD_INCOMPLETE
+    CURL_FORMADD_ILLEGAL_ARRAY
+    CURL_FORMADD_DISABLED
+>;
 
 sub curl_global_init(long) returns uint32 is native(LIBCURL) is export { * }
 
@@ -499,6 +519,107 @@ class X::LibCurl is Exception
     method Int() { $!code }
 
     method message() { curl_easy_strerror($!code) }
+}
+
+class X::LibCurl::Form is X::LibCurl
+{
+    method message() { ... }
+}
+
+class LibCurl::formstruct is repr('CStruct')
+{
+    has uint32 $.option;
+    has Str $.value;
+}
+
+class LibCurl::Form
+{
+    has Pointer $.firstitem;
+    has Pointer $.lastitem;
+
+    sub curl_formadd_ss(CArray[Pointer], CArray[Pointer],
+                        uint32, Str,
+                        uint32, Str,
+                        uint32)
+        returns uint32 is symbol('curl_formadd')
+        is native(LIBCURL) { * }
+
+    sub curl_formadd_sss(CArray[Pointer], CArray[Pointer],
+                         uint32, Str,
+                         uint32, Str,
+                         uint32, Str,
+                         uint32)
+        returns uint32 is symbol('curl_formadd')
+        is native(LIBCURL) { * }
+
+    sub curl_formfree(Pointer) is native(LIBCURL) { * }
+
+    multi method add(Str :$name!, Str :$contents!, Str :$content-type)
+    {
+        my $first = CArray[Pointer].new($!firstitem);
+        my $last = CArray[Pointer].new($!lastitem);
+
+        my $ret;
+        if $content-type
+        {
+            $ret = curl_formadd_sss($first, $last,
+                                    CURLFORM_COPYNAME, $name,
+                                    CURLFORM_COPYCONTENTS, $contents,
+                                    CURLFORM_CONTENTTYPE, $content-type,
+                                    CURLFORM_END);
+        }
+        else
+        {
+            $ret = curl_formadd_ss($first, $last,
+                                   CURLFORM_COPYNAME, $name,
+                                   CURLFORM_COPYCONTENTS, $contents,
+                                   CURLFORM_END);
+        }
+
+        die X::LibCurl::Form(code => $ret) if $ret != CURL_FORMADD_OK;
+
+        $!firstitem = $first[0];
+        $!lastitem = $last[0];
+    }
+
+    multi method add(Str :$name!, Str :$filename!, Str :$content-type)
+    {
+        my $first = CArray[Pointer].new($!firstitem);
+        my $last = CArray[Pointer].new($!lastitem);
+
+        my $ret;
+        if $content-type
+        {
+            $ret = curl_formadd_sss($first, $last,
+                                    CURLFORM_COPYNAME, $name,
+                                    CURLFORM_FILE, $filename,
+                                    CURLFORM_CONTENTTYPE, $content-type,
+                                    CURLFORM_END);
+        }
+        else
+        {
+            $ret = curl_formadd_ss($first, $last,
+                                   CURLFORM_COPYNAME, $name,
+                                   CURLFORM_FILE, $filename,
+                                   CURLFORM_END);
+        }
+
+        die X::LibCurl::Form(code => $ret) if $ret != CURL_FORMADD_OK;
+
+        $!firstitem = $first[0];
+        $!lastitem = $last[0];
+    }
+
+    method free()
+    {
+        curl_formfree($!firstitem) if $!firstitem;
+        $!firstitem = $!lastitem = Pointer;
+    }
+
+    method DESTROY()
+    {
+        self.free;
+    }
 }
 
 class LibCurl::slist-struct is repr('CStruct')
@@ -778,34 +899,3 @@ class LibCurl::EasyHandle is repr('CPointer')
     }
 }
 
-class LibCurl::httppost is repr('CPointer')
-{
-}
-
-class LibCurl::formopts is repr('CStruct')
-{
-    has uint32 $.option is rw;
-    has Str $.value is rw;
-}
-
-sub curl_formadd(LibCurl::httppost $firstitem is rw,
-                 LibCurl::httppost $lasttitem is rw,
-                 uint32, LibCurl::formopts, uint32) returns uint32
-    is native(LIBCURL) { * }
-
-class LibCurl::Form
-{
-    has $.firstitem;
-    has $.lastitem;
-
-    method add(Str :$name, Str :$content, Str :$contenttype)
-    {
-        my $formopts := CArray[Pointer].new;
-
-        ...
-
-        curl_formadd($!firstitem, $!lastitem,
-                     CURLFORM_ARRAY, $formopts,
-                     CURLFORM_END);
-    }
-}
