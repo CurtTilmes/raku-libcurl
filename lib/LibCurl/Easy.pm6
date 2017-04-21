@@ -284,11 +284,11 @@ sub easy-lookup(Pointer $handleptr)
 sub headerfunction(Pointer $ptr, uint32 $size, uint32 $nitems,
                    Pointer $handleptr) returns uint32
 {
-    my $bytes = nativecast(CArray[int8], $ptr);
-
     my $easy = easy-lookup($handleptr);
 
-    my $header = Buf.new($bytes[0 ..^ $size * $nitems]).decode;
+    my $header = Blob.new(
+        nativecast(CArray[uint8], $ptr)[0 ..^ $size * $nitems]
+    ).decode;
 
     if $header ~~ /^HTTP\//
     {
@@ -302,7 +302,7 @@ sub headerfunction(Pointer $ptr, uint32 $size, uint32 $nitems,
     return $size * $nitems;
 }
 
-sub memcpy(Pointer $dest, CArray[int8], uint32 $n) is native { * }
+sub memcpy(Pointer $dest, Blob, uint32 $n) is native { * }
 
 sub readfunction(Pointer $ptr, uint32 $size, uint32 $nmemb,
                         Pointer $handleptr) returns uint32
@@ -313,10 +313,7 @@ sub readfunction(Pointer $ptr, uint32 $size, uint32 $nmemb,
 
     my $tosend = min $easy.sendbuf.elems - $easy.sendindex, $size * $nmemb;
 
-    my $subbuf = CArray[int8].new($easy.sendbuf.subbuf($easy.sendindex,
-                                                       $tosend));
-
-    memcpy($ptr, $subbuf, $tosend);
+    memcpy($ptr, $easy.sendbuf.subbuf($easy.sendindex, $tosend), $tosend);
 
     $easy.sendindex += $tosend;
 
@@ -327,8 +324,11 @@ sub writefunction(Pointer $ptr, uint32 $size, uint32 $nmemb,
                       Pointer $handleptr) returns uint32
 {
     my $easy = easy-lookup($handleptr);
-    my $bytes = nativecast(CArray[int8], $ptr);
-    $easy.buf ~= Buf.new($bytes[0 ..^ $size * $nmemb]);
+
+    $easy.buf ~= Blob.new(
+        nativecast(CArray[uint8], $ptr)[0 ..^ $size * $nmemb]
+    );
+
     return $size * $nmemb;
 }
 

@@ -24,6 +24,8 @@ is $curl.statusline, 'HTTP/1.0 200 OK swsclose', 'statusline';
 
 is $curl.content, "blablabla\n\n", 'content';
 
+$curl.cleanup;
+
 is $server.input,
 "PUT /bzz/60 HTTP/1.1
 Host: $HOSTIP:$HTTPPORT

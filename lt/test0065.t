@@ -23,6 +23,8 @@ is $curl.statusline, 'HTTP/1.1 401 Still a bad password you moron',
 
 is $curl.content, "This is not the real page either\r\n", 'content';
 
+$curl.cleanup;
+
 is $server.input,
 qq<GET /65 HTTP/1.1
 Host: $HOSTIP:$HTTPPORT
