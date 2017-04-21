@@ -351,7 +351,6 @@ Fields currently defined are:
 [ssl-engines](https://curl.haxx.se/libcurl/c/CURLINFO_SSL_ENGINES.html)
 [total-time](https://curl.haxx.se/libcurl/c/CURLINFO_TOTAL_TIME.html)
 
-
 ## Received header fields
 
 You can retrieve the header fields in several ways as well.
@@ -373,6 +372,33 @@ If you understand that the content is decodable as a string, you can
 call the ```.content($encoding = 'utf-8')``` method which will decode
 the content into a Str, by default with the **utf-8** encoding if not
 specified.
+
+## Multi-part forms
+
+There is a special POST option for multipart/formdata.
+
+    my $curl = LibCurl::Easy.new(URL => 'http://...');
+
+    # normal field
+    $curl.formadd(name => 'fieldname', contents => 'something');
+
+    # Add an optional content-type
+    $curl.formadd(name => 'fieldname', contents => 'something',
+                  content-type => 'text/plain');
+
+    # upload a file from disk, give optional filename or content-type
+    $curl.formadd(name => 'fieldname', file => 'afile.txt',
+                  filename => 'alternate.name.txt',
+                  content-type => 'image/jpeg');
+
+    # Send a Blob of contents, but as a file with a filename
+    # can also have optional content-type
+    $curl.formadd(name => 'fieldname', filename => 'some.file.name.txt',
+                  contents => "something".encode);
+
+    $curl.perform;
+
+This will automatically cause LibCurl to POST the data.
 
 ## Proxies
 
