@@ -2,6 +2,8 @@ use v6;
 
 use NativeCall;
 
+constant intptr = ssize_t;
+
 constant LIBCURL = "curl";
 
 enum CURL_HTTP_VERSION_ENUM <
@@ -528,156 +530,132 @@ class X::LibCurl::Form is X::LibCurl
 
 class LibCurl::formstruct is repr('CStruct')
 {
-    has uint32 $.option;
-    has Str $.value;
+    has uint32 $.option is rw;
+    has intptr $.value is rw;
+}
+
+# http://stackoverflow.com/questions/43544931/passing-an-array-of-structures-to-a-perl-6-nativecall-function
+role StructArray[Mu:U \T where .REPR eq 'CStruct'] does Positional[T] {
+    has $.bytes;
+    has $.elems;
+
+    method new(UInt \n) {
+        self.bless(bytes => buf8.allocate(n * nativesizeof T), elems => n);
+    }
+
+    method AT-POS(UInt \i where ^$!elems) {
+        nativecast(T, Pointer.new(nativecast(Pointer, $!bytes) +
+                                  i * nativesizeof T));
+    }
+
+    method pointer {
+        nativecast(Pointer[T], $!bytes);
+    }
 }
 
 class LibCurl::Form
 {
-    has Pointer $.firstitem;
-    has Pointer $.lastitem;
+    has intptr $.firstitem = 0;
+    has intptr $.lastitem = 0;
 
-    sub curl_formadd_ss(CArray[Pointer], CArray[Pointer],
-                        uint32, Str,
-                        uint32, Str,
-                        uint32)
-        returns uint32 is symbol('curl_formadd')
-        is native(LIBCURL) { * }
-
-    sub curl_formadd_sss(CArray[Pointer], CArray[Pointer],
-                         uint32, Str,
-                         uint32, Str,
-                         uint32, Str,
-                         uint32)
-        returns uint32 is symbol('curl_formadd')
-        is native(LIBCURL) { * }
-
-    sub curl_formadd_ssss(CArray[Pointer], CArray[Pointer],
-                          uint32, Str,
-                          uint32, Str,
-                          uint32, Str,
-                          uint32, Str,
-                          uint32)
-        returns uint32 is symbol('curl_formadd')
-        is native(LIBCURL) { * }
-
-    sub curl_formadd_ssbn(CArray[Pointer], CArray[Pointer],
-                          uint32, Str,
-                          uint32, Str,
-                          uint32, Blob,
-                          uint32, long,
-                          uint32)
-        returns uint32 is symbol('curl_formadd')
-        is native(LIBCURL) { * }
-
-    sub curl_formadd_sssbn(CArray[Pointer], CArray[Pointer],
-                           uint32, Str,
-                           uint32, Str,
-                           uint32, Str,
-                           uint32, Blob,
-                           uint32, long,
+    sub curl_formadd_array(intptr is rw, intptr is rw,
+                           uint32, Pointer[LibCurl::formstruct],
                            uint32)
         returns uint32 is symbol('curl_formadd')
         is native(LIBCURL) { * }
 
-    sub curl_formfree(Pointer) is native(LIBCURL) { * }
+    sub curl_formfree(intptr) is native(LIBCURL) { * }
+
+    method add-array(@items)
+    {
+        my @array := StructArray[LibCurl::formstruct].new(@items.elems + 1);
+
+        my $i = 0;
+        for @items -> @item
+        {
+            @array[$i].option = @item[0];
+            @array[$i].value = @item[1];
+            $i++
+        }
+
+        @array[$i].option = CURLFORM_END;
+
+        my $ret = curl_formadd_array($!firstitem, $!lastitem,
+                                     CURLFORM_ARRAY, @array.pointer,
+                                     CURLFORM_END);
+
+        die X::LibCurl::Form.new(code => $ret) if $ret != CURL_FORMADD_OK;
+    }
+
 
     multi method add(Str :$name!, Str :$contents!, Str :$content-type)
     {
-        my $first = CArray[Pointer].new($!firstitem);
-        my $last = CArray[Pointer].new($!lastitem);
+        my (@array, $n, $c, $t);
 
-        my $ret;
+        $n = "$name\0".encode;
+        @array.push: (CURLFORM_COPYNAME, +nativecast(Pointer, $n));
+
+        $c = "$contents\0".encode;
+        @array.push: (CURLFORM_COPYCONTENTS, +nativecast(Pointer, $c));
+
         if $content-type
         {
-            $ret = curl_formadd_sss($first, $last,
-                                    CURLFORM_COPYNAME, $name,
-                                    CURLFORM_COPYCONTENTS, $contents,
-                                    CURLFORM_CONTENTTYPE, $content-type,
-                                    CURLFORM_END);
-        }
-        else
-        {
-            $ret = curl_formadd_ss($first, $last,
-                                   CURLFORM_COPYNAME, $name,
-                                   CURLFORM_COPYCONTENTS, $contents,
-                                   CURLFORM_END);
+            $t = "$content-type\0".encode;
+            @array.push: (CURLFORM_CONTENTTYPE, +nativecast(Pointer, $t));
         }
 
-        die X::LibCurl::Form(code => $ret) if $ret != CURL_FORMADD_OK;
-
-        $!firstitem = $first[0];
-        $!lastitem = $last[0];
+        self.add-array(@array)
     }
+
 
     multi method add(Str :$name!, Str :$file!, Str :$filename = $file,
                      Str :$content-type)
     {
-        my $first = CArray[Pointer].new($!firstitem);
-        my $last = CArray[Pointer].new($!lastitem);
+        my (@array, $n, $f, $fn, $t);
 
-        my $ret;
+        $n = "$name\0".encode;
+        @array.push: (CURLFORM_COPYNAME, +nativecast(Pointer, $n));
+
+        $f = "$file\0".encode;
+        @array.push: (CURLFORM_FILE, +nativecast(Pointer, $f));
+
+        $fn = "$filename\0".encode;
+        @array.push: (CURLFORM_FILENAME, +nativecast(Pointer, $fn));
+
         if $content-type
         {
-            $ret = curl_formadd_ssss($first, $last,
-                                     CURLFORM_COPYNAME, $name,
-                                     CURLFORM_FILE, $file,
-                                     CURLFORM_FILENAME, $filename,
-                                     CURLFORM_CONTENTTYPE, $content-type,
-                                     CURLFORM_END);
-        }
-        else
-        {
-            $ret = curl_formadd_sss($first, $last,
-                                   CURLFORM_COPYNAME, $name,
-                                   CURLFORM_FILE, $file,
-                                   CURLFORM_FILENAME, $filename,
-                                   CURLFORM_END);
+            $t = "$content-type\0".encode;
+            @array.push: (CURLFORM_CONTENTTYPE, +nativecast(Pointer, $t));
         }
 
-        die X::LibCurl::Form(code => $ret) if $ret != CURL_FORMADD_OK;
-
-        $!firstitem = $first[0];
-        $!lastitem = $last[0];
+        self.add-array(@array)
     }
 
     multi method add(Str :$name!, Str :$filename!, Blob :$contents!,
                      Str :$content-type)
     {
-        my $first = CArray[Pointer].new($!firstitem);
-        my $last = CArray[Pointer].new($!lastitem);
+        my (@array, $n, $f, $fn, $t);
 
-        my $ret;
+        $n = "$name\0".encode;
+        @array.push: (CURLFORM_COPYNAME, +nativecast(Pointer, $n));
+
         if $content-type
         {
-            $ret = curl_formadd_sssbn($first, $last,
-                                      CURLFORM_COPYNAME, $name,
-                                      CURLFORM_CONTENTTYPE, $content-type,
-                                      CURLFORM_BUFFER, $filename,
-                                      CURLFORM_BUFFERPTR, $contents,
-                                      CURLFORM_BUFFERLENGTH, $contents.elems,
-                                      CURLFORM_END);
-        }
-        else
-        {
-            $ret = curl_formadd_ssbn($first, $last,
-                                     CURLFORM_COPYNAME, $name,
-                                     CURLFORM_BUFFER, $filename,
-                                     CURLFORM_BUFFERPTR, $contents,
-                                     CURLFORM_BUFFERLENGTH, $contents.elems,
-                                     CURLFORM_END);
+            $t = "$content-type\0".encode;
+            @array.push: (CURLFORM_CONTENTTYPE, +nativecast(Pointer, $t));
         }
 
-        die X::LibCurl::Form(code => $ret) if $ret != CURL_FORMADD_OK;
+        @array.push: (CURLFORM_BUFFER, +nativecast(Pointer, $contents));
 
-        $!firstitem = $first[0];
-        $!lastitem = $last[0];
+        @array.push: (CURLFORM_BUFFERLENGTH, $contents.elems);
+
+        self.add-array(@array);
     }
 
     method free()
     {
         curl_formfree($!firstitem) if $!firstitem;
-        $!firstitem = $!lastitem = Pointer;
+        $!firstitem = $!lastitem = 0;
     }
 
     method DESTROY()
