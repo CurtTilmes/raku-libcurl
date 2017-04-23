@@ -382,10 +382,10 @@ There is a special POST option for multipart/formdata.
     # normal field
     $curl.formadd(name => 'fieldname', contents => 'something');
 
-    # upload a file from disk, give optional filename or content-type
+    # upload a file from disk, give optional filename or contenttype
     $curl.formadd(name => 'fieldname', file => 'afile.txt',
                   filename => 'alternate.name.txt',
-                  content-type => 'image/jpeg');
+                  contenttype => 'image/jpeg');
 
     # Send a Blob of contents, but as a file with a filename
     $curl.formadd(name => 'fieldname', buffer => 'some.file.name.txt',
