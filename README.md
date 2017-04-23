@@ -382,23 +382,31 @@ There is a special POST option for multipart/formdata.
     # normal field
     $curl.formadd(name => 'fieldname', contents => 'something');
 
-    # Add an optional content-type
-    $curl.formadd(name => 'fieldname', contents => 'something',
-                  content-type => 'text/plain');
-
     # upload a file from disk, give optional filename or content-type
     $curl.formadd(name => 'fieldname', file => 'afile.txt',
                   filename => 'alternate.name.txt',
                   content-type => 'image/jpeg');
 
     # Send a Blob of contents, but as a file with a filename
-    # can also have optional content-type
-    $curl.formadd(name => 'fieldname', filename => 'some.file.name.txt',
-                  contents => "something".encode);
+    $curl.formadd(name => 'fieldname', buffer => 'some.file.name.txt',
+                  bufferptr => "something".encode);
 
     $curl.perform;
 
 This will automatically cause LibCurl to POST the data.
+
+The options are described in more detail [here](https://curl.haxx.se/libcurl/c/curl_formadd.html).
+
+The fields implemented are:
+
+[name](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMCOPYNAME)
+[contents](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMCOPYCONTENTS)
+[filecontent](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMFILECONTENT)
+[file](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMFILE)
+[contenttype](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMCONTENTTYPE)
+[filename](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMFILENAME)
+[buffer](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMBUFFER)
+[bufferptr](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMBUFFERPTR)
 
 ## Proxies
 

@@ -272,6 +272,17 @@ my %infofields =
     total-time           => (CURLINFO_TOTAL_TIME,       CURLINFO_DOUBLE     ),
 ;
 
+my %formfields =
+    name        => (CURLFORM_COPYNAME,     CURLFORM_NAMELENGTH),
+    contents    => (CURLFORM_COPYCONTENTS, CURLFORM_CONTENTSLENGTH),
+    filecontent => (CURLFORM_FILECONTENT,  0),
+    file        => (CURLFORM_FILE,         0),
+    contenttype => (CURLFORM_CONTENTTYPE,  0),
+    filename    => (CURLFORM_FILENAME,     0),
+    buffer      => (CURLFORM_BUFFER,       0),
+    bufferptr   => (CURLFORM_BUFFERPTR,    CURLFORM_BUFFERLENGTH),
+;
+
 INIT { curl_global_init(CURL_GLOBAL_DEFAULT) }
 
 END { curl_global_cleanup() }
@@ -499,10 +510,29 @@ class LibCurl::Easy
         return self;
     }
 
-    method formadd(|c)
+    method formadd(*%fields)
     {
         $!form //= LibCurl::Form.new;
-        $!form.add(|c);
+
+        my @form-array;
+
+        for %fields.kv -> $field, $param
+        {
+            die "Unknown form field option $field" unless %formfields{$field};
+
+            my ($code, $codelength) = %formfields{$field};
+
+            my $blob = $param ~~ Str ?? "$param\0".encode !! $param;
+
+            @form-array.push: ($code, $blob);
+
+            if $codelength
+            {
+                @form-array.push: ($codelength, $blob.elems);
+            }
+        }
+
+        $!form.add-array(@form-array);
     }
 
     method clear-form()

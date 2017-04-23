@@ -566,15 +566,17 @@ class LibCurl::Form
 
     sub curl_formfree(intptr) is native(LIBCURL) { * }
 
+    # array of (option,value) arrays
     method add-array(@items)
     {
         my @array := StructArray[LibCurl::formstruct].new(@items.elems + 1);
-
         my $i = 0;
         for @items -> @item
         {
             @array[$i].option = @item[0];
-            @array[$i].value = @item[1];
+            @array[$i].value = @item[1] ~~ Blob
+                               ?? +nativecast(Pointer, @item[1])
+                               !! @item[1];
             $i++
         }
 
@@ -585,71 +587,6 @@ class LibCurl::Form
                                      CURLFORM_END);
 
         die X::LibCurl::Form.new(code => $ret) if $ret != CURL_FORMADD_OK;
-    }
-
-
-    multi method add(Str :$name!, Str :$contents!, Str :$content-type)
-    {
-        my (@array, $n, $c, $t);
-
-        $n = "$name\0".encode;
-        @array.push: (CURLFORM_COPYNAME, +nativecast(Pointer, $n));
-
-        $c = "$contents\0".encode;
-        @array.push: (CURLFORM_COPYCONTENTS, +nativecast(Pointer, $c));
-
-        if $content-type
-        {
-            $t = "$content-type\0".encode;
-            @array.push: (CURLFORM_CONTENTTYPE, +nativecast(Pointer, $t));
-        }
-
-        self.add-array(@array)
-    }
-
-
-    multi method add(Str :$name!, Str :$file!, Str :$filename = $file,
-                     Str :$content-type)
-    {
-        my (@array, $n, $f, $fn, $t);
-
-        $n = "$name\0".encode;
-        @array.push: (CURLFORM_COPYNAME, +nativecast(Pointer, $n));
-
-        $f = "$file\0".encode;
-        @array.push: (CURLFORM_FILE, +nativecast(Pointer, $f));
-
-        $fn = "$filename\0".encode;
-        @array.push: (CURLFORM_FILENAME, +nativecast(Pointer, $fn));
-
-        if $content-type
-        {
-            $t = "$content-type\0".encode;
-            @array.push: (CURLFORM_CONTENTTYPE, +nativecast(Pointer, $t));
-        }
-
-        self.add-array(@array)
-    }
-
-    multi method add(Str :$name!, Str :$filename!, Blob :$contents!,
-                     Str :$content-type)
-    {
-        my (@array, $n, $f, $fn, $t);
-
-        $n = "$name\0".encode;
-        @array.push: (CURLFORM_COPYNAME, +nativecast(Pointer, $n));
-
-        if $content-type
-        {
-            $t = "$content-type\0".encode;
-            @array.push: (CURLFORM_CONTENTTYPE, +nativecast(Pointer, $t));
-        }
-
-        @array.push: (CURLFORM_BUFFER, +nativecast(Pointer, $contents));
-
-        @array.push: (CURLFORM_BUFFERLENGTH, $contents.elems);
-
-        self.add-array(@array);
     }
 
     method free()
