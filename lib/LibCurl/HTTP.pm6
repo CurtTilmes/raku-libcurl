@@ -6,9 +6,8 @@ class LibCurl::HTTP is LibCurl::Easy
 {
     method GET($URL, $filename?)
     {
-        self.setopt(:httpget, URL => $URL);
         self.setopt(download => $filename) if $filename;
-        return self;
+        self.setopt(:httpget, URL => $URL);
     }
 
     method HEAD($URL)
@@ -26,8 +25,9 @@ class LibCurl::HTTP is LibCurl::Easy
         self.setopt(URL => $URL, upload => $filename);
     }
 
-    method POST($URL, $content)
+    method POST($URL, $content?)
     {
-        self.setopt(URL => $URL, postfields => $content);
+        self.setopt(postfields => $content) if $content;
+        self.setopt(URL => $URL);
     }
 }

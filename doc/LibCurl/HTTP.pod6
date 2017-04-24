@@ -22,6 +22,11 @@ LibCurl::HTTP
 
   $http.POST('http://example.com/form.html', 'name=foo&opt=value').perform;
 
+  $http.POST('http://example.com')
+       .formadd(name => 'name', contents => 'foo')
+       .formadd(name => 'file', file => 'file-to-upload.txt');
+       .perform;
+
 =head1 DESCRIPTION
 
 A thin subclass of C<LibCurl::Easy> that adds extra methods for the
