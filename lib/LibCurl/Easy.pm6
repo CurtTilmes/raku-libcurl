@@ -533,6 +533,8 @@ class LibCurl::Easy
         }
 
         $!form.add-array(@form-array);
+
+        return self;
     }
 
     method clear-form()
