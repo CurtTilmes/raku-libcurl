@@ -750,16 +750,10 @@ class LibCurl::EasyHandle is repr('CPointer')
     sub curl_easy_getinfo_ptr(LibCurl::EasyHandle, int32, CArray[Pointer])
         returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
-    sub sprintf-pointer(CArray[uint8], Str, Pointer) returns int32
-        is symbol('sprintf') is native { * }
-
     method new() returns LibCurl::EasyHandle { curl_easy_init }
 
-    method id() returns Str {
-        my $id = CArray[int8].new;
-        $id[20] = 0;
-        sprintf-pointer($id, "%p", self);
-        return nativecast(Str, $id);
+    method id() returns Int {
+        return +nativecast(intptr, self);
     }
 
     method cleanup() { curl_easy_cleanup(self) }

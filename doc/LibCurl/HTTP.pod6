@@ -50,7 +50,7 @@ Set customrequest => 'DELETE', URL => $URL
 
 Set URL => $URL, upload => $filename
 
-=item method B<POST>($URL, $content)
+=item method B<POST>($URL, $content?)
 
 Set URL => $URL, postfields => $content
 
