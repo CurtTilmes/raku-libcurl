@@ -1,0 +1,34 @@
+{
+    "name" : "LibCurl",
+
+    "version" : "0.5",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-libcurl.git",
+
+    "perl" : "6.c",
+    
+    "tags" : [ "LibCurl", "Curl", "HTTP", "FTP" ],
+
+    "provides" : {
+        "LibCurl::EasyHandle"  : "lib/LibCurl/EasyHandle.pm6",
+        "LibCurl::MultiHandle" : "lib/LibCurl/MultiHandle.pm6",
+        "LibCurl::Easy"        : "lib/LibCurl/Easy.pm6",
+        "LibCurl::Multi"       : "lib/LibCurl/Multi.pm6",
+        "LibCurl::HTTP"        : "lib/LibCurl/HTTP.pm6"
+    },
+
+    "depends" : [ "Nativecall" ],
+
+    "description" : "Perl6 bindings for LibCurl",
+
+    "test-depends" : [ "Test" ],
+
+    "license" : "NASA-1.3",
+
+    "authors" : [ "Curt Tilmes <Curt.Tilmes@nasa.gov>" ],
+
+    "support" : { 
+      "source" : "https://github.com/CurtTilmes/perl6-libcurl.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-libcurl.git"
+    }
+}
