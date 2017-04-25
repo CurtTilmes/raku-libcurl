@@ -17,7 +17,7 @@
         "LibCurl::HTTP"        : "lib/LibCurl/HTTP.pm6"
     },
 
-    "depends" : [ "Nativecall" ],
+    "depends" : [ "NativeCall" ],
 
     "description" : "Perl6 bindings for LibCurl",
 
