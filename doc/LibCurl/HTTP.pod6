@@ -24,7 +24,7 @@ LibCurl::HTTP
 
   $http.POST('http://example.com')
        .formadd(name => 'name', contents => 'foo')
-       .formadd(name => 'file', file => 'file-to-upload.txt');
+       .formadd(name => 'file', file => 'file-to-upload.txt')
        .perform;
 
 =head1 DESCRIPTION
