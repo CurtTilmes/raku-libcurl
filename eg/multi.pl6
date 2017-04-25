@@ -8,8 +8,8 @@ my $curl2 = LibCurl::Easy.new(:followlocation, URL => 'http://example.com');
 
 sub callback(LibCurl::Easy $easy, Exception $e)
 {
-    die $e if $e;
-    say $easy.statusline;
+    say $easy.effective-url, " finished";
+    say $e ?? "error: $e.message()" !! $easy.statusline;
 }
 
 my $multi = LibCurl::Multi.new(callback => &callback);

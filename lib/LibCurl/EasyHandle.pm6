@@ -753,7 +753,7 @@ class LibCurl::EasyHandle is repr('CPointer')
     method new() returns LibCurl::EasyHandle { curl_easy_init }
 
     method id() returns Int {
-        return +nativecast(intptr, self);
+        return +nativecast(Pointer, self);
     }
 
     method cleanup() { curl_easy_cleanup(self) }
