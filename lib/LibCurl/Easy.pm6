@@ -410,7 +410,7 @@ class LibCurl::Easy
 
     method error() returns Str { nativecast(Str, $!errorbuffer) }
 
-    method get-header(Str $field) returns Str { %!receiveheaders{$field} }
+    method get-header(Str $field) { %!receiveheaders{$field} }
 
     method setopt(*%options)
     {

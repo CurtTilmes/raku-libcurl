@@ -77,10 +77,12 @@ class LibCurl::Multi
         return self;
     }
 
-    method perform($timeout-ms = 1000)
+    method perform($timeout-ms = 1000, *%options)
     {
         my int32 $running-handles = %.easy-handles.elems;
         my int32 $numfds = 0;
+
+        self.setopt(|%options) if %options;
 
         repeat {
             $!multi.perform($running-handles);
