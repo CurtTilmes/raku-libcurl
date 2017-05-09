@@ -49,7 +49,7 @@ A [Perl 6](https://perl6.org/) interface to
         .perform.response-code;
 
     # PUT (upload a file)
-    LibCurl::Easy.new(URL => http://example.com/somefile',
+    LibCurl::Easy.new(URL => 'http://example.com/somefile',
                       upload => 'somefile').perform;
 
     # PUT (content from a string)
