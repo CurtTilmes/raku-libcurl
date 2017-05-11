@@ -251,8 +251,11 @@ callback, with one that looks like this:
 
     $curl.setopt(debugfunction => &debug);
 
-```xferinfo``` replaces the libcurl CURLOPT_XFERINFOFUNCTION (and
-CURLOPT_PROGRESSFUNCTION) with one that looks like this:
+```xferinfo``` replaces the libcurl
+[CURLOPT_XFERINFOFUNCTION](https://curl.haxx.se/libcurl/c/CURLOPT_XFERINFOFUNCTION.html)
+(and
+[CURLOPT_PROGRESSFUNCTION](https://curl.haxx.se/libcurl/c/CURLOPT_PROGRESSFUNCTION.html))
+with one that looks like this:
 
     sub xferinfo(LibCurl::Easy $easy, $dltotal, $dlnow, $ultotal, $ulnow)
     {...}
