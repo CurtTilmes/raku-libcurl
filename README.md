@@ -421,6 +421,15 @@ you should be able to specify anything needed as options to LibCurl to
 use them.  The easiest for most common cases is to just set the
 [proxy](https://curl.haxx.se/libcurl/c/CURLOPT_PROXY.html) option.
 
+By default, libcurl will also respect the environment variables
+**http_proxy**, **ftp_proxy**, **all_proxy**, etc. if any of those are
+set.  Setting the `proxy` string to `""` (an empty string) will
+explicitly disable the use of a proxy, even if there is an environment
+variable set for it.
+
+A proxy host string can also include protocol scheme (`http://`) and
+embedded user + password.
+
 ## Multi
 
 Perl6 LibCurl also supports the libcurl
@@ -500,5 +509,4 @@ Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17,
 U.S.Code. All Other Rights Reserved.
 
-See [NASA Open Source Agreement](../blob/master/NASA_Open_Source_Agreement_1.3
-GSC-17847.pdf) for more details.
+See [NASA Open Source Agreement](../blob/master/NASA_Open_Source_Agreement_1.3%22GSC-17847.pdf) for more details.
