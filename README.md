@@ -267,7 +267,7 @@ with one that looks like this:
 
 ```upload``` specifies a filename to upload from.
 
-```send``` specifies a Perl Str or a Perl Buf to send content from.
+```send``` specifies a Perl `Str` or a Perl `Buf` to send content from.
 
 Finally there is a ```private``` option which replaces
 CURLOPT_PRIVATE, and you can safely store any Perl object in it.
