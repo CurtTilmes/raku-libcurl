@@ -1,5 +1,8 @@
 # Perl6 LibCurl
 
+[![Build Status](https://travis-ci.org/CurtTilmes/perl6-libcurl.svg)](https://travis-ci.org/CurtTilmes/perl6-libcurl)
+
+
 [Simple Examples](#simple-examples)
 [Options](#options)
 [Header Options](#header-options)
