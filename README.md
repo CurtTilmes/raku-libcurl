@@ -370,14 +370,15 @@ You can retrieve the header fields in several ways as well.
 ## Content
 
 If you did not specify the ```download``` option to download content
-into a file, the content will be stashed in memory in a Buf object:
-
-    say "Got binary content", $curl.buf;
+into a file, the content will be stashed in memory in a Buf object you
+can access with the `.buf()` method.
 
 If you understand that the content is decodable as a string, you can
 call the ```.content($encoding = 'utf-8')``` method which will decode
-the content into a Str, by default with the **utf-8** encoding if not
-specified.
+the content into a `Str`, by default with the **utf-8** encoding if
+not specified.
+
+    say "Got content", $curl.content;
 
 ## Multi-part forms
 
