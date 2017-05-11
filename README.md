@@ -438,9 +438,9 @@ embedded user + password.
 
 Perl6 LibCurl also supports the libcurl
 [multi](https://curl.haxx.se/libcurl/c/libcurl-multi.html) interface.
-You still have to construct LibCurl::Easy (or LibCurl::HTTP) handles
-for each transfer, but instead of calling ```.perform```, just add the
-handle to a ```LibCurl::Multi```.
+You still have to construct `LibCurl::Easy` (or `LibCurl::HTTP`)
+handles for each transfer, but instead of calling `.perform`, just add
+the handle to a `LibCurl::Multi`.
 
     use LibCurl::Easy;
     use LibCurl::Multi;
@@ -467,9 +467,8 @@ You can also use an asynchronous callback to get a notification when
 an individual transfer has completed.  The callback takes place in the
 same thread with all the transfers, so it should complete quickly (or
 start a new thread for heavy lifting as needed).  You can add
-additional handles to the ```LibCurl::Multi``` at any time, even
-re-using completed LibCurl::Easy handles (after setting ```URL```,
-etc. as needed).
+additional handles to the `LibCurl::Multi` at any time, even re-using
+completed LibCurl::Easy handles (after setting `URL`, etc. as needed).
 
     use LibCurl::Easy;
     use LibCurl::Multi;
