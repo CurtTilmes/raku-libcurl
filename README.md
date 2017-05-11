@@ -494,5 +494,5 @@ Administrator of the National Aeronautics and Space Administration.
 No copyright is claimed in the United States under Title 17,
 U.S.Code. All Other Rights Reserved.
 
-See [NASA Open Source Agreement](NASA_Open_Source_Agreement_1.3
+See [NASA Open Source Agreement](../blob/master/NASA_Open_Source_Agreement_1.3
 GSC-17847.pdf) for more details.
