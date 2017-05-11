@@ -1,3 +1,6 @@
+#
+# certinfo still doesn't work quite right...
+#
 use v6;
 
 use LibCurl::Easy;
