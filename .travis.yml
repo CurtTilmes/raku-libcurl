@@ -1,0 +1,17 @@
+language: perl6
+
+os:
+  - linux
+
+perl6:
+  - latest
+
+sudo: true
+
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update            ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libcurl4-openssl-dev; fi
+
+install:
+  - rakudobrew build zef
+  - zef install .
