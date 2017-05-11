@@ -247,6 +247,7 @@ for some special Perl functionality.
 callback, with one that looks like this:
 
     sub debug(LibCurl::Easy $easy, CURL-INFO-TYPE $type, Buf $buf)
+    {...}
 
     $curl.setopt(debugfunction => &debug);
 
@@ -254,8 +255,9 @@ callback, with one that looks like this:
 CURLOPT_PROGRESSFUNCTION) with one that looks like this:
 
     sub xferinfo(LibCurl::Easy $easy, $dltotal, $dlnow, $ultotal, $ulnow)
+    {...}
 
-    $curl.setopt(xferinfofunction => &xferinfo
+    $curl.setopt(xferinfofunction => &xferinfo);
 
 ```download``` specifies a filename to download into.
 
