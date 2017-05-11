@@ -243,7 +243,8 @@ This only clears the 'extra' headers, not useragent/referer/cookie.
 In addition to the normal libcurl options, Perl6 LibCurl uses options
 for some special Perl functionality.
 
-```debugfunction``` replaces the libcurl ```CURLOPT_DEBUGFUNCTION```
+```debugfunction``` replaces the libcurl
+[CURLOPT_DEBUGFUNCTION](https://curl.haxx.se/libcurl/c/CURLOPT_DEBUGFUNCTION.html)
 callback, with one that looks like this:
 
     sub debug(LibCurl::Easy $easy, CURL-INFO-TYPE $type, Buf $buf)
