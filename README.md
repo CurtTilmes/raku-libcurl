@@ -158,6 +158,7 @@ me know):
 [cookiejar](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIEJAR.html)
 [cookielist](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIELIST.html)
 [customrequest](https://curl.haxx.se/libcurl/c/CURLOPT_CUSTOMREQUEST.html)
+[dirlistonly](https://curl.haxx.se/libcurl/c/CURLOPT_DIRLISTONLY.html)
 [failonerror](https://curl.haxx.se/libcurl/c/CURLOPT_FAILONERROR.html)
 [followlocation](https://curl.haxx.se/libcurl/c/CURLOPT_FOLLOWLOCATION.html)
 [forbid-reuse](https://curl.haxx.se/libcurl/c/CURLOPT_FORBID_REUSE.html)

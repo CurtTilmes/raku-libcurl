@@ -168,6 +168,7 @@ my %opts =
     cookiejar            => (CURLOPT_COOKIEJAR,            CURLOPT_STR      ),
     cookielist           => (CURLOPT_COOKIELIST,           CURLOPT_STR      ),
     customrequest        => (CURLOPT_CUSTOMREQUEST,        CURLOPT_STR      ),
+    dirlistonly          => (CURLOPT_DIRLISTONLY,          CURLOPT_BOOL     ),
     failonerror          => (CURLOPT_FAILONERROR,          CURLOPT_BOOL     ),
     followlocation       => (CURLOPT_FOLLOWLOCATION,       CURLOPT_BOOL     ),
     forbid-reuse         => (CURLOPT_FORBID_REUSE,         CURLOPT_BOOL     ),
