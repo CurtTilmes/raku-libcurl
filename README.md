@@ -492,6 +492,10 @@ etc. as needed).
 
     $multi.perform;
 
+## INSTALL
+
+`LibCurl` depends on [libcurl](https://curl.haxx.se/download.html), so
+you must install that prior to installing this module.
 
 ## SEE ALSO
 
