@@ -17,11 +17,11 @@
         "LibCurl::HTTP"        : "lib/LibCurl/HTTP.pm6"
     },
 
-    "depends" : [ "NativeCall" ],
+    "depends" : [ "NativeCall", "JSON::Fast" ],
 
     "description" : "Perl6 bindings for LibCurl",
 
-    "test-depends" : [ "Test" ],
+    "test-depends" : [ "Test", "Test::When" ],
 
     "license" : "NASA-1.3",
 
