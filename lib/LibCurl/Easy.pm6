@@ -523,7 +523,7 @@ class LibCurl::Easy
 
             my ($code, $codelength) = %formfields{$field};
 
-            my $blob = $param ~~ Str ?? "$param\0".encode !! $param;
+            my $blob = $param ~~ Blob ?? $param !! "$param\0".encode;
 
             @form-array.push: ($code, $blob);
 
