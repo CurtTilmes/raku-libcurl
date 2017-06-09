@@ -42,7 +42,7 @@ A [Perl 6](https://perl6.org/) interface to
 
     # GET
     print LibCurl::Easy.new(URL => 'http://example.com').perform.content;
-    
+
     # GET (download a file)
     LibCurl::Easy.new(URL => 'http://example.com/somefile',
                       download => 'somefile').perform;
@@ -116,6 +116,7 @@ You can even import very simple subroutines ala [WWW](https://github.com/zoffixz
     my $curl = LibCurl::Easy.new(:verbose, :followlocation);
     $curl.setopt(URL => 'http://example.com', download => './myfile.html');
     $curl.perform;
+    say $curl.success;
     say $curl.Content-Type;
     say $curl.Content-Length;
     say $curl.Date;
@@ -306,10 +307,14 @@ thrown X::LibCurl exception.  You can catch these with CATCH.  You can
 see the string error, or cast to Int to see the [libcurl error
 code](https://curl.haxx.se/libcurl/c/libcurl-errors.html).
 
+For HTTP transfers, you can access the response code with
+`getinfo('response-code')` or just `.response-code`.  You can also
+check that the response code is in the 2xx range with `.success`.
+
 You might find the
 [failonerror](https://curl.haxx.se/libcurl/c/CURLOPT_FAILONERROR.html)
 option useful to force an error if the HTTP code is equal to or larger
-than 400.
+than 400.  That will cause an exception in those cases.
 
 On an error, you may find [extra human readable error
 messages](https://curl.haxx.se/libcurl/c/CURLOPT_ERRORBUFFER.html)
@@ -343,7 +348,7 @@ there are also convenience methods for each info field.
     say $curl.getinfo(<effective-url response-code>);  # Hash with those keys
 
     say $curl.getinfo;   # Hash of all info fields
-   
+
     say $curl.effective-url;
     say $curl.response-code;
 

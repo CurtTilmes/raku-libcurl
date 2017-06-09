@@ -507,7 +507,7 @@ class LibCurl::Easy
                 $value eq ';' ?? "$field;" !! "$field: $value"
             );
         }
-        
+
         return self;
     }
 
@@ -548,7 +548,7 @@ class LibCurl::Easy
     {
         $!handle.setopt(CURLOPT_HTTPHEADER, $!header-slist);
 
-        unless $!download-fh 
+        unless $!download-fh
         {
             $!buf = Buf.new;
             $!handle.setopt(CURLOPT_WRITEDATA, $!handle);
@@ -583,6 +583,11 @@ class LibCurl::Easy
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
 
         return self;
+    }
+
+    method success() returns Bool
+    {
+        200 <= self.getinfo('response-code') < 300
     }
 
     multi method getinfo(Str $info)

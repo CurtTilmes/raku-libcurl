@@ -5,6 +5,8 @@ use Test::When <online>;
 
 use LibCurl::HTTP;
 
+plan 18;
+
 my $version = LibCurl::HTTP.version;
 
 like $version, /^libcurl/, 'LibCurl Version';
@@ -19,6 +21,8 @@ isa-ok $curl, LibCurl::HTTP, 'Created Object';
 # GET
 #
 my $x = $curl.GET('http://example.com').perform;
+
+ok $curl.success, 'Response success';
 
 is $curl.response-code, 200, 'Response code';
 
@@ -37,6 +41,8 @@ $curl = LibCurl::HTTP.new();
 
 $curl.HEAD('http://example.com').perform;
 
+ok $curl.success, 'Response success';
+
 is $curl.response-code, 200, 'Response code';
 
 is $curl.statusline, 'HTTP/1.1 200 OK', 'Status line';
@@ -54,6 +60,8 @@ is $curl.buf.bytes, 0, 'No Body.';
 $curl = LibCurl::HTTP.new();
 
 $curl.POST('http://httpbin.org/post?foo=42&bar=x').perform;
+
+ok $curl.success, 'Response success';
 
 is $curl.response-code, '200', 'Response-code';
 

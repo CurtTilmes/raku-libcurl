@@ -80,6 +80,10 @@ A Hash of all received headers from the last transaction.
 
 Get a single from the received headers.
 
+  * method **success**() returns Bool
+
+Is the HTTP response-code 2xx?
+
   * multi method **getinfo**(Str $info)
 
 Returns a single info object. See ... for a description of all the info fields.
