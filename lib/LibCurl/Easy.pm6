@@ -407,7 +407,18 @@ class LibCurl::Easy
         state $v = LibCurl::version.new.info
     }
 
-    method content($encoding = 'utf-8') returns Str { $!buf.decode($encoding) }
+    method content($encoding is copy = 'utf-8') returns Str
+    {
+        with self.receiveheaders<Content-Type>
+        {
+            # Should be a stricter grammar, but dump regex will work for now
+            if /charset \s* '=' \s* \\? <['"]>? (<-[\\"']>*) \\? <['"]>? /
+            {
+                $encoding = $0.Str;
+            }
+        }
+        $!buf.decode($encoding)
+    }
 
     method error() returns Str { nativecast(Str, $!errorbuffer) }
 
