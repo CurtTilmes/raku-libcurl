@@ -1,12 +1,12 @@
 {
     "name" : "LibCurl",
 
-    "version" : "0.5.1",
+    "version" : "0.5.2",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-libcurl.git",
 
     "perl" : "6.c",
-    
+
     "tags" : [ "LibCurl", "Curl", "HTTP", "FTP" ],
 
     "provides" : {
@@ -27,7 +27,7 @@
 
     "authors" : [ "Curt Tilmes <Curt.Tilmes@nasa.gov>" ],
 
-    "support" : { 
+    "support" : {
       "source" : "https://github.com/CurtTilmes/perl6-libcurl.git",
       "bugtracker" : "https://github.com/CurtTilmes/perl6-libcurl.git"
     }
