@@ -16,6 +16,11 @@ class LibCurl::HTTP is LibCurl::Easy
         self.setopt(:failonerror, :nobody, URL => $URL);
     }
 
+    OPTIONS($URL)
+    {
+        self.setopt(:failonerror, customrequest => 'OPTIONS', URL => $URL);
+    }
+
     method DELETE($URL)
     {
         self.setopt(:failonerror, customrequest => 'DELETE', URL => $URL);
