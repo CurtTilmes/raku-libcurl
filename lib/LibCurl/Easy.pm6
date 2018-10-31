@@ -149,7 +149,7 @@ BEGIN for <
 > { EXPORT::DEFAULT::{$_} = ::($_) }
 
 enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG CURLOPT_OFF_T
-    LIBCURL_HEADER LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND
+    CURLOPT_SLIST LIBCURL_HEADER LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND
     LIBCURL_DEBUG LIBCURL_XFER LIBCURL_PRIVATE>;
 
 my %opts =
@@ -185,6 +185,8 @@ my %opts =
     infilesize           => (CURLOPT_INFILESIZE_LARGE,     CURLOPT_OFF_T    ),
     low-speed-limit      => (CURLOPT_LOW_SPEED_LIMIT,      CURLOPT_LONG     ),
     low-speed-time       => (CURLOPT_LOW_SPEED_TIME,       CURLOPT_LONG     ),
+    mail-from            => (CURLOPT_MAIL_FROM,            CURLOPT_STR      ),
+    mail-rcpt            => (CURLOPT_MAIL_RCPT,            CURLOPT_SLIST    ),
     maxconnects          => (CURLOPT_MAXCONNECTS,          CURLOPT_LONG     ),
     maxfilesize          => (CURLOPT_MAXFILESIZE_LARGE,    CURLOPT_OFF_T    ),
     maxredirs            => (CURLOPT_MAXREDIRS,            CURLOPT_LONG     ),
@@ -378,6 +380,7 @@ class LibCurl::Easy
     has &.debugfunction;
     has &.xferinfofunction;
     has $.private;
+    has @.slists;
 
     sub fopen(Str $path, Str $mode) returns Pointer is native { * }
 
@@ -445,6 +448,12 @@ class LibCurl::Easy
                     {
                         fseek($!upload-fh, $param, 0);
                     }
+                }
+
+                when CURLOPT_SLIST {
+                    my $slist = LibCurl::slist.append(@$param);
+                    $!handle.setopt($code, $slist);
+                    @.slists.push($slist);
                 }
 
                 when LIBCURL_HEADER {
@@ -670,6 +679,8 @@ class LibCurl::Easy
         .cleanup with $!handle;
         $!handle = LibCurl::EasyHandle;
         self.clear-form;
+        .free for @!slists;
+        @!slists = ();
     }
 
     submethod DESTROY
