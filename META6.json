@@ -1,11 +1,11 @@
 {
     "name" : "LibCurl",
 
-    "version" : "0.6",
+    "version" : "0.6.1",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-libcurl.git",
 
-    "perl" : "6.c",
+    "perl" : "6.*",
 
     "tags" : [ "LibCurl", "Curl", "HTTP", "FTP" ],
 

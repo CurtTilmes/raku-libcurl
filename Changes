@@ -1,3 +1,7 @@
 v0.6
 
 * Added some new options, mainly wanted to support unix sockets.
+
+v0.6.1
+
+* Remove dependency on perl 6.c -- just use 6.*.
