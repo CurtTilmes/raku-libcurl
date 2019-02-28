@@ -1,5 +1,3 @@
-use v6;
-
 use Test;
 
 plan 5;
@@ -15,4 +13,3 @@ use-ok 'LibCurl::MultiHandle';
 use-ok 'LibCurl::Multi';
 
 done-testing;
-

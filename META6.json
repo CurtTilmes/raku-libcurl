@@ -1,7 +1,7 @@
 {
     "name" : "LibCurl",
 
-    "version" : "0.5.3",
+    "version" : "0.6",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-libcurl.git",
 
@@ -21,7 +21,7 @@
 
     "description" : "Perl6 bindings for LibCurl",
 
-    "test-depends" : [ "Test", "Test::When" ],
+    "test-depends" : [ "Test", "Test::When", "Test::META" ],
 
     "license" : "NASA-1.3",
 

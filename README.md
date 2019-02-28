@@ -182,6 +182,7 @@ me know):
 [cookiejar](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIEJAR.html)
 [cookielist](https://curl.haxx.se/libcurl/c/CURLOPT_COOKIELIST.html)
 [customrequest](https://curl.haxx.se/libcurl/c/CURLOPT_CUSTOMREQUEST.html)
+[default-protocol](https://curl.haxx.se/libcurl/c/CURLOPT_DEFAULT_PROTOCOL.html)
 [dirlistonly](https://curl.haxx.se/libcurl/c/CURLOPT_DIRLISTONLY.html)
 [failonerror](https://curl.haxx.se/libcurl/c/CURLOPT_FAILONERROR.html)
 [followlocation](https://curl.haxx.se/libcurl/c/CURLOPT_FOLLOWLOCATION.html)
@@ -228,6 +229,7 @@ me know):
 [timeout](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html)
 [timeout-ms](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT_MS.html)
 [timevalue](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEVALUE.html)
+[unix-socket-path](https://curl.haxx.se/libcurl/c/CURLOPT_UNIX_SOCKET_PATH.html)
 [unrestricted-auth](https://curl.haxx.se/libcurl/c/CURLOPT_UNRESTRICTED_AUTH.html)
 [use-ssl](https://curl.haxx.se/libcurl/c/CURLOPT_USE_SSL.html)
 [useragent](https://curl.haxx.se/libcurl/c/CURLOPT_USERAGENT.html)
@@ -462,6 +464,22 @@ variable set for it.
 
 A proxy host string can also include protocol scheme (`http://`) and
 embedded user + password.
+
+## Unix sockets
+
+`LibCurl` can be used to communicate with a unix socket by setting the
+`unix-socket-path` option.  You must still specify a host, but it is
+ignored.  For example, you could use the [docker REST
+API](https://docs.docker.com/engine/api/latest) like this:
+
+    use LibCurl::Easy;
+    use JSON::Fast;
+
+    my $docker = LibCurl::Easy.new(unix-socket-path => '/var/run/docker.sock');
+
+    my $info = from-json($docker.URL("http://localhost/info").perform.content);
+    say $info<KernelVersion>;
+    say $info<OperatingSystem>;
 
 ## Multi
 

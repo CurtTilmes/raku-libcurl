@@ -1,7 +1,5 @@
-use v6;
-
 use Test;
-use Test::When <online>;
+use Test::When <author>;
 
 use LibCurl::HTTP :subs;
 
