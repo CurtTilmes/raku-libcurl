@@ -647,6 +647,7 @@ class LibCurl::Easy
             $!channel-out = Nil;
         }
         $!channel-in = Nil;
+        $!sendbuf = Nil;
     }
 
     method perform() returns LibCurl::Easy
