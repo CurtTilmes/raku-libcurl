@@ -1,5 +1,3 @@
-use v6;
-
 use NativeCall;
 
 constant intptr = ssize_t;
@@ -202,6 +200,7 @@ constant CURLINFO_STRING                    = 0x100000;
 constant CURLINFO_LONG                      = 0x200000;
 constant CURLINFO_DOUBLE                    = 0x300000;
 constant CURLINFO_SLIST                     = 0x400000;
+constant CURLINFO_SOCKET                    = 0x500000;
 
 constant CURLINFO_EFFECTIVE_URL             = CURLINFO_STRING + 1;
 constant CURLINFO_RESPONSE_CODE             = CURLINFO_LONG   + 2;
@@ -246,6 +245,7 @@ constant CURLINFO_PRIMARY_PORT              = CURLINFO_LONG   + 40;
 constant CURLINFO_LOCAL_IP                  = CURLINFO_STRING + 41;
 constant CURLINFO_LOCAL_PORT                = CURLINFO_LONG   + 42;
 constant CURLINFO_TLS_SESSION               = CURLINFO_SLIST  + 43;
+constant CURLINFO_ACTIVESOCKET              = CURLINFO_SOCKET + 44;
 
 constant CURLOPTTYPE_LONG                   = 0;
 constant CURLOPTTYPE_OBJECTPOINT            = 10000;
@@ -708,6 +708,11 @@ class LibCurl::version is repr('CPointer')
     method info() { nativecast(LibCurl::version-info, self) }
 }
 
+class LibCurl::Socket
+{
+    has int32 $.sock;
+}
+
 class LibCurl::EasyHandle is repr('CPointer')
 {
     sub curl_easy_init() returns LibCurl::EasyHandle is native(LIBCURL) { * }
@@ -766,6 +771,15 @@ class LibCurl::EasyHandle is repr('CPointer')
 
     sub curl_easy_getinfo_ptr(LibCurl::EasyHandle, int32, CArray[Pointer])
         returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
+
+    sub curl_easy_getinfo_socket(LibCurl::EasyHandle, int32, int32 is rw)
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
+
+    sub curl_easy_send(LibCurl::EasyHandle, Pointer, size_t, size_t is rw
+        --> uint32) {}
+
+    sub curl_easy_recv(LibCurl::EasyHandle, Pointer, size_t, size_t is rw
+        --> uint32) {}
 
     method new() returns LibCurl::EasyHandle { curl_easy_init }
 
@@ -851,6 +865,13 @@ class LibCurl::EasyHandle is repr('CPointer')
         my $ret = curl_easy_getinfo_long(self, $option, $value);
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return $value;
+    }
+
+    method getinfo_socket($option) returns int32 {
+        my int32 $sock;
+        my $ret = curl_easy_getinfo_socket(self, $option, $sock);
+        die X::LibCurl.new(code => $ret) unless $ret = CURLE_OK;
+        return LibCurl::Socket.new(:$sock);
     }
 
     method getinfo_double($option) {

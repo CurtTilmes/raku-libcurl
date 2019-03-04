@@ -1,5 +1,3 @@
-use v6;
-
 use NativeCall;
 use LibCurl::EasyHandle;
 
@@ -163,6 +161,7 @@ my %opts =
     autoreferer          => (CURLOPT_AUTOREFERER,          CURLOPT_BOOL     ),
     buffersize           => (CURLOPT_BUFFERSIZE,           CURLOPT_LONG     ),
     certinfo             => (CURLOPT_CERTINFO,             CURLOPT_BOOL     ),
+    connect-only         => (CURLOPT_CONNECT_ONLY,         CURLOPT_LONG     ),
     cookie               => (CURLOPT_COOKIE,               CURLOPT_STR      ),
     cookiefile           => (CURLOPT_COOKIEFILE,           CURLOPT_STR      ),
     cookiejar            => (CURLOPT_COOKIEJAR,            CURLOPT_STR      ),
@@ -183,6 +182,7 @@ my %opts =
     httpauth             => (CURLOPT_HTTPAUTH,             CURLOPT_LONG     ),
     httpget              => (CURLOPT_HTTPGET,              CURLOPT_BOOL     ),
     httpproxytunnel      => (CURLOPT_HTTPPROXYTUNNEL,      CURLOPT_BOOL     ),
+    ignore-content-length=> (CURLOPT_IGNORE_CONTENT_LENGTH,CURLOPT_BOOL     ),
     infilesize           => (CURLOPT_INFILESIZE_LARGE,     CURLOPT_OFF_T    ),
     low-speed-limit      => (CURLOPT_LOW_SPEED_LIMIT,      CURLOPT_LONG     ),
     low-speed-time       => (CURLOPT_LOW_SPEED_TIME,       CURLOPT_LONG     ),
@@ -241,6 +241,7 @@ my %opts =
 ;
 
 my %infofields =
+    active-socket        => (CURLINFO_ACTIVESOCKET,     CURLINFO_SOCKET     ),
     appconnect_time      => (CURLINFO_APPCONNECT_TIME,  CURLINFO_DOUBLE     ),
     certinfo             => (CURLINFO_CERTINFO,         CURLINFO_SLIST      ),
     condition-unmet      => (CURLINFO_CONDITION_UNMET,  CURLINFO_LONG       ),
@@ -325,7 +326,20 @@ sub readfunction(Pointer $ptr, uint32 $size, uint32 $nmemb,
 {
     my $easy = easy-lookup($handleptr);
 
-    return 0 if $easy.sendindex >= $easy.sendbuf.elems;
+    if $easy.sendindex >= $easy.sendbuf.elems
+    {
+        with $easy.channel-in
+        {
+            try my $next = .receive;
+            return 0 if $!;
+            $easy.sendbuf = $next ~~ Str ?? $next.encode !! $next;
+            $easy.sendindex = 0;
+        }
+        else
+        {
+            return 0;
+        }
+    }
 
     my $tosend = min $easy.sendbuf.elems - $easy.sendindex, $size * $nmemb;
 
@@ -341,9 +355,13 @@ sub writefunction(Pointer $ptr, uint32 $size, uint32 $nmemb,
 {
     my $easy = easy-lookup($handleptr);
 
-    $easy.buf ~= Blob.new(
-        nativecast(CArray[uint8], $ptr)[0 ..^ $size * $nmemb]
-    );
+    $easy.buf ~= Blob.new(nativecast(CArray[uint8], $ptr)[^ $size * $nmemb]);
+
+    with $easy.channel-out
+    {
+        .send: $easy.buf.decode;
+        $easy.buf = buf8.new;
+    }
 
     return $size * $nmemb;
 }
@@ -383,6 +401,9 @@ class LibCurl::Easy
     has &.xferinfofunction;
     has $.private;
     has @.slists;
+    has Channel $.channel-in;
+    has Channel $.channel-out;
+    has $.new-opts;
 
     sub fopen(Str $path, Str $mode) returns Pointer is native { * }
 
@@ -396,13 +417,24 @@ class LibCurl::Easy
         my $errorbuffer = CArray[uint8].new;
         $errorbuffer[0] = 0;
         $errorbuffer[CURL_ERROR_SIZE] = 0;
-        my $self = self.bless(:$handle, :$errorbuffer);
-        $allhandles-lock.protect({ %allhandles{$handle.id} = $self });
         $handle.setopt(CURLOPT_HEADERDATA, $handle);
         $handle.setopt(CURLOPT_HEADERFUNCTION, &headerfunction);
         $handle.setopt(CURLOPT_ERRORBUFFER, $errorbuffer);
+        my $self = self.bless(:$handle, :$errorbuffer, new-opts => opts);
+        $allhandles-lock.protect({ %allhandles{$handle.id} = $self });
         $self.setopt(|opts);
         return $self;
+    }
+
+    method reset()
+    {
+        $!handle.reset;
+        $!handle.setopt(CURLOPT_HEADERDATA, $!handle);
+        $!handle.setopt(CURLOPT_HEADERFUNCTION, &headerfunction);
+        $!errorbuffer[0] = 0;
+        $!handle.setopt(CURLOPT_ERRORBUFFER, $!errorbuffer);
+        self.setopt(|$!new-opts);
+        self.clear-header;
     }
 
     method version returns Str { state $v = curl_version }
@@ -477,15 +509,12 @@ class LibCurl::Easy
 
                 when LIBCURL_SEND {
                     given $param {
-                        when Buf { $!sendbuf = $param }
+                        when Blob { $!sendbuf = $param }
                         when Str { $!sendbuf = $param.encode }
                         default  { die "Don't know how to send $param" }
                     }
                     $!sendindex = 0;
-                    $!handle.setopt(CURLOPT_UPLOAD, 1);
                     $!handle.setopt(CURLOPT_INFILESIZE_LARGE, $!sendbuf.elems);
-                    $!handle.setopt(CURLOPT_READDATA, $!handle);
-                    $!handle.setopt(CURLOPT_READFUNCTION, &readfunction);
                 }
 
 		when LIBCURL_DEBUG {
@@ -566,10 +595,20 @@ class LibCurl::Easy
         $!form = LibCurl::Form;
     }
 
+    method stream-out(--> Channel)
+    {
+        $!handle.setopt(CURLOPT_IGNORE_CONTENT_LENGTH, 1);
+        $!channel-out = Channel.new
+    }
+
+    method stream-in(--> Channel)
+    {
+        self.set-header(Transfer-Encoding => 'chunked');
+        $!channel-in = Channel.new
+    }
+
     method prepare()
     {
-        $!handle.setopt(CURLOPT_HTTPHEADER, $!header-slist);
-
         unless $!download-fh
         {
             $!buf = Buf.new;
@@ -577,6 +616,14 @@ class LibCurl::Easy
             $!handle.setopt(CURLOPT_WRITEFUNCTION, &writefunction);
         }
 
+        if $!sendbuf or $!channel-in
+        {
+            $!handle.setopt(CURLOPT_UPLOAD, 1);
+            $!handle.setopt(CURLOPT_READDATA, $!handle);
+            $!handle.setopt(CURLOPT_READFUNCTION, &readfunction);
+        }
+
+        $!handle.setopt(CURLOPT_HTTPHEADER, $!header-slist);
         $!handle.setopt(CURLOPT_HTTPPOST, $!form.firstitem) if $!form;
 
         %!receiveheaders = ();
@@ -584,14 +631,22 @@ class LibCurl::Easy
 
     method finish()
     {
-        if $!download-fh {
+        with $!download-fh
+        {
             fclose($!download-fh);
             $!download-fh = Pointer;
         }
-        if $!upload-fh {
+        with $!upload-fh
+        {
             fclose($!upload-fh);
             $!upload-fh = Pointer;
         }
+        with $!channel-out
+        {
+            .close;
+            $!channel-out = Nil;
+        }
+        $!channel-in = Nil;
     }
 
     method perform() returns LibCurl::Easy
@@ -637,6 +692,9 @@ class LibCurl::Easy
                         $!handle.getinfo_slist($code);
                     }
                 }
+            }
+            when CURLINFO_SOCKET {
+                $!handle.getinfo_socket($code);
             }
             default {
                 die "Unknown getinfo [$info]";

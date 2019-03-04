@@ -1,20 +1,21 @@
 {
     "name" : "LibCurl",
 
-    "version" : "0.6.1",
+    "version" : "0.7",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-libcurl.git",
 
     "perl" : "6.*",
 
-    "tags" : [ "LibCurl", "Curl", "HTTP", "FTP" ],
+    "tags" : [ "LibCurl", "Curl", "HTTP", "FTP", "REST" ],
 
     "provides" : {
         "LibCurl::EasyHandle"  : "lib/LibCurl/EasyHandle.pm6",
         "LibCurl::MultiHandle" : "lib/LibCurl/MultiHandle.pm6",
         "LibCurl::Easy"        : "lib/LibCurl/Easy.pm6",
         "LibCurl::Multi"       : "lib/LibCurl/Multi.pm6",
-        "LibCurl::HTTP"        : "lib/LibCurl/HTTP.pm6"
+        "LibCurl::HTTP"        : "lib/LibCurl/HTTP.pm6",
+        "LibCurl::REST"        : "lib/LibCurl/REST.pm6"
     },
 
     "depends" : [ "NativeCall", "JSON::Fast" ],

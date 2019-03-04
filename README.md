@@ -197,6 +197,7 @@ me know):
 [httpauth](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPAUTH.html)
 [httpget](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPGET.html)
 [httpproxytunnel](https://curl.haxx.se/libcurl/c/CURLOPT_HTTPPROXYTUNNEL.html)
+[ignore-content-length)](https://curl.haxx.se/libcurl/c/CURLOPT_IGNORE_CONTENT_LENGTH.html)
 [infilesize](https://curl.haxx.se/libcurl/c/CURLOPT_INFILESIZE_LARGE.html)
 [low-speed-limit](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html)
 [low-speed-time](https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html)
