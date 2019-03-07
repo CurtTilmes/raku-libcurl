@@ -196,6 +196,8 @@ constant CURL_GLOBAL_NOTHING                = 0;
 constant CURL_GLOBAL_DEFAULT                = CURL_GLOBAL_ALL;
 constant CURL_GLOBAL_ACK_EINTR              = 1 +< 2;
 
+constant CURL_SOCKET_BAD                    = -1;
+
 constant CURLINFO_STRING                    = 0x100000;
 constant CURLINFO_LONG                      = 0x200000;
 constant CURLINFO_DOUBLE                    = 0x300000;
@@ -540,6 +542,42 @@ class X::LibCurl is Exception
     method message() { curl_easy_strerror($!code) }
 }
 
+class timeval is repr('CStruct')
+{
+    has longlong $.tv_sec;
+    has longlong $.tv_usec;
+
+    submethod BUILD(Int :$tv)
+    {
+        $!tv_sec = Int($tv / 1000);
+        $!tv_usec = $tv % 1000;
+    }
+}
+
+sub select(int32, Blob, Blob, Blob, timeval --> int32) is native {}
+
+sub wait_on_socket(uint32 $sockfd, :$timeout = 60000,
+                   Bool :$recv) is export
+{
+    my timeval $tv .= new(:tv($timeout));
+    my $fd-set-size = Int($sockfd/8) + 2;
+    my $infd = buf8.allocate($fd-set-size);
+    my $outfd = buf8.allocate($fd-set-size);
+    my $errfd = buf8.allocate($fd-set-size);
+
+    $errfd[$sockfd / 8] +|= 1 +< ($sockfd % 8);
+    if $recv
+    {
+        $infd[$sockfd / 8] +|= 1 +< ($sockfd % 8);
+    }
+    else
+    {
+        $outfd[$sockfd / 8] +|= 1 +< ($sockfd % 8);
+    }
+
+    select($sockfd+1, $infd, $outfd, $errfd, $tv)
+}
+
 class X::LibCurl::Form is X::LibCurl
 {
     method message() { ... }
@@ -708,11 +746,6 @@ class LibCurl::version is repr('CPointer')
     method info() { nativecast(LibCurl::version-info, self) }
 }
 
-class LibCurl::Socket
-{
-    has int32 $.sock;
-}
-
 class LibCurl::EasyHandle is repr('CPointer')
 {
     sub curl_easy_init() returns LibCurl::EasyHandle is native(LIBCURL) { * }
@@ -775,11 +808,11 @@ class LibCurl::EasyHandle is repr('CPointer')
     sub curl_easy_getinfo_socket(LibCurl::EasyHandle, int32, int32 is rw)
         returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
-    sub curl_easy_send(LibCurl::EasyHandle, Pointer, size_t, size_t is rw
-        --> uint32) {}
+    sub curl_easy_send(LibCurl::EasyHandle, Blob, size_t, size_t is rw
+        --> uint32) is native(LIBCURL) {}
 
-    sub curl_easy_recv(LibCurl::EasyHandle, Pointer, size_t, size_t is rw
-        --> uint32) {}
+    sub curl_easy_recv(LibCurl::EasyHandle, Blob, size_t, size_t is rw
+        --> uint32) is native(LIBCURL) {}
 
     method new() returns LibCurl::EasyHandle { curl_easy_init }
 
@@ -870,8 +903,8 @@ class LibCurl::EasyHandle is repr('CPointer')
     method getinfo_socket($option) returns int32 {
         my int32 $sock;
         my $ret = curl_easy_getinfo_socket(self, $option, $sock);
-        die X::LibCurl.new(code => $ret) unless $ret = CURLE_OK;
-        return LibCurl::Socket.new(:$sock);
+        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
+        return $sock;
     }
 
     method getinfo_double($option) {
@@ -908,5 +941,46 @@ class LibCurl::EasyHandle is repr('CPointer')
         die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
         return nativecast(LibCurl::certinfo, $ptr);
     }
-}
 
+    multi method send(Str $str) { $.send($str.encode) }
+
+    multi method send(Blob $buf, :$timeout = 60000) {
+        my $sockfd = $.getinfo_socket(CURLINFO_ACTIVESOCKET);
+        die "Bad handle" if $sockfd  == CURL_SOCKET_BAD;
+        my size_t $tosend = $buf.elems;
+        my size_t $sent;
+        my $ret;
+        repeat
+        {
+            $ret = curl_easy_send(self,
+                                  $buf.subbuf($buf.elems-$tosend),
+                                  $tosend, $sent);
+            $tosend -= $sent;
+            if $ret == CURLE_AGAIN
+                && wait_on_socket($sockfd, :$timeout) == 0
+            {
+                die "Timeout";
+            }
+        } while $ret == CURLE_AGAIN && $tosend > 0;
+        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK
+    }
+
+    method recv(:$bufsiz = 8192, :$timeout = 60000) {
+        my $sockfd = $.getinfo_socket(CURLINFO_ACTIVESOCKET);
+        die "Bad handle" if $sockfd  == CURL_SOCKET_BAD;
+        my $buf = buf8.allocate($bufsiz);
+        my size_t $nread;
+        my $ret;
+        repeat
+        {
+            $ret = curl_easy_recv(self, $buf, $bufsiz, $nread);
+            if $ret == CURLE_AGAIN &&
+                wait_on_socket($sockfd, :recv, :$timeout) == 0
+            {
+                die "Timeout";
+            }
+        } while $ret == CURLE_AGAIN;
+        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
+        $buf.subbuf(^$nread)
+    }
+}
