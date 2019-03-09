@@ -946,7 +946,7 @@ class LibCurl::EasyHandle is repr('CPointer')
 
     multi method send(Blob $buf, :$timeout = 60000) {
         my $sockfd = $.getinfo_socket(CURLINFO_ACTIVESOCKET);
-        die "Bad handle" if $sockfd  == CURL_SOCKET_BAD;
+        return False if $sockfd  == CURL_SOCKET_BAD;
         my size_t $tosend = $buf.elems;
         my size_t $sent;
         my $ret;
@@ -967,7 +967,7 @@ class LibCurl::EasyHandle is repr('CPointer')
 
     method recv(:$bufsiz = 8192, :$timeout = 60000) {
         my $sockfd = $.getinfo_socket(CURLINFO_ACTIVESOCKET);
-        die "Bad handle" if $sockfd  == CURL_SOCKET_BAD;
+        return if $sockfd  == CURL_SOCKET_BAD;
         my $buf = buf8.allocate($bufsiz);
         my size_t $nread;
         my $ret;
@@ -980,7 +980,6 @@ class LibCurl::EasyHandle is repr('CPointer')
                 die "Timeout";
             }
         } while $ret == CURLE_AGAIN;
-        die X::LibCurl.new(code => $ret) unless $ret == CURLE_OK;
-        $buf.subbuf(^$nread)
+        $ret == CURLE_OK ?? $buf.subbuf(^$nread) !! False
     }
 }
