@@ -148,7 +148,7 @@ BEGIN for <
 
 enum CURLOPT_TYPE <CURLOPT_BOOL CURLOPT_STR CURLOPT_LONG CURLOPT_OFF_T
     CURLOPT_SLIST LIBCURL_HEADER LIBCURL_DOWNLOAD LIBCURL_UPLOAD LIBCURL_SEND
-    LIBCURL_DEBUG LIBCURL_XFER LIBCURL_PRIVATE>;
+    LIBCURL_DEBUG LIBCURL_XFER LIBCURL_PRIVATE LIBCURL_HEADERS>;
 
 my %opts =
     CAinfo               => (CURLOPT_CAINFO,               CURLOPT_STR      ),
@@ -238,6 +238,7 @@ my %opts =
     debugfunction        => (0,                            LIBCURL_DEBUG    ),
     xferinfofunction     => (0,                            LIBCURL_XFER     ),
     private              => (0,                            LIBCURL_PRIVATE  ),
+    headers              => (0,                            LIBCURL_HEADERS  ),
 ;
 
 my %infofields =
@@ -433,8 +434,8 @@ class LibCurl::Easy
         $!handle.setopt(CURLOPT_HEADERFUNCTION, &headerfunction);
         $!errorbuffer[0] = 0;
         $!handle.setopt(CURLOPT_ERRORBUFFER, $!errorbuffer);
-        self.setopt(|$!new-opts);
         self.clear-header;
+        self.setopt(|$!new-opts);
     }
 
     method version returns Str { state $v = curl_version }
@@ -492,6 +493,10 @@ class LibCurl::Easy
 
                 when LIBCURL_HEADER {
                     self.set-header(|($option => $param));
+                }
+
+                when LIBCURL_HEADERS {
+                    self.set-header(|$param) with $param;
                 }
 
                 when LIBCURL_DOWNLOAD {
