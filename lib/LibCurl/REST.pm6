@@ -57,13 +57,13 @@ class LibCurl::REST
             default { $bin ?? $!curl.buf !! $!curl.content }
         }
 
-        $!curl.success ?? $content || True !! die $content;
+        $!curl.success ?? $content !! die $content;
     }
 
     method get(|opts)    { $.query(:method<GET>,    |opts) }
-    method post(|opts)   { $.query(:method<POST>,   |opts) }
-    method delete(|opts) { $.query(:method<DELETE>, |opts) }
-    method put(|opts)    { $.query(:method<PUT>,    |opts) }
+    method post(|opts)   { $.query(:method<POST>,   |opts) || True }
+    method delete(|opts) { $.query(:method<DELETE>, |opts) || True }
+    method put(|opts)    { $.query(:method<PUT>,    |opts) || True }
 
     method head(Str:D $url, |opts)
     {
