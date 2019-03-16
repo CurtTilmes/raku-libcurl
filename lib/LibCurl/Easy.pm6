@@ -430,6 +430,7 @@ class LibCurl::Easy
     method reset()
     {
         $!handle.reset;
+        $!buf = Nil;
         $!handle.setopt(CURLOPT_HEADERDATA, $!handle);
         $!handle.setopt(CURLOPT_HEADERFUNCTION, &headerfunction);
         $!errorbuffer[0] = 0;
