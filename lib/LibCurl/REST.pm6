@@ -57,10 +57,20 @@ class LibCurl::REST
             default { $bin ?? $!curl.buf !! $!curl.content }
         }
 
-        $!curl.success ?? $content || True !! fail $content;
+        $!curl.success ?? $content || True !! die $content;
     }
 
     method get(|opts)    { $.query(:method<GET>,    |opts) }
     method post(|opts)   { $.query(:method<POST>,   |opts) }
     method delete(|opts) { $.query(:method<DELETE>, |opts) }
+    method put(|opts)    { $.query(:method<PUT>,    |opts) }
+
+    method head(Str:D $url, |opts)
+    {
+        LEAVE .reset with $!curl;
+
+        $!curl.setopt(URL => "$!prefix/$url", :nobody, |opts).perform;
+
+        $!curl.success ?? $!curl.receiveheaders !! die $!curl.statusline;
+    }
 }
