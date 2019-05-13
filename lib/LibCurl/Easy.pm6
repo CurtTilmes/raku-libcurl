@@ -314,7 +314,7 @@ sub headerfunction(Pointer $ptr, uint32 $size, uint32 $nitems,
     }
     elsif $header ~~ /^(<-[:]>+) ': ' (.*)$/
     {
-        $easy.receiveheaders{$0} = $1.trim;
+        $easy.receiveheaders{$0.fc} = $easy.receiveheaders{$0} = $1.trim;
     }
 
     return $size * $nitems;
@@ -448,7 +448,7 @@ class LibCurl::Easy
 
     method content($encoding is copy = 'utf-8') returns Str
     {
-        with self.receiveheaders<Content-Type>
+        with self.receiveheaders<content-type>
         {
             # Should be a stricter grammar, but dump regex will work for now
             if /charset \s* '=' \s* \\? <['"]>? (<-[\\"']>*) \\? <['"]>? /
@@ -461,7 +461,7 @@ class LibCurl::Easy
 
     method error() returns Str { nativecast(Str, $!errorbuffer) }
 
-    method get-header(Str $field) { %!receiveheaders{$field} }
+    method get-header(Str $field) { %!receiveheaders{$field.fc} }
 
     method setopt(*%options)
     {
@@ -728,7 +728,7 @@ class LibCurl::Easy
         return self.setopt(|($name => $param))
             if %opts{$name} and $param.defined;
 
-        return $_ with %!receiveheaders{$name};
+        return $_ with %!receiveheaders{$name.fc};
 
         return self.getinfo($name) if %infofields{$name};
 
