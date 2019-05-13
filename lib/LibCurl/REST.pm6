@@ -51,13 +51,15 @@ class LibCurl::REST
         {
             when 'application/json'
             {
-                try my $json = from-json($!curl.content);
+                try my $json = from-json($!curl.content || "null");
                 $! ?? $!curl.content !! $json;
             }
             default { $bin ?? $!curl.buf !! $!curl.content }
         }
 
-        $!curl.success ?? $content !! die $content;
+        $!curl.success ?? $content
+                       !! $content ?? die $content
+                                   !! die $!curl.statusline
     }
 
     method get(|opts)    { $.query(:method<GET>,    |opts) }
