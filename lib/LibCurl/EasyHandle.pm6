@@ -29,6 +29,7 @@ enum CURLAUTH (
     CURLAUTH_NTLM         => 1 +< 3,
     CURLAUTH_DIGEST_IE    => 1 +< 4,
     CURLAUTH_NTLM_WB      => 1 +< 5,
+    CURLAUTH_BEARER       => 1 +< 6,
     CURLAUTH_ONLY         => 1 +< 31,
 );
 
