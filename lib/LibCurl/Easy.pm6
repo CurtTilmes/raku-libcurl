@@ -135,6 +135,7 @@ BEGIN for <
 
     CURLPROXY_HTTP
     CURLPROXY_HTTP_1_0
+    CURLPROXY_HTTPS
     CURLPROXY_SOCKS4
     CURLPROXY_SOCKS5
     CURLPROXY_SOCKS4A
@@ -209,6 +210,8 @@ my %opts =
     proxyport            => (CURLOPT_PROXYPORT,            CURLOPT_LONG     ),
     proxytype            => (CURLOPT_PROXYTYPE,            CURLOPT_LONG     ),
     proxyuserpwd         => (CURLOPT_PROXYUSERPWD,         CURLOPT_STR      ),
+    proxy-ssl-verifypeer => (CURLOPT_PROXY_SSL_VERIFYPEER, CURLOPT_LONG     ),
+    proxy-ssl-verifyhost => (CURLOPT_PROXY_SSL_VERIFYHOST, CURLOPT_LONG     ),
     range                => (CURLOPT_RANGE,                CURLOPT_STR      ),
     redir-protocols      => (CURLOPT_REDIR_PROTOCOLS,      CURLOPT_LONG     ),
     referer              => (CURLOPT_REFERER,              CURLOPT_STR      ),

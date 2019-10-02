@@ -52,6 +52,7 @@ enum CURL_TIMECOND <
 enum CURLPROXY (
     CURLPROXY_HTTP             => 0,
     CURLPROXY_HTTP_1_0         => 1,
+    CURLPROXY_HTTPS            => 2,
     CURLPROXY_SOCKS4           => 4,
     CURLPROXY_SOCKS5           => 5,
     CURLPROXY_SOCKS4A          => 6,
@@ -476,6 +477,8 @@ constant CURLOPT_DEFAULT_PROTOCOL           = CURLOPTTYPE_OBJECTPOINT   + 238;
 constant CURLOPT_STREAM_WEIGHT              = CURLOPTTYPE_LONG          + 239;
 constant CURLOPT_STREAM_DEPENDS             = CURLOPTTYPE_OBJECTPOINT   + 240;
 constant CURLOPT_STREAM_DEPENDS_E           = CURLOPTTYPE_OBJECTPOINT   + 241;
+constant CURLOPT_PROXY_SSL_VERIFYPEER       = CURLOPTTYPE_LONG          + 248;
+constant CURLOPT_PROXY_SSL_VERIFYHOST       = CURLOPTTYPE_LONG          + 249;
 constant CURLOPT_REQUEST_TARGET             = CURLOPTTYPE_OBJECTPOINT   + 266;
 
 constant CURLOPT_READDATA                   = CURLOPT_INFILE;
