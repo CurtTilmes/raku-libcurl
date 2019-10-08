@@ -1,7 +1,7 @@
 {
     "name" : "LibCurl",
 
-    "version" : "0.8",
+    "version" : "0.9",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-libcurl.git",
 
