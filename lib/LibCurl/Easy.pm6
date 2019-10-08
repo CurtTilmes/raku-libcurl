@@ -119,6 +119,7 @@ BEGIN for <
     CURLAUTH_NTLM
     CURLAUTH_DIGEST_IE
     CURLAUTH_NTLM_WB
+    CURLAUTH_BEARER
     CURLAUTH_ONLY
     CURLAUTH_ANY
     CURLAUTH_ANYSAFE
@@ -134,6 +135,7 @@ BEGIN for <
 
     CURLPROXY_HTTP
     CURLPROXY_HTTP_1_0
+    CURLPROXY_HTTPS
     CURLPROXY_SOCKS4
     CURLPROXY_SOCKS5
     CURLPROXY_SOCKS4A
@@ -184,6 +186,8 @@ my %opts =
     httpproxytunnel      => (CURLOPT_HTTPPROXYTUNNEL,      CURLOPT_BOOL     ),
     ignore-content-length=> (CURLOPT_IGNORE_CONTENT_LENGTH,CURLOPT_BOOL     ),
     infilesize           => (CURLOPT_INFILESIZE_LARGE,     CURLOPT_OFF_T    ),
+    localport            => (CURLOPT_LOCALPORT,            CURLOPT_LONG     ),
+    localportrange       => (CURLOPT_LOCALPORTRANGE,       CURLOPT_LONG     ),
     low-speed-limit      => (CURLOPT_LOW_SPEED_LIMIT,      CURLOPT_LONG     ),
     low-speed-time       => (CURLOPT_LOW_SPEED_TIME,       CURLOPT_LONG     ),
     mail-from            => (CURLOPT_MAIL_FROM,            CURLOPT_STR      ),
@@ -208,6 +212,8 @@ my %opts =
     proxyport            => (CURLOPT_PROXYPORT,            CURLOPT_LONG     ),
     proxytype            => (CURLOPT_PROXYTYPE,            CURLOPT_LONG     ),
     proxyuserpwd         => (CURLOPT_PROXYUSERPWD,         CURLOPT_STR      ),
+    proxy-ssl-verifypeer => (CURLOPT_PROXY_SSL_VERIFYPEER, CURLOPT_LONG     ),
+    proxy-ssl-verifyhost => (CURLOPT_PROXY_SSL_VERIFYHOST, CURLOPT_LONG     ),
     range                => (CURLOPT_RANGE,                CURLOPT_STR      ),
     redir-protocols      => (CURLOPT_REDIR_PROTOCOLS,      CURLOPT_LONG     ),
     referer              => (CURLOPT_REFERER,              CURLOPT_STR      ),
@@ -215,6 +221,9 @@ my %opts =
     resume-from          => (CURLOPT_RESUME_FROM_LARGE,    CURLOPT_OFF_T    ),
     ssl-verifyhost       => (CURLOPT_SSL_VERIFYHOST,       CURLOPT_LONG     ),
     ssl-verifypeer       => (CURLOPT_SSL_VERIFYPEER,       CURLOPT_BOOL     ),
+    tcp-keepalive        => (CURLOPT_TCP_KEEPALIVE,        CURLOPT_BOOL     ),
+    tcp-keepidle         => (CURLOPT_TCP_KEEPIDLE,         CURLOPT_LONG     ),
+    tcp-keepintvl        => (CURLOPT_TCP_KEEPINTVL,        CURLOPT_LONG     ),
     timecondition        => (CURLOPT_TIMECONDITION,        CURLOPT_LONG     ),
     timeout              => (CURLOPT_TIMEOUT,              CURLOPT_LONG     ),
     timeout-ms           => (CURLOPT_TIMEOUT_MS,           CURLOPT_LONG     ),
