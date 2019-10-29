@@ -1,4 +1,4 @@
-# Perl6 LibCurl
+# Raku LibCurl
 
 [![Build Status](https://travis-ci.org/CurtTilmes/perl6-libcurl.svg)](https://travis-ci.org/CurtTilmes/perl6-libcurl)
 
@@ -14,7 +14,7 @@
 [Proxies](#proxies)
 [Multi](#multi)
 
-A [Perl 6](https://perl6.org/) interface to
+A [Raku](https://raku.org/) interface to
 [libcurl](https://curl.haxx.se/libcurl/).
 
     libcurl is a free and easy-to-use client-side URL transfer
@@ -135,7 +135,7 @@ available, mostly just skip the ```CURLOPT_```, lowercase, and use '-'
 instead of '_'.  For example, instead of
 ```CURLOPT_ACCEPT_ENCODING```, use ```accept-encoding```.  When the
 options are really boolean (set to 1 to enable and 0 to disable), you
-can treat them like Perl booleans if you want, ```:option``` to
+can treat them like option booleans if you want, ```:option``` to
 enable, and ```:!option``` to disable.
 
 Just like libcurl, the primary option is
@@ -280,8 +280,8 @@ This only clears the 'extra' headers, not useragent/referer/cookie.
 
 ## Special Options
 
-In addition to the normal libcurl options, Perl6 LibCurl uses options
-for some special Perl functionality.
+In addition to the normal libcurl options, Raku LibCurl uses options
+for some special Raku functionality.
 
 ```debugfunction``` replaces the libcurl
 [CURLOPT_DEBUGFUNCTION](https://curl.haxx.se/libcurl/c/CURLOPT_DEBUGFUNCTION.html)
@@ -307,10 +307,10 @@ with one that looks like this:
 
 ```upload``` specifies a filename to upload from.
 
-```send``` specifies a Perl `Str` or a Perl `Buf` to send content from.
+```send``` specifies a `Str` or a `Buf` to send content from.
 
 Finally there is a ```private``` option which replaces
-CURLOPT_PRIVATE, and you can safely store any Perl object in it.
+CURLOPT_PRIVATE, and you can safely store any object in it.
 
 ## Errors
 
@@ -493,7 +493,7 @@ API](https://docs.docker.com/engine/api/latest) like this:
 
 ## Multi
 
-Perl6 LibCurl also supports the libcurl
+Raku LibCurl also supports the libcurl
 [multi](https://curl.haxx.se/libcurl/c/libcurl-multi.html) interface.
 You still have to construct `LibCurl::Easy` (or `LibCurl::HTTP`)
 handles for each transfer, but instead of calling `.perform`, just add
@@ -558,12 +558,12 @@ you must install that prior to installing this module.
 
 ## SEE ALSO
 
-There is another Perl 6 interface to libcurl
+There is another Raku interface to libcurl
 [Net::Curl](https://github.com/azawawi/perl6-net-curl) developed by
 Ahmad M. Zawawi.  If you already use it and it works well for you,
 great, keep using it.  Ahmad did a nice job developing it.  I would
 encourage you to also take a look at this module.  LibCurl provides a
-more 'perlish' OO interface to libcurl than Net::Curl, and wraps
+more 'rakuish' OO interface to libcurl than Net::Curl, and wraps
 things in a manner to make using it a little easier (IMHO).
 
 ## LICENSE
