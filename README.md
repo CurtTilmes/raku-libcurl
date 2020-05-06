@@ -232,7 +232,7 @@ me know):
 [ssl-verifyhost](https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYHOST.html)
 [ssl-verifypeer](https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html)
 [tcp-keepalive](https://curl.haxx.se/libcurl/c/CURLOPT_TCP_KEEPALIVE.html)
-[tcp-keepidle] (https://curl.haxx.se/libcurl/c/CURLOPT_TCP_KEEPIDLE.html)
+[tcp-keepidle](https://curl.haxx.se/libcurl/c/CURLOPT_TCP_KEEPIDLE.html)
 [tcp-keepintvl](https://curl.haxx.se/libcurl/c/CURLOPT_TCP_KEEPINTVL.html)
 [timecondition](https://curl.haxx.se/libcurl/c/CURLOPT_TIMECONDITION.html)
 [timeout](https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html)
