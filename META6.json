@@ -33,7 +33,7 @@
     "tags" : [ "LibCurl", "Curl", "HTTP", "FTP", "REST" ],
     "support" : {
         "email" : "Curt.Tilmes@nasa.gov",
-        "source" : "https://github.com/CurtTilmes/perl6-libcurl.git",
-        "bugtracker" : "https://github.com/CurtTilmes/perl6-libcurl.git"
+        "source" : "https://github.com/CurtTilmes/raku-libcurl.git",
+        "bugtracker" : "https://github.com/CurtTilmes/raku-libcurl.git"
     }
 }
