@@ -1,6 +1,6 @@
 # Raku LibCurl
 
-[![Build Status](https://travis-ci.org/CurtTilmes/perl6-libcurl.svg)](https://travis-ci.org/CurtTilmes/perl6-libcurl)
+[![Build Status](https://travis-ci.org/CurtTilmes/raku-libcurl.svg)](https://travis-ci.org/CurtTilmes/raku-libcurl)
 
 [Simple Examples](#simple-examples)
 [Options](#options)
