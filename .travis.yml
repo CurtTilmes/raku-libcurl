@@ -1,17 +1,8 @@
-language: perl6
+language:
+  - minimal
 
-os:
-  - linux
+services:
+  - docker
 
-perl6:
-  - latest
-
-sudo: true
-
-before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update            ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libcurl4-openssl-dev; fi
-
-install:
-  - rakudobrew build zef
-  - zef install .
+script:
+  - make test

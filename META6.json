@@ -1,35 +1,39 @@
 {
-    "name" : "LibCurl",
-
-    "version" : "0.9",
-
-    "source-url" : "https://github.com/CurtTilmes/perl6-libcurl.git",
-
-    "perl" : "6.*",
-
-    "tags" : [ "LibCurl", "Curl", "HTTP", "FTP", "REST" ],
-
-    "provides" : {
-        "LibCurl::EasyHandle"  : "lib/LibCurl/EasyHandle.pm6",
-        "LibCurl::MultiHandle" : "lib/LibCurl/MultiHandle.pm6",
-        "LibCurl::Easy"        : "lib/LibCurl/Easy.pm6",
-        "LibCurl::Multi"       : "lib/LibCurl/Multi.pm6",
-        "LibCurl::HTTP"        : "lib/LibCurl/HTTP.pm6",
-        "LibCurl::REST"        : "lib/LibCurl/REST.pm6"
+    "meta-version"     : "1",
+    "perl"             : "6.d",
+    "name"             : "LibCurl",
+    "api"              : "1",
+    "version"          : "1.0",
+    "auth"             : "github:CurtTilmes",
+    "description"      : "Raku bindings for LibCurl",
+    "authors"          : [ "Curt Tilmes <Curt.Tilmes@nasa.gov>" ],
+    "license"          : "NASA-1.3",
+    "test-depends"     : [ "Test", "Test::When" ],
+    "depends"        : {
+        "runtime": {
+            "requires": [
+                "NativeCall",
+                "NativeLibs:ver<0.0.7>:auth<github:salortiz>",
+                "JSON::Fast",
+                "curl:from<native>"
+            ]
+        },
+        "test": {
+            "requires": [ "Test", "Test::When" ]
+        }
     },
-
-    "depends" : [ "NativeCall", "JSON::Fast" ],
-
-    "description" : "Perl6 bindings for LibCurl",
-
-    "test-depends" : [ "Test", "Test::When", "Test::META" ],
-
-    "license" : "NASA-1.3",
-
-    "authors" : [ "Curt Tilmes <Curt.Tilmes@nasa.gov>" ],
-
+    "provides" : {
+        "LibCurl::EasyHandle"  : "lib/LibCurl/EasyHandle.rakumod",
+        "LibCurl::MultiHandle" : "lib/LibCurl/MultiHandle.rakumod",
+        "LibCurl::Easy"        : "lib/LibCurl/Easy.rakumod",
+        "LibCurl::Multi"       : "lib/LibCurl/Multi.rakumod",
+        "LibCurl::HTTP"        : "lib/LibCurl/HTTP.rakumod",
+        "LibCurl::REST"        : "lib/LibCurl/REST.rakumod"
+    },
+    "tags" : [ "LibCurl", "Curl", "HTTP", "FTP", "REST" ],
     "support" : {
-      "source" : "https://github.com/CurtTilmes/perl6-libcurl.git",
-      "bugtracker" : "https://github.com/CurtTilmes/perl6-libcurl.git"
+        "email" : "Curt.Tilmes@nasa.gov",
+        "source" : "https://github.com/CurtTilmes/perl6-libcurl.git",
+        "bugtracker" : "https://github.com/CurtTilmes/perl6-libcurl.git"
     }
 }

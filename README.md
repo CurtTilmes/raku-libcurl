@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/CurtTilmes/perl6-libcurl.svg)](https://travis-ci.org/CurtTilmes/perl6-libcurl)
 
-
 [Simple Examples](#simple-examples)
 [Options](#options)
 [Header Options](#header-options)
@@ -426,6 +425,9 @@ not specified.
 
 ## Multi-part forms
 
+Forms now uses the libcurl MIME capability, but requires verison 7.56
+or greater for forms.
+
 There is a special POST option for multipart/formdata.
 
     my $curl = LibCurl::Easy.new(URL => 'http://...');
@@ -433,31 +435,21 @@ There is a special POST option for multipart/formdata.
     # normal field
     $curl.formadd(name => 'fieldname', contents => 'something');
 
+    # Use a file as content, but not as a file upload
+    $curl.formadd(name => 'fieldname', filecontent => 'afile.txt');
+    
     # upload a file from disk, give optional filename or contenttype
     $curl.formadd(name => 'fieldname', file => 'afile.txt',
                   filename => 'alternate.name.txt',
                   contenttype => 'image/jpeg');
 
     # Send a Blob of contents, but as a file with a filename
-    $curl.formadd(name => 'fieldname', buffer => 'some.file.name.txt',
-                  bufferptr => "something".encode);
+    $curl.formadd(name => 'fieldname', filename => 'some.file.name.txt',
+                  contents => "something".encode);
 
     $curl.perform;
 
 This will automatically cause LibCurl to POST the data.
-
-The options are described in more detail [here](https://curl.haxx.se/libcurl/c/curl_formadd.html).
-
-The fields implemented are:
-
-[name](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMCOPYNAME)
-[contents](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMCOPYCONTENTS)
-[filecontent](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMFILECONTENT)
-[file](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMFILE)
-[contenttype](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMCONTENTTYPE)
-[filename](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMFILENAME)
-[buffer](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMBUFFER)
-[bufferptr](https://curl.haxx.se/libcurl/c/curl_formadd.html#CURLFORMBUFFERPTR)
 
 ## Proxies
 
@@ -554,7 +546,12 @@ completed LibCurl::Easy handles (after setting `URL`, etc. as needed).
 ## INSTALL
 
 `LibCurl` depends on [libcurl](https://curl.haxx.se/download.html), so
-you must install that prior to installing this module.
+you must install that prior to installing this module.  It may already
+be installed on your system.
+
+* For debian or ubuntu: `apt-get install libcurl4-openssl-dev`
+* For alpine: `apk add libcurl`
+* For CentOS: `yum install libcurl`
 
 ## SEE ALSO
 
