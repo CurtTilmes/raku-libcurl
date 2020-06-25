@@ -15,8 +15,8 @@
                 "NativeCall",
                 "NativeLibs:ver<0.0.7>:auth<github:salortiz>",
                 "JSON::Fast",
-                "curl:from<native>"
-            ]
+                "curl:from<native>:ver<4>"
+             ]
         },
         "test": {
             "requires": [ "Test", "Test::When" ]
