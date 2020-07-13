@@ -1,12 +1,8 @@
 use NativeLibs:ver<0.0.7>:auth<github:salortiz>;
 
-my $Lib;
-
-INIT .fail without $Lib = NativeLibs::Loader.load('libcurl.so.4');
+constant LIBCURL = NativeLibs::Searcher.at-runtime('curl', 'curl_version', 4);
 
 constant intptr = ssize_t;
-
-constant LIBCURL = "curl";
 
 enum CURL_HTTP_VERSION_ENUM <
     CURL_HTTP_VERSION_NONE
@@ -535,19 +531,19 @@ enum CURLFORMcode <
     CURL_FORMADD_DISABLED
 >;
 
-sub curl_global_init(long) returns uint32 is native is export { * }
+sub curl_global_init(long) returns uint32 is native(LIBCURL) is export { * }
 
-sub curl_global_cleanup() is native is export { * }
+sub curl_global_cleanup() is native(LIBCURL) is export { * }
 
-sub curl_version() returns Str is native is export { * }
+sub curl_version() returns Str is native(LIBCURL) is export { * }
 
-sub curl_free(Pointer $ptr) is native is export { * }
+sub curl_free(Pointer $ptr) is native(LIBCURL) is export { * }
 
 class X::LibCurl is Exception
 {
     has Int $.code;
 
-    sub curl_easy_strerror(uint32) returns Str is native { * }
+    sub curl_easy_strerror(uint32) returns Str is native(LIBCURL) { * }
 
     method Int() { $!code }
 
@@ -600,7 +596,7 @@ class LibCurl::mime is repr('CPointer') { ... }
 class LibCurl::mimepart is repr('CPointer')                     # curl_mimepart
 {
     multi method data(Blob, size_t --> int32)
-        is native is symbol('curl_mime_data') { * }
+        is native(LIBCURL) is symbol('curl_mime_data') { * }
 
     multi method data(Blob:D $blob)
     {
@@ -619,28 +615,28 @@ class LibCurl::mimepart is repr('CPointer')                     # curl_mimepart
     }
 
     method filedata(Str --> int32)
-        is native is symbol('curl_mime_filedata') { * }
+        is native(LIBCURL) is symbol('curl_mime_filedata') { * }
 
     method filename(Str --> int32)
-        is native is symbol('curl_mime_filename') { * }
+        is native(LIBCURL) is symbol('curl_mime_filename') { * }
 
     method name(Str --> int32)
-        is native is symbol('curl_mime_name') { * }
+        is native(LIBCURL) is symbol('curl_mime_name') { * }
 
     method type(Str --> int32)
-        is native is symbol('curl_mime_type') { * }
+        is native(LIBCURL) is symbol('curl_mime_type') { * }
 
     method subparts(LibCurl::mime --> int32)
-        is native is symbol('curl_mime_subparts') { * }
+        is native(LIBCURL) is symbol('curl_mime_subparts') { * }
 }
 
 class LibCurl::mime                                              # curl_mime
 {
     method addpart(--> LibCurl::mimepart)
-        is native is symbol('curl_mime_addpart') { * }
+        is native(LIBCURL) is symbol('curl_mime_addpart') { * }
 
     method free()
-        is native is symbol('curl_mime_free') { * }
+        is native(LIBCURL) is symbol('curl_mime_free') { * }
 
     submethod DESTROY() { self.free }
 }
@@ -655,9 +651,9 @@ class LibCurl::slist-struct is repr('CStruct')
 class LibCurl::slist is repr('CPointer')
 {
     sub curl_slist_append(LibCurl::slist, Str) returns LibCurl::slist
-        is native { * }
+        is native(LIBCURL) { * }
 
-    sub curl_slist_free_all(LibCurl::slist) is native { * }
+    sub curl_slist_free_all(LibCurl::slist) is native(LIBCURL) { * }
 
     method append(*@str-list) returns LibCurl::slist
     {
@@ -740,7 +736,7 @@ class LibCurl::version-info is repr('CStruct')
 class LibCurl::version is repr('CPointer')
 {
     sub curl_version_info(uint32 $type) returns LibCurl::version
-        is native { * }
+        is native(LIBCURL) { * }
 
     method new() { curl_version_info(CURLVERSION_NOW) }
 
@@ -749,71 +745,71 @@ class LibCurl::version is repr('CPointer')
 
 class LibCurl::EasyHandle is repr('CPointer')
 {
-    sub curl_easy_init() returns LibCurl::EasyHandle is native { * }
+    sub curl_easy_init() returns LibCurl::EasyHandle is native(LIBCURL) { * }
 
-    sub curl_easy_cleanup(LibCurl::EasyHandle) is native { * }
+    sub curl_easy_cleanup(LibCurl::EasyHandle) is native(LIBCURL) { * }
 
-    sub curl_easy_reset(LibCurl::EasyHandle) is native { * }
+    sub curl_easy_reset(LibCurl::EasyHandle) is native(LIBCURL) { * }
 
     sub curl_easy_duphandle(LibCurl::EasyHandle) returns LibCurl::EasyHandle
-        is native { * }
+        is native(LIBCURL) { * }
 
     sub curl_easy_escape(LibCurl::EasyHandle, Buf, int32) returns Pointer
-        is native { * }
+        is native(LIBCURL) { * }
 
     sub curl_easy_unescape(LibCurl::EasyHandle, Buf, int32, int32 is rw)
-        returns Pointer is native { * }
+        returns Pointer is native(LIBCURL) { * }
 
     sub curl_easy_setopt_str(LibCurl::EasyHandle, uint32, Str) returns uint32
-        is native is symbol('curl_easy_setopt') { * }
+        is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_long(LibCurl::EasyHandle, uint32, long) returns uint32
-        is native is symbol('curl_easy_setopt') { * }
+        is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_ptr(LibCurl::EasyHandle, uint32, Pointer)
-        returns uint32 is native is symbol('curl_easy_setopt') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_slist(LibCurl::EasyHandle, uint32, LibCurl::slist)
-        returns uint32 is native is symbol('curl_easy_setopt') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_array(LibCurl::EasyHandle, uint32, CArray[uint8])
-        returns uint32 is native is symbol('curl_easy_setopt') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_data-cb(LibCurl::EasyHandle, uint32,
         &cb (Pointer, uint32, uint32, Pointer --> uint32))
-        returns uint32 is native is symbol('curl_easy_setopt') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_debug-cb(LibCurl::EasyHandle, uint32,
 	&cb (Pointer, uint32, Pointer, size_t, Pointer --> int32))
-        returns uint32 is native is symbol('curl_easy_setopt') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_setopt_xfer-cb(LibCurl::EasyHandle, uint32,
 	&cb (Pointer, long, long, long, long --> int32))
-        returns uint32 is native is symbol('curl_easy_setopt') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_setopt') { * }
 
     sub curl_easy_perform(LibCurl::EasyHandle) returns uint32
-        is native { * }
+        is native(LIBCURL) { * }
 
     sub curl_easy_getinfo_long(LibCurl::EasyHandle, int32, long is rw)
-        returns uint32 is native is symbol('curl_easy_getinfo') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
     sub curl_easy_getinfo_double(LibCurl::EasyHandle, int32, num64 is rw)
-        returns uint32 is native is symbol('curl_easy_getinfo') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
     sub curl_easy_getinfo_str(LibCurl::EasyHandle, int32, CArray[Str])
-        returns uint32 is native is symbol('curl_easy_getinfo') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
     sub curl_easy_getinfo_ptr(LibCurl::EasyHandle, int32, CArray[Pointer])
-        returns uint32 is native is symbol('curl_easy_getinfo') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
     sub curl_easy_getinfo_socket(LibCurl::EasyHandle, int32, int32 is rw)
-        returns uint32 is native is symbol('curl_easy_getinfo') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_easy_getinfo') { * }
 
     sub curl_easy_send(LibCurl::EasyHandle, Blob, size_t, size_t is rw
-        --> uint32) is native {}
+        --> uint32) is native(LIBCURL) {}
 
     sub curl_easy_recv(LibCurl::EasyHandle, Blob, size_t, size_t is rw
-        --> uint32) is native {}
+        --> uint32) is native(LIBCURL) {}
 
     method new() returns LibCurl::EasyHandle { curl_easy_init }
 
@@ -941,7 +937,7 @@ class LibCurl::EasyHandle is repr('CPointer')
     }
 
     method mime-init(--> LibCurl::mime)
-        is native is symbol('curl_mime_init') { * }
+        is native(LIBCURL) is symbol('curl_mime_init') { * }
 
     method getinfo_certinfo() {
 	... # TODO

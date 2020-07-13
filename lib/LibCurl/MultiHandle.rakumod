@@ -40,38 +40,38 @@ class LibCurl::CURLMsg is repr('CStruct')
 
 class X::LibCurl::Multi is X::LibCurl
 {
-    sub curl_multi_strerror(uint32) returns Str is native { * }
+    sub curl_multi_strerror(uint32) returns Str is native(LIBCURL) { * }
 
     method message() { curl_multi_strerror(self.Int) }
 }
 
 class LibCurl::MultiHandle is repr('CPointer')
 {
-    sub curl_multi_init() returns LibCurl::MultiHandle is native { * }
+    sub curl_multi_init() returns LibCurl::MultiHandle is native(LIBCURL) { * }
 
     sub curl_multi_add_handle(LibCurl::MultiHandle, LibCurl::EasyHandle)
-        returns uint32 is native { * }
+        returns uint32 is native(LIBCURL) { * }
 
     sub curl_multi_remove_handle(LibCurl::MultiHandle, LibCurl::EasyHandle)
-        returns uint32 is native { * }
+        returns uint32 is native(LIBCURL) { * }
 
     sub curl_multi_setopt_long(LibCurl::MultiHandle, uint32, long)
-        returns uint32 is native is symbol('curl_multi_setopt') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_multi_setopt') { * }
 
     sub curl_multi_setopt_str(LibCurl::MultiHandle, uint32, Str)
-        returns uint32 is native is symbol('curl_multi_setopt') { * }
+        returns uint32 is native(LIBCURL) is symbol('curl_multi_setopt') { * }
 
     sub curl_multi_cleanup(LibCurl::MultiHandle) returns uint32
-        is native { * }
+        is native(LIBCURL) { * }
 
     sub curl_multi_wait(LibCurl::MultiHandle,Pointer,uint32,int32,int32 is rw)
-        returns uint32 is native { * }
+        returns uint32 is native(LIBCURL) { * }
 
     sub curl_multi_perform(LibCurl::MultiHandle, int32 is rw) returns uint32
-        is native { * }
+        is native(LIBCURL) { * }
 
     sub curl_multi_info_read(LibCurl::MultiHandle, uint32 is rw)
-        returns LibCurl::CURLMsg is native { * }
+        returns LibCurl::CURLMsg is native(LIBCURL) { * }
 
     method new() { curl_multi_init }
 
