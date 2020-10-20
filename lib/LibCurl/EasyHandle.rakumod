@@ -1,4 +1,4 @@
-use NativeLibs:ver<0.0.7>:auth<github:salortiz>;
+use NativeLibs:ver<0.0.7+>:auth<github:salortiz>;
 
 constant LIBCURL = NativeLibs::Searcher.at-runtime('curl', 'curl_version', 4);
 
