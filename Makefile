@@ -21,7 +21,7 @@ test-alpine:
 	  -v $(CWD):/test \
           --entrypoint="/bin/sh" \
 	  jjmerelo/raku-test \
-	  -c "apk add --update --no-cache libcurl && cd /home/raku && zef install --/test --deps-only --test-depends . && zef -v test ."
+	  -c "apk add --update --no-cache libcurl && cd /test && zef install --/test --deps-only --test-depends . && zef -v test ."
 
 test-debian:
 	docker run --rm -t \
