@@ -16,12 +16,12 @@ dist:
 		-o ../$(ARCHIVENAME)-$(VERSION).tar.gz $(VERSION)
 
 test-alpine:
-	docker run --rm -t  \
+	docker run --rm -t -u root \
 	  -e RELEASE_TESTING=1 \
 	  -v $(CWD):/test \
           --entrypoint="/bin/sh" \
 	  jjmerelo/raku-test \
-	  -c "apk add --update --no-cache libcurl && zef install --/test --deps-only --test-depends . && zef -v test ."
+	  -c "apk add --update --no-cache libcurl && cd /home/raku && zef install --/test --deps-only --test-depends . && zef -v test ."
 
 test-debian:
 	docker run --rm -t \
