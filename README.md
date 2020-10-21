@@ -483,6 +483,29 @@ API](https://docs.docker.com/engine/api/latest) like this:
     say $info<KernelVersion>;
     say $info<OperatingSystem>;
 
+## Streaming
+
+There is an experimental stream capability which can bind a Channel to
+the data stream.  Instead of retrieving the buffered data at once,
+each time data comes in it is sent through to the Channel.  This is
+useful for long-lived connections that periodically send more data.
+
+You can access it with Something like this:
+
+```
+my $curl = LibCurl::Easy.new(URL => ...);
+
+my $stream = $curl.stream-out;
+
+start react whenever $stream -> $in {
+    say "in: ", $in;
+}
+
+$curl.perform;
+```
+
+Suggestions for improving the interface for this capability welcome!
+
 ## Multi
 
 Raku LibCurl also supports the libcurl
