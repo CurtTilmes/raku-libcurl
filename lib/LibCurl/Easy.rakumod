@@ -520,6 +520,7 @@ class LibCurl::Easy
                 when LIBCURL_DOWNLOAD {
                     $!download-fh = fopen($param, "wb");
                     $!handle.setopt(CURLOPT_WRITEDATA, $!download-fh);
+                    $!handle.setopt(CURLOPT_WRITEFUNCTION, Pointer);
                 }
 
                 when LIBCURL_UPLOAD {
