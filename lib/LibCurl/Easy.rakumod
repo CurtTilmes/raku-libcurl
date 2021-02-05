@@ -468,7 +468,7 @@ class LibCurl::Easy
         with self.receiveheaders<content-type>
         {
             # Should be a stricter grammar, but dump regex will work for now
-            if /charset \s* '=' \s* \\? <['"]>? (<-[\\"']>*) \\? <['"]>? /
+            if /charset \s* '=' \s* \\? <['"]>? (<-[\\";']>*) \\? <['"]>? /
             {
                 $encoding = $0.Str;
             }
