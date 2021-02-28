@@ -325,6 +325,8 @@ sub headerfunction(Pointer $ptr, uint32 $size, uint32 $nitems,
         nativecast(CArray[uint8], $ptr)[0 ..^ $size * $nitems]
     ).decode;
 
+    $easy.raw-headers ~= $header;
+
     if $header ~~ /^HTTP\//
     {
         $easy.statusline = $header.trim;
@@ -408,6 +410,7 @@ class LibCurl::Easy
     has LibCurl::slist $.header-slist;
     has LibCurl::mime $.mime;
     has %.receiveheaders is rw;
+    has $.raw-headers is rw;
     has $.statusline is rw;
     has Pointer $.upload-fh;
     has Pointer $.download-fh;
@@ -634,6 +637,7 @@ class LibCurl::Easy
         $!handle.setopt(CURLOPT_MIMEPOST, $!mime) if $!mime;
 
         %!receiveheaders = ();
+        $!raw-headers = "";
     }
 
     method finish()
