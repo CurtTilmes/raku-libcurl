@@ -750,7 +750,6 @@ class LibCurl::Easy
         $allhandles-lock.protect({ %allhandles{$!handle.id}:delete });
         .cleanup with $!handle;
         $!handle = LibCurl::EasyHandle;
-        self.clear-form;
         .free for @!slists;
         @!slists = ();
     }
