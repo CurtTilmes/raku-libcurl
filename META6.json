@@ -3,7 +3,7 @@
     "perl"             : "6.d",
     "name"             : "LibCurl",
     "api"              : "1",
-    "version"          : "1.4",
+    "version"          : "1.5",
     "auth"             : "github:CurtTilmes",
     "description"      : "Raku bindings for LibCurl",
     "authors"          : [ "Curt Tilmes <Curt.Tilmes@nasa.gov>" ],

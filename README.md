@@ -246,7 +246,7 @@ me know):
 [userpwd](https://curl.haxx.se/libcurl/c/CURLOPT_USERPWD.html)
 [verbose](https://curl.haxx.se/libcurl/c/CURLOPT_VERBOSE.html)
 [wildcardmatch](https://curl.haxx.se/libcurl/c/CURLOPT_WILDCARDMATCH.html)
-[xoauth2_bearer](https://curl.se/libcurl/c/CURLOPT_XOAUTH2_BEARER.html)
+[xoauth2_bearer](https://curl.haxx.se/libcurl/c/CURLOPT_XOAUTH2_BEARER.html)
 
 ## Header Options
 
