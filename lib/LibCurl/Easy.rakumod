@@ -242,6 +242,7 @@ my %opts =
     userpwd              => (CURLOPT_USERPWD,              CURLOPT_STR      ),
     verbose              => (CURLOPT_VERBOSE,              CURLOPT_BOOL     ),
     wildcardmatch        => (CURLOPT_WILDCARDMATCH,        CURLOPT_BOOL     ),
+    xoauth2_bearer       => (CURLOPT_XOAUTH2_BEARER,       CURLOPT_STR      ),
     Transfer-Encoding    => (0,                            LIBCURL_HEADER   ),
     Content-MD5          => (0,                            LIBCURL_HEADER   ),
     Content-Type         => (0,                            LIBCURL_HEADER   ),
